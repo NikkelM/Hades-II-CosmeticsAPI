@@ -1,6 +1,6 @@
 local config = {
   enabled = true,
-  logLevel = 3,
+  logLevel = 2,
 }
 
 local configDesc = {
