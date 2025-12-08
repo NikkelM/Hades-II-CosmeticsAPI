@@ -19,7 +19,8 @@ mod.KnownExtraDecorBaseAnimations = {
 	Cosmetic_HecateKey = "Tilesets\\Crossroads\\Crossroads_Hecate_Key_01",
 }
 
-mod.AddedCosmeticSjsonData = {}
+mod.AddedCosmeticSjsonTextData = {}
+mod.AddedCosmeticSjsonAnimationData = {}
 
 ---Logs a message at the specified log level with colour coding.
 ---@param t any The message to log.

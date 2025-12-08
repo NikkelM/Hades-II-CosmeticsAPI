@@ -15,18 +15,19 @@ public.RegisterCosmetic = function(cosmeticData)
 		Description = "table",
 		FlavorText = "table",
 		ShopCategory = "string",
-		Icon = "string",
-		SetAnimationValue = "string",
-		RemoveCosmetics = "string",
+		IconPath = "string",
+		CosmeticAnimationPath = "string",
+		CosmeticsGroup = "string",
 	}
-	for _, field in ipairs(requiredFields) do
-		if cosmeticData[field] == nil then
+	for fieldName, fieldType in pairs(requiredFields) do
+		if cosmeticData[fieldName] == nil then
 			mod.DebugPrint("[CosmeticsAPI] Error: Missing required field '" ..
-				field .. "' in cosmetic data, cannot register cosmetic: " .. tostring(cosmeticData.Id or "Unknown"), 1)
+				fieldName .. "' in cosmetic data, cannot register cosmetic: " .. tostring(cosmeticData.Id or "Unknown"), 1)
 			return false
-		elseif type(cosmeticData[field]) ~= requiredFields[field] then
-			mod.WarnIncorrectType(field, requiredFields[field], type(cosmeticData[field]),
-				tostring(cosmeticData.Id or "Unknown"))
+		elseif type(cosmeticData[fieldName]) ~= fieldType then
+			mod.DebugPrint("[CosmeticsAPI] Error: Field '" .. fieldName .. "' has incorrect type '" ..
+				type(cosmeticData[fieldName]) .. "' (expected '" .. fieldType ..
+				"') in cosmetic data, cannot register cosmetic: " .. tostring(cosmeticData.Id or "Unknown"), 1)
 			return false
 		end
 	end
@@ -46,7 +47,7 @@ public.RegisterCosmetic = function(cosmeticData)
 	-- Ensure no cosmetic with this ID already exists
 	if game.WorldUpgradeData[cosmeticData.Id] ~= nil then
 		mod.DebugPrint("[CosmeticsAPI] Error: A cosmetic with ID '" .. cosmeticData.Id ..
-			"' already exists, cannot register duplicate cosmetic.", 1)
+			"' already exists, cannot register duplicate cosmetic. Make sure to prefix your cosmetic with you \"_PLUGIN.guid\"!", 1)
 		return false
 	end
 
@@ -87,12 +88,12 @@ public.RegisterCosmetic = function(cosmeticData)
 	end
 	-- #endregion
 
-	-- #region Id, Name, Icon, SetAnimationValue
+	-- #region Name (Id), (Icon) IconPath, SetAnimationValue (CosmeticAnimationPath)
 	local newGameCosmetic = {
 		-- This is NOT the DisplayName field, but the internal ID
 		Name = cosmeticData.Id,
-		Icon = cosmeticData.Icon,
-		SetAnimationValue = cosmeticData.SetAnimationValue
+		Icon = cosmeticData.Id .. "_Icon",
+		SetAnimationValue = cosmeticData.Id .. "_Animation",
 	}
 	-- #endregion
 
@@ -105,24 +106,6 @@ public.RegisterCosmetic = function(cosmeticData)
 			mod.WarnIncorrectType("InheritFrom", "table", type(cosmeticData.InheritFrom), cosmeticData.Id)
 		end
 	end
-	-- #endregion
-
-	-- #region Icon
-	-- TODO: Must be added to GUI_Screens_VFX.sjson
-	-- {
-	-- Name = "CosmeticIcon_HecateKey"
-	-- FilePath = "GUI\Screens\CosmeticIcons\cosmetic_hecateKey"
-	-- Scale = 1.0
-	-- }
-	-- #endregion
-
-	-- #region SetAnimationValue & AnimationScale
-	-- TODO: Must create a new GUI animation for the SetAnimationValue with the correct scale
-	-- {
-	-- Name = "NikkelM-HadesBiomesCosmetics\Crossroads\Assets\Banner_Infernal"
-	-- FilePath = "NikkelM-HadesBiomesCosmetics\Crossroads\Assets\Banner_Infernal"
-	-- Scale = 3.57
-	-- }
 	-- #endregion
 
 	-- #region ShopCategory
@@ -224,13 +207,14 @@ public.RegisterCosmetic = function(cosmeticData)
 		-- This cosmetic did not belong to a group yet (it was an Extra Decor cosmetic) - create a new group with just that one cosmetic and our new one
 		newGameCosmetic.RemoveCosmetics = { cosmeticData.CosmeticsGroup }
 
-		-- We also need to set a SetAnimationValue for it if it doesn't exist yet, otherwise unequipping the new cosmetic will not replace it with the base cosmetic animation
+		-- We also need to set a SetAnimationValue for the original cosmetic if it doesn't exist yet, otherwise unequipping the new cosmetic will not replace it with the base cosmetic animation
 		if not game.WorldUpgradeData[cosmeticData.CosmeticsGroup].SetAnimationValue then
 			if mod.KnownExtraDecorBaseAnimations[cosmeticData.CosmeticsGroup] then
 				game.WorldUpgradeData[cosmeticData.CosmeticsGroup].SetAnimationValue = mod.KnownExtraDecorBaseAnimations
 						[cosmeticData.CosmeticsGroup]
 			else
-				mod.DebugPrint("[CosmeticsAPI] Error: The cosmetic to which you are adding an alternate version (CosmeticsGroup key): '" ..
+				mod.DebugPrint(
+					"[CosmeticsAPI] Error: The cosmetic to which you are adding an alternate version (CosmeticsGroup key): '" ..
 					cosmeticData.CosmeticsGroup ..
 					"' is an \"Extra Decor\" and does not have a SetAnimationValue defined in vanilla Hades II. The Cosmetics API keeps a list of known base animations for Extra Decor cosmetics, but this cosmetic is not on it. The base animation must be added to the API before you can add an alternative version of the cosmetic. Please find the base animation and open a PR to add it to the \"mod.KnownExtraDecorBaseAnimations\" table in the \"Scripts/Utils.lua\" file on https://github.com/NikkelM/Hades-II-CosmeticsAPI",
 					1)
@@ -341,13 +325,27 @@ public.RegisterCosmetic = function(cosmeticData)
 	-- #endregion
 
 	-- This is used in SjsonHooks.lua to add texts to HelpText.sjson files
-	local newGameCosmeticSjsonData = {
+	local newGameCosmeticSjsonTextData = {
 		Id = cosmeticData.Id,
 		Name = cosmeticData.Name,
 		Description = cosmeticData.Description,
 		FlavorText = cosmeticData.FlavorText,
 	}
-	table.insert(mod.AddedCosmeticSjsonData, newGameCosmeticSjsonData)
+	table.insert(mod.AddedCosmeticSjsonTextData, newGameCosmeticSjsonTextData)
+
+	-- This is used in SjsonHooks.lua to add the animation and Icon to GUI_Screens_VFX.sjson
+	local newGameCosmeticSjsonAnimationData = {
+		Id = cosmeticData.Id,
+		-- cosmeticData.Id .. "_Icon"
+		IconId = newGameCosmetic.Icon,
+		IconPath = cosmeticData.IconPath,
+		IconScale = cosmeticData.IconScale or 1.0,
+		-- cosmeticData.Id .. "_Animation"
+		AnimationId = newGameCosmetic.SetAnimationValue,
+		CosmeticAnimationPath = cosmeticData.CosmeticAnimationPath,
+		AnimationScale = cosmeticData.AnimationScale or 1.0,
+	}
+	table.insert(mod.AddedCosmeticSjsonAnimationData, newGameCosmeticSjsonAnimationData)
 
 	mod.DebugPrint("[CosmeticsAPI] Successfully registered new cosmetic: " .. cosmeticData.Id, 3)
 	return true
