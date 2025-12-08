@@ -12,6 +12,7 @@ public.RegisterCosmetic = function(cosmeticData)
 	local requiredFields = {
 		Id = "string",
 		Name = "table",
+		Description = "table",
 		FlavorText = "table",
 		ShopCategory = "string",
 		Icon = "string",
@@ -49,31 +50,40 @@ public.RegisterCosmetic = function(cosmeticData)
 		return false
 	end
 
-	-- Ensure the Name and FlavorText tables only contains valid language keys
-	local validLanguageCodes = {
-		de = true,
-		el = true,
-		en = true,
-		es = true,
-		fr = true,
-		it = true,
-		ja = true,
-		ko = true,
-		pl = true,
-		["pt-BR"] = true,
-		ru = true,
-		tr = true,
-		uk = true,
-		["zh-CN"] = true,
-		["zh-TW"] = true,
-	}
-	for _, textField in ipairs({ "Name", "FlavorText" }) do
+	-- Ensure the Name and FlavorText tables only contains valid language keys, and contains at least the english entry
+	local hasEnglishName = false
+	local hasEnglishDescription = false
+	local hasEnglishFlavorText = false
+	for _, textField in ipairs({ "Name", "Description", "FlavorText" }) do
 		for langCode, _ in pairs(cosmeticData[textField]) do
-			if not validLanguageCodes[langCode] then
+			if langCode == "en" then
+				if textField == "Name" then
+					hasEnglishName = true
+				elseif textField == "Description" then
+					hasEnglishDescription = true
+				else
+					hasEnglishFlavorText = true
+				end
+			end
+			if not mod.ValidLanguageCodes[langCode] then
 				mod.DebugPrint("[CosmeticsAPI] Warning: Invalid language code '" .. tostring(langCode) ..
 					"' in field '" .. textField .. "' of cosmetic data: " .. tostring(cosmeticData.Id or "Unknown"), 2)
 			end
 		end
+	end
+	if not hasEnglishName then
+		mod.DebugPrint("[CosmeticsAPI] Warning: Missing default English ('en') entry in Name field of cosmetic data: " ..
+			tostring(cosmeticData.Id or "Unknown"), 2)
+	end
+	if not hasEnglishDescription then
+		mod.DebugPrint(
+			"[CosmeticsAPI] Warning: Missing default English ('en') entry in Description field of cosmetic data: " ..
+			tostring(cosmeticData.Id or "Unknown"), 2)
+	end
+	if not hasEnglishFlavorText then
+		mod.DebugPrint(
+			"[CosmeticsAPI] Warning: Missing default English ('en') entry in FlavorText field of cosmetic data: " ..
+			tostring(cosmeticData.Id or "Unknown"), 2)
 	end
 	-- #endregion
 
@@ -115,10 +125,6 @@ public.RegisterCosmetic = function(cosmeticData)
 	-- }
 	-- #endregion
 
-	-- #region FlavorText
-	-- TODO: Must be hooked into HelpText under the new ID, respect localization input
-	-- #endregion
-
 	-- #region ShopCategory
 	local legalShopCategories = {
 		CosmeticsShop_Tent = true,
@@ -127,14 +133,14 @@ public.RegisterCosmetic = function(cosmeticData)
 		CosmeticsShop_PreRun = true,
 	}
 	-- Insert the new cosmetic into the correct shop category
-	-- If InsertAfterCosmeticInCategory is set, insert it after that cosmetic, otherwise at the end of the category
+	-- If InsertAfterCosmetic is set, insert it after that cosmetic, otherwise at the end of the category
 	if legalShopCategories[cosmeticData.ShopCategory] then
 		for _, category in ipairs(game.ScreenData.CosmeticsShop.ItemCategories) do
 			if category.Name == cosmeticData.ShopCategory then
 				local insertIndex = #category + 1
-				if cosmeticData.InsertAfterCosmeticInCategory ~= nil then
+				if cosmeticData.InsertAfterCosmetic ~= nil then
 					for index, existingCosmeticId in ipairs(category) do
-						if existingCosmeticId == cosmeticData.InsertAfterCosmeticInCategory then
+						if existingCosmeticId == cosmeticData.InsertAfterCosmetic then
 							insertIndex = index + 1
 							break
 						end
@@ -159,6 +165,15 @@ public.RegisterCosmetic = function(cosmeticData)
 		if cosmeticData.GameStateRequirements ~= nil then
 			mod.WarnIncorrectType("GameStateRequirements", "table", type(cosmeticData.GameStateRequirements), cosmeticData.Id)
 		end
+	end
+	-- #endregion
+
+	-- #region AlwaysRevealImmediately
+	if cosmeticData.AlwaysRevealImmediately ~= nil and type(cosmeticData.AlwaysRevealImmediately) == "boolean" then
+		newGameCosmetic.AlwaysRevealImmediately = cosmeticData.AlwaysRevealImmediately
+	elseif cosmeticData.AlwaysRevealImmediately ~= nil then
+		mod.WarnIncorrectType("AlwaysRevealImmediately", "boolean", type(cosmeticData.AlwaysRevealImmediately),
+			cosmeticData.Id)
 	end
 	-- #endregion
 
@@ -197,30 +212,49 @@ public.RegisterCosmetic = function(cosmeticData)
 	end
 	-- #endregion
 
-	-- #region RemoveCosmetics
+	-- #region CosmeticsGroup
 	-- This cosmetic already belongs to a group - collect all cosmetics in the same group, and add our new one to their RemoveCosmetics, as well as make all of them the RemoveCosmetics of our new one
-	if game.WorldUpgradeData[cosmeticData.RemoveCosmetics].RemoveCosmetics ~= nil then
+	if game.WorldUpgradeData[cosmeticData.CosmeticsGroup].RemoveCosmetics ~= nil then
 		-- Our cosmetic will remove all of these cosmetics when it is equipped
-		newGameCosmetic.RemoveCosmetics = game.WorldUpgradeData[cosmeticData.RemoveCosmetics].RemoveCosmetics
-		-- Make sure to also remove the cosmetic provided as the group key, as it won't be in its own RemoveCosmetics list
-		table.insert(newGameCosmetic.RemoveCosmetics, cosmeticData.RemoveCosmetics)
+		newGameCosmetic.RemoveCosmetics = game.DeepCopyTable(game.WorldUpgradeData[cosmeticData.CosmeticsGroup]
+			.RemoveCosmetics)
+		-- Make sure to also remove the cosmetic provided as the group key when equipping our new cosmetic, as it won't be in its own RemoveCosmetics list that we just copied
+		table.insert(newGameCosmetic.RemoveCosmetics, cosmeticData.CosmeticsGroup)
 	else
 		-- This cosmetic did not belong to a group yet (it was an Extra Decor cosmetic) - create a new group with just that one cosmetic and our new one
-		newGameCosmetic.RemoveCosmetics = { cosmeticData.RemoveCosmetics }
+		newGameCosmetic.RemoveCosmetics = { cosmeticData.CosmeticsGroup }
+
+		-- We also need to set a SetAnimationValue for it if it doesn't exist yet, otherwise unequipping the new cosmetic will not replace it with the base cosmetic animation
+		if not game.WorldUpgradeData[cosmeticData.CosmeticsGroup].SetAnimationValue then
+			if mod.KnownExtraDecorBaseAnimations[cosmeticData.CosmeticsGroup] then
+				game.WorldUpgradeData[cosmeticData.CosmeticsGroup].SetAnimationValue = mod.KnownExtraDecorBaseAnimations
+						[cosmeticData.CosmeticsGroup]
+			else
+				mod.DebugPrint("[CosmeticsAPI] Error: The cosmetic to which you are adding an alternate version (CosmeticsGroup key): '" ..
+					cosmeticData.CosmeticsGroup ..
+					"' is an \"Extra Decor\" and does not have a SetAnimationValue defined in vanilla Hades II. The Cosmetics API keeps a list of known base animations for Extra Decor cosmetics, but this cosmetic is not on it. The base animation must be added to the API before you can add an alternative version of the cosmetic. Please find the base animation and open a PR to add it to the \"mod.KnownExtraDecorBaseAnimations\" table in the \"Scripts/Utils.lua\" file on https://github.com/NikkelM/Hades-II-CosmeticsAPI",
+					1)
+			end
+		end
 	end
+
 	-- Now, for all cosmetics in this group, add our new cosmetic to their RemoveCosmetics list
 	for _, existingCosmeticId in ipairs(newGameCosmetic.RemoveCosmetics) do
-		local existingCosmetic = game.WorldUpgradeData[existingCosmeticId]
-		if existingCosmetic ~= nil then
-			if existingCosmetic.RemoveCosmetics == nil then
-				existingCosmetic.RemoveCosmetics = {}
+		-- Skip adding ourselves to our own RemoveCosmetics list
+		if existingCosmeticId ~= newGameCosmetic.Name then
+			local existingCosmetic = game.WorldUpgradeData[existingCosmeticId]
+			if existingCosmetic ~= nil then
+				if existingCosmetic.RemoveCosmetics == nil then
+					existingCosmetic.RemoveCosmetics = {}
+				end
+				-- Remember, the Name key is the Id of the cosmetic
+				table.insert(existingCosmetic.RemoveCosmetics, newGameCosmetic.Name)
+			else
+				mod.DebugPrint("[CosmeticsAPI] Warning: Could not find existing cosmetic '" ..
+					existingCosmeticId ..
+					"' to add new cosmetic '" ..
+					newGameCosmetic.Name .. "' to its RemoveCosmetics list. This should not be able to happen.", 2)
 			end
-			table.insert(existingCosmetic.RemoveCosmetics, newGameCosmetic.Id)
-		else
-			mod.DebugPrint("[CosmeticsAPI] Warning: Could not find existing cosmetic '" ..
-				existingCosmeticId ..
-				"' to add new cosmetic '" ..
-				newGameCosmetic.Id .. "' to its RemoveCosmetics list. This should not be able to happen.", 2)
 		end
 	end
 	-- #endregion
@@ -305,6 +339,15 @@ public.RegisterCosmetic = function(cosmeticData)
 	game.ProcessDataInheritance(game.WorldUpgradeData[cosmeticData.Id], game.WorldUpgradeData)
 	game.ProcessSimpleExtractValues(game.WorldUpgradeData[cosmeticData.Id])
 	-- #endregion
+
+	-- This is used in SjsonHooks.lua to add texts to HelpText.sjson files
+	local newGameCosmeticSjsonData = {
+		Id = cosmeticData.Id,
+		Name = cosmeticData.Name,
+		Description = cosmeticData.Description,
+		FlavorText = cosmeticData.FlavorText,
+	}
+	table.insert(mod.AddedCosmeticSjsonData, newGameCosmeticSjsonData)
 
 	mod.DebugPrint("[CosmeticsAPI] Successfully registered new cosmetic: " .. cosmeticData.Id, 3)
 	return true

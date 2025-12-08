@@ -1,3 +1,26 @@
+mod.ValidLanguageCodes = {
+	de = true,
+	el = true,
+	en = true,
+	es = true,
+	fr = true,
+	it = true,
+	ja = true,
+	ko = true,
+	pl = true,
+	["pt-BR"] = true,
+	ru = true,
+	tr = true,
+	uk = true,
+	["zh-CN"] = true,
+	["zh-TW"] = true,
+}
+mod.KnownExtraDecorBaseAnimations = {
+	Cosmetic_HecateKey = "Tilesets\\Crossroads\\Crossroads_Hecate_Key_01",
+}
+
+mod.AddedCosmeticSjsonData = {}
+
 ---Logs a message at the specified log level with colour coding.
 ---@param t any The message to log.
 ---@param level number|nil The log level. 0 = Off, 1 = Errors, 2 = Warnings, 3 = Info, 4 = Debug. nil omits the level display.

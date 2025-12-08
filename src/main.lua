@@ -47,15 +47,37 @@ local function on_ready()
 	if config.enabled == false then return end
 
 	import "Scripts/Utils.lua"
+	import "Scripts/PatchLogic.lua"
 	import "Scripts/CosmeticsAPI.lua"
+end
+
+-- Loaded after all other mods
+-- Define static Context Wraps in here to prevent issues as per https://github.com/SGG-Modding/ModUtil/issues/12
+local function on_ready_late()
+	if config.enabled == false then return end
+
+	import "Scripts/SjsonHooks.lua"
 end
 
 local function on_reload()
 	if config.enabled == false then return end
 end
 
-local loader = reload.auto_single()
+local function on_reload_late()
+	if config.enabled == false then return end
+end
 
+-- this allows us to limit certain functions to not be reloaded.
+local loader = reload.auto_multiple()
+
+-- this runs only when modutil and the game's lua is ready
 modutil.once_loaded.game(function()
-	loader.load(on_ready, on_reload)
+	loader.load("early", on_ready, on_reload)
+end)
+
+-- again but loaded later than other mods
+mods.on_all_mods_loaded(function()
+	modutil.once_loaded.game(function()
+		loader.load("late", on_ready_late, on_reload_late)
+	end)
 end)
