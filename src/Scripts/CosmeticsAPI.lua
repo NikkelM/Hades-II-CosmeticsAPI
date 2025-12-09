@@ -32,22 +32,25 @@ public.RegisterCosmetic = function(cosmeticData)
 		end
 	end
 
-	-- Ensure exactly one of SetAnimationIds, ActivateIds, ActivateRoomObstacleIds is set
-	local setCount = 0
-	if cosmeticData.SetAnimationIds ~= nil then setCount = setCount + 1 end
-	if cosmeticData.ActivateIds ~= nil then setCount = setCount + 1 end
-	-- if cosmeticData.ActivateRoomObstacleIds ~= nil then setCount = setCount + 1 end
-	if setCount > 1 or setCount == 0 then
-		mod.DebugPrint(
-			"[CosmeticsAPI] Error: Exactly one of SetAnimationIds, ActivateIds, ActivateRoomObstacleIds must be set in cosmetic data, but you set " ..
-			setCount .. ", cannot register cosmetic: " .. tostring(cosmeticData.Id or "Unknown"), 1)
-		return false
+	-- Ensure exactly one of SetAnimationIds, ActivateIds, ActivateRoomObstacleIds is set, if InheritFrom is not set
+	if cosmeticData.InheritFrom == nil or cosmeticData.InheritFrom == { "DefaultCosmeticItem" } then
+		local setCount = 0
+		if cosmeticData.SetAnimationIds ~= nil then setCount = setCount + 1 end
+		if cosmeticData.ActivateIds ~= nil then setCount = setCount + 1 end
+		-- if cosmeticData.ActivateRoomObstacleIds ~= nil then setCount = setCount + 1 end
+		if setCount > 1 or setCount == 0 then
+			mod.DebugPrint(
+				"[CosmeticsAPI] Error: Exactly one of SetAnimationIds, ActivateIds, ActivateRoomObstacleIds must be set in cosmetic data, but you set " ..
+				setCount .. ", cannot register cosmetic: " .. tostring(cosmeticData.Id or "Unknown"), 1)
+			return false
+		end
 	end
 
 	-- Ensure no cosmetic with this ID already exists
 	if game.WorldUpgradeData[cosmeticData.Id] ~= nil then
 		mod.DebugPrint("[CosmeticsAPI] Error: A cosmetic with ID '" .. cosmeticData.Id ..
-			"' already exists, cannot register duplicate cosmetic. Make sure to prefix your cosmetic with you \"_PLUGIN.guid\"!", 1)
+			"' already exists, cannot register duplicate cosmetic. Make sure to prefix your cosmetic with you \"_PLUGIN.guid\"!",
+			1)
 		return false
 	end
 
