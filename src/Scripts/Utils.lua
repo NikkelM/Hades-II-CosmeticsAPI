@@ -1,3 +1,12 @@
+-- Add any new cosmetic SetAnimationPath values here, in the format of
+-- CosmeticId = "FilePath"
+-- You can most often get the FilePath from the Game/Obstacles/Crossroads.sjson file
+-- Most obstacles in this file are named "Crossroads<Cosmetic name without "Cosmetic_" prefix>01"
+-- The filepath we need is the "Thing.Graphic" of the obstacle, NOT the obstacle name itself
+mod.KnownExtraDecorBaseAnimations = {
+	Cosmetic_HecateKey = "Tilesets\\Crossroads\\Crossroads_Hecate_Key_01",
+}
+
 mod.ValidLanguageCodes = {
 	de = true,
 	el = true,
@@ -14,9 +23,6 @@ mod.ValidLanguageCodes = {
 	uk = true,
 	["zh-CN"] = true,
 	["zh-TW"] = true,
-}
-mod.KnownExtraDecorBaseAnimations = {
-	Cosmetic_HecateKey = "Tilesets\\Crossroads\\Crossroads_Hecate_Key_01",
 }
 
 mod.AddedCosmeticSjsonTextData = {}
