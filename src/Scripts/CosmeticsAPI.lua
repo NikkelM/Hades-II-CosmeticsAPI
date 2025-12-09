@@ -332,6 +332,7 @@ public.RegisterCosmetic = function(cosmeticData)
 	game.ProcessSimpleExtractValues(game.WorldUpgradeData[cosmeticData.Id])
 	-- #endregion
 
+	-- #region Text Sjson Data
 	-- This is used in SjsonHooks.lua to add texts to HelpText.sjson files
 	local newGameCosmeticSjsonTextData = {
 		Id = cosmeticData.Id,
@@ -340,8 +341,17 @@ public.RegisterCosmetic = function(cosmeticData)
 		FlavorText = cosmeticData.FlavorText,
 	}
 	table.insert(mod.AddedCosmeticSjsonTextData, newGameCosmeticSjsonTextData)
+	-- #endregion
 
-	-- TODO: Validate field types
+	-- #region Animation & Icon Sjson Data
+	-- Field validation for those we haven't validated already above
+	if cosmeticData.IconScale ~= nil and type(cosmeticData.IconScale) ~= "number" then
+		mod.WarnIncorrectType("IconScale", "number", type(cosmeticData.IconScale), cosmeticData.Id)
+	end
+	if cosmeticData.AnimationScale ~= nil and type(cosmeticData.AnimationScale) ~= "number" then
+		mod.WarnIncorrectType("AnimationScale", "number", type(cosmeticData.AnimationScale), cosmeticData.Id)
+	end
+
 	-- This is used in SjsonHooks.lua to add the animation and Icon to GUI_Screens_VFX.sjson
 	local newGameCosmeticSjsonAnimationData = {
 		Id = cosmeticData.Id,
@@ -355,6 +365,7 @@ public.RegisterCosmetic = function(cosmeticData)
 		AnimationScale = cosmeticData.AnimationScale or 1.0,
 	}
 	table.insert(mod.AddedCosmeticSjsonAnimationData, newGameCosmeticSjsonAnimationData)
+	-- #endregion
 
 	mod.DebugPrint("[CosmeticsAPI] Successfully registered new cosmetic: " .. cosmeticData.Id, 3)
 	return true
