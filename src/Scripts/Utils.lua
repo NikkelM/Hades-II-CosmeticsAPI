@@ -1,10 +1,26 @@
--- Add any new cosmetic SetAnimationPath values here, in the format of
--- CosmeticId = "FilePath"
--- You can most often get the FilePath from the Game/Obstacles/Crossroads.sjson file
+-- Add the base cosmetic overrides for vanilla cosmetics here
+-- You can most often get the SetAnimationValue from the Game/Obstacles/Crossroads.sjson file
 -- Most obstacles in this file are named "Crossroads<Cosmetic name without "Cosmetic_" prefix>01"
--- The filepath we need is the "Thing.Graphic" of the obstacle, NOT the obstacle name itself
+-- The SetAnimationValue we need is the "Thing.Graphic" of the obstacle, NOT the obstacle name itself
+-- Some cosmetics may require additional overrides to work correctly with modded cosmetics, you can add them here as well
+-- This is e.g. the case if the vanilla cosmetic defines ActivateIds, which would all get set to the new SetAnimationValue if no separate SetAnimationIds table is provided
 mod.KnownExtraDecorBaseAnimations = {
-	Cosmetic_HecateKey = "Tilesets\\Crossroads\\Crossroads_Hecate_Key_01",
+	-- #region CosmeticsShop_Tent
+	-- #endregion
+	-- #region CosmeticsShop_Main
+	Cosmetic_HecateKey = {
+		SetAnimationValue = "Tilesets\\Crossroads\\Crossroads_Hecate_Key_01",
+	},
+	Cosmetic_BrokerLantern01 = {
+		SetAnimationValue = "Tilesets\\Crossroads\\Crossroads_Broker_Lantern_01",
+		-- Otherwise, all of it's ActivateIds get set to the SetAnimationValue
+		SetAnimationIds = { 743049 },
+	},
+	-- #endregion
+	-- #region CosmeticsShop_Taverna
+	-- #endregion
+	-- #region CosmeticsShop_PreRun
+	-- #endregion
 }
 
 mod.ValidLanguageCodes = {

@@ -42,7 +42,7 @@ CosmeticsAPI.RegisterCosmetic({
 		de = "...",
 	},
 	Description = {
-		-- "{$Keywords.CosmeticSwap}:" resolves to "Alt Decor" with a tooltip for something that replaces something, "{$Keywords.CosmeticAltAdd}:" to "Extra Decor" with a tooltip that it replaces something similar, and {$Keywords.CosmeticAdd} resolves to "Extra Decor" for something that did not exist before.
+		-- "{$Keywords.CosmeticSwap}:" resolves to "Alt Decor" with a tooltip for something that replaces something, "{$Keywords.CosmeticAltAdd}:" to "Extra Decor" with a tooltip that it adds or replaces something similar, and {$Keywords.CosmeticAdd} resolves to "Extra Decor" for something that did not exist before. You should not need to use CosmeticAdd, since all cosmetics added through the Cosmetics API replace an existing cosmetic.
 		en = "{$Keywords.CosmeticSwap}: Time-worn monoliths that stand tall to either side of the {#BoldFormatGraftDark}Cauldron{#Prev}.",
 		de = "...",
 	},
@@ -73,9 +73,10 @@ CosmeticsAPI.RegisterCosmetic({
 	AlwaysRevealImmediately = false,
 	-- Overrides where the camera pans when equipping the cosmetic
 	CameraFocusId = nil,
-	-- One of SetAnimationIds or ActivateIds must be provided (or inherited)
+	-- At least one of SetAnimationIds or ActivateIds must be provided (or inherited)
 	SetAnimationIds = nil,
 	ActivateIds = nil,
+	DeactivateIds = nil,
 	OnRevealFunctionName = nil,
 	PanDuration = 1,
 	PreActivationHoldDuration = 0.5,
@@ -95,7 +96,9 @@ If the Cosmetics API does not know the base animation name, it will throw an err
 
 You can find the list under [`./src/Scripts/Utils.lua`, `mod.KnownExtraDecorBaseAnimations`](https://github.com/NikkelM/Hades-II-CosmeticsAPI/blob/main/src/Scripts/Utils.lua).
 
-New file paths have the format `CosmeticId = "FilePath"`.
-You can most often get the FilePath from the `Game/Obstacles/Crossroads.sjson` file.
+You can most often get the `SetAnimationValue` from the `Game/Obstacles/Crossroads.sjson` file.
 Most obstacles in this file are named `"Crossroads<Cosmetic name without "Cosmetic_" prefix>01"`.
-The filepath we need is the `Thing.Graphic` of the obstacle, *NOT* the obstacle name itself.
+The `SetAnimationValue` we need is the `Thing.Graphic` of the obstacle, *NOT* the obstacle name itself.
+
+Some cosmetics may require additional overrides to work correctly with modded cosmetics, you can add them there as well.
+This is e.g. the case if the vanilla cosmetic defines `ActivateIds`, which would all get set to the new `SetAnimationValue` if no separate `SetAnimationIds` table is provided

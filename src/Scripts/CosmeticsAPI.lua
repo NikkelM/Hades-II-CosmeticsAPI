@@ -32,20 +32,6 @@ public.RegisterCosmetic = function(cosmeticData)
 		end
 	end
 
-	-- Ensure exactly one of SetAnimationIds, ActivateIds, ActivateRoomObstacleIds is set, if InheritFrom is not set
-	if cosmeticData.InheritFrom == nil or cosmeticData.InheritFrom == { "DefaultCosmeticItem" } then
-		local setCount = 0
-		if cosmeticData.SetAnimationIds ~= nil then setCount = setCount + 1 end
-		if cosmeticData.ActivateIds ~= nil then setCount = setCount + 1 end
-		-- if cosmeticData.ActivateRoomObstacleIds ~= nil then setCount = setCount + 1 end
-		if setCount > 1 or setCount == 0 then
-			mod.DebugPrint(
-				"[CosmeticsAPI] Error: Exactly one of SetAnimationIds, ActivateIds, ActivateRoomObstacleIds must be set in cosmetic data, but you set " ..
-				setCount .. ", cannot register cosmetic: " .. tostring(cosmeticData.Id or "Unknown"), 1)
-			return false
-		end
-	end
-
 	-- Ensure no cosmetic with this ID already exists
 	if game.WorldUpgradeData[cosmeticData.Id] ~= nil then
 		mod.DebugPrint("[CosmeticsAPI] Error: A cosmetic with ID '" .. cosmeticData.Id ..
@@ -207,6 +193,14 @@ public.RegisterCosmetic = function(cosmeticData)
 	end
 	-- #endregion
 
+	-- #region DeactivateIds
+	if cosmeticData.DeactivateIds ~= nil and type(cosmeticData.DeactivateIds) == "table" then
+		newGameCosmetic.DeactivateIds = cosmeticData.DeactivateIds
+	elseif cosmeticData.DeactivateIds ~= nil then
+		mod.WarnIncorrectType("DeactivateIds", "table", type(cosmeticData.DeactivateIds), cosmeticData.Id)
+	end
+	-- #endregion
+
 	-- #region CosmeticsGroup
 	-- This cosmetic already belongs to a group - collect all cosmetics in the same group, and add our new one to their RemoveCosmetics, as well as make all of them the RemoveCosmetics of our new one
 	if game.WorldUpgradeData[cosmeticData.CosmeticsGroup].RemoveCosmetics ~= nil then
@@ -220,15 +214,17 @@ public.RegisterCosmetic = function(cosmeticData)
 		newGameCosmetic.RemoveCosmetics = { cosmeticData.CosmeticsGroup }
 
 		-- We also need to set a SetAnimationValue for the original cosmetic if it doesn't exist yet, otherwise unequipping the new cosmetic will not replace it with the base cosmetic animation
+		-- Some cosmetics also need additional properties overridden, so we keep a list of known required overrides
 		if not game.WorldUpgradeData[cosmeticData.CosmeticsGroup].SetAnimationValue then
 			if mod.KnownExtraDecorBaseAnimations[cosmeticData.CosmeticsGroup] then
-				game.WorldUpgradeData[cosmeticData.CosmeticsGroup].SetAnimationValue = mod.KnownExtraDecorBaseAnimations
-						[cosmeticData.CosmeticsGroup]
+				for property, value in pairs(mod.KnownExtraDecorBaseAnimations[cosmeticData.CosmeticsGroup]) do
+					game.WorldUpgradeData[cosmeticData.CosmeticsGroup][property] = value
+				end
 			else
 				mod.DebugPrint(
 					"[CosmeticsAPI] Error: The cosmetic to which you are adding an alternate version (CosmeticsGroup key): '" ..
 					cosmeticData.CosmeticsGroup ..
-					"' is an \"Extra Decor\" and does not have a SetAnimationValue defined in vanilla Hades II. The Cosmetics API keeps a list of known base animations for Extra Decor cosmetics, but this cosmetic is not on it. The base animation must be added to the API before you can add an alternative version of the cosmetic. Please find the base animation and open a PR to add it to the \"mod.KnownExtraDecorBaseAnimations\" table in the \"Scripts/Utils.lua\" file on https://github.com/NikkelM/Hades-II-CosmeticsAPI",
+					"' is an \"Extra Decor\" and does not have a SetAnimationValue defined in vanilla Hades II. The Cosmetics API keeps a list of known base animations for Extra Decor cosmetics, but this cosmetic is not on it. The base animation (and potential other required properties) must be added to the API before you can add an alternative version of the cosmetic. Please find the base animation and open a PR to add it to the \"mod.KnownExtraDecorBaseAnimations\" table in the \"Scripts/Utils.lua\" file on https://github.com/NikkelM/Hades-II-CosmeticsAPI",
 					1)
 			end
 		end
@@ -345,6 +341,7 @@ public.RegisterCosmetic = function(cosmeticData)
 	}
 	table.insert(mod.AddedCosmeticSjsonTextData, newGameCosmeticSjsonTextData)
 
+	-- TODO: Validate field types
 	-- This is used in SjsonHooks.lua to add the animation and Icon to GUI_Screens_VFX.sjson
 	local newGameCosmeticSjsonAnimationData = {
 		Id = cosmeticData.Id,
