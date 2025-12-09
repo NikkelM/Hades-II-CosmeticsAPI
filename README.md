@@ -6,7 +6,7 @@ Developer library to simplify adding new Crossroads cosmetics to Hades II. Does 
 
 Through this library, you can easily add new cosmetic items to the Crossroads, as offered by Dora.
 You can add alternative versions of *any* existing cosmetic, both "Alt Decor" and "Extra Decor" items are supported.
-Adding entirely new cosmetics (in different locations) is *not* supported.
+Adding entirely new cosmetics (in different locations), or replacing assets that aren't already a cosmetic is *not* supported.
 
 The library will automatically handle grouping cosmetics so that equipping one will unequip any other already equipped cosmetic in the same group.
 You can provide names, descriptions and flavour texts for various languages, as well as customize the voicelines used when purchasing, equipping or unequipping the cosmetic.
@@ -88,10 +88,10 @@ CosmeticsAPI.RegisterCosmetic({
 })
 ```
 
-## Important Note
+## Important Note & Contributing
 
-If you want to add a variant cosmetic for a base game "Extra Decor" item, the Cosmetics API *must* know the `CosmeticAnimationPath (SetAnimationValue)` of the base game cosmetic, as these are not part of the cosmetics definition for "Extra Decor" items.
-The Cosmetics API has a list of known animation names for some cosmetics, but if you want to add a new variant, you must first open a PR against the Cosmetics API to add the unknown animation name to the list.
+If you want to add a variant cosmetic for a base game "Extra Decor" item, the Cosmetics API *must* know the `CosmeticAnimationPath (SetAnimationValue)` of the base game cosmetic, as these are not part of the cosmetics definition for all "Extra Decor" items.
+The Cosmetics API has a list of known animation names for some cosmetics (naturally growing on-demand), so if you want to add a new variant, you must first open a PR against the Cosmetics API to add the unknown animation name to the list.
 If the Cosmetics API does not know the base animation name, it will throw an error when you try to register your new cosmetic.
 
 You can find the list under [`./src/Scripts/Utils.lua`, `mod.KnownExtraDecorBaseAnimations`](https://github.com/NikkelM/Hades-II-CosmeticsAPI/blob/main/src/Scripts/Utils.lua).
@@ -101,4 +101,4 @@ Most obstacles in this file are named `"Crossroads<Cosmetic name without "Cosmet
 The `SetAnimationValue` we need is the `Thing.Graphic` of the obstacle, *NOT* the obstacle name itself.
 
 Some cosmetics may require additional overrides to work correctly with modded cosmetics, you can add them there as well.
-This is e.g. the case if the vanilla cosmetic defines `ActivateIds`, which would all get set to the new `SetAnimationValue` if no separate `SetAnimationIds` table is provided
+This is e.g. the case if the vanilla cosmetic defines `ActivateIds`, which would all get set to the new `SetAnimationValue` if no separate `SetAnimationIds` table is provided.
