@@ -42,8 +42,8 @@ CosmeticsAPI.RegisterCosmetic({
 		de = "...",
 	},
 	Description = {
-		-- {$Keywords.CosmeticAltAdd} resolves to "Alt Decor", while {$Keywords.CosmeticAdd} resolves to "Extra Decor"
-		en = "{$Keywords.CosmeticAltAdd}: Time-worn monoliths that stand tall to either side of the {#BoldFormatGraftDark}Cauldron{#Prev}.",
+		-- "{$Keywords.CosmeticSwap}:" resolves to "Alt Decor" with a tooltip for something that replaces something, "{$Keywords.CosmeticAltAdd}:" to "Extra Decor" with a tooltip that it replaces something similar, and {$Keywords.CosmeticAdd} resolves to "Extra Decor" for something that did not exist before.
+		en = "{$Keywords.CosmeticSwap}: Time-worn monoliths that stand tall to either side of the {#BoldFormatGraftDark}Cauldron{#Prev}.",
 		de = "...",
 	},
 	FlavorText = {
