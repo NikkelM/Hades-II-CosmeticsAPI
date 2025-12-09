@@ -9,10 +9,10 @@ local public = {}
 ---@field ShopCategory string Which shop this cosmetic should be added to. Choose one of "CosmeticsShop_Tent" (Mel's Tent), "CosmeticsShop_Main" (Crossroads Main Grounds & West), "CosmeticsShop_Taverna" (Taverna & Crossroads West), "CosmeticsShop_PreRun" (Training Grounds).
 ---@field InsertAfterCosmetic string|nil The ID of an existing cosmetic in the same ShopCategory to insert this cosmetic after. Can insert after another custom cosmetic if the other one is added first. If nil, the cosmetic will be added to the end of the category.
 ---@field CosmeticsGroup string Which group of cosmetics to remove/replace this cosmetic with when equipped. Must be the ID of an existing cosmetic in the same ShopCategory. This cosmetic will be added to the same group, or create a group if none exists yet.
----@field IconPath string The path to the shop menu icon for the cosmetic in your package. Usually has a resolution of 125x125 or 110x110.
----@field IconScale number|nil The scale factor for the cosmetic's icon in the shop menu. If nil, defaults to 1.
 ---@field CosmeticAnimationPath string The path to the asset texture for this cosmetic in your package.
 ---@field AnimationScale number|nil The scale factor for the cosmetic's asset in the Crossroads. If nil, defaults to 1.
+---@field IconPath string The path to the shop menu icon for the cosmetic in your package. Usually has a resolution of 125x125 or 110x110. You can reuse the same asset as CosmeticAnimationPath with proper scaling in many cases.
+---@field IconScale number|nil The scale factor for the cosmetic's icon in the shop menu. If nil, defaults to 1.
 ---@field GameStateRequirements table|nil The requirements that must be met to show this cosmetic in the shop. Supports all base game requirement logic. If nil, the cosmetic will always be eligible.
 ---@field Cost table|nil The resource costs to buy this cosmetic. For display purposes, limit to five different resources. If nil, will default to { CosmeticsPoints = 50 } (50 Kudos).
 ---@field InheritFrom table|nil Which existing cosmetics to inherit properties from. If nil, will default to { "DefaultCosmeticItem" }. If set to anything else, some default values for other properties may not work, depending on what you inherit from.

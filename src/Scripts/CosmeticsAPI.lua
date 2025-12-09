@@ -121,12 +121,21 @@ public.RegisterCosmetic = function(cosmeticData)
 		for _, category in ipairs(game.ScreenData.CosmeticsShop.ItemCategories) do
 			if category.Name == cosmeticData.ShopCategory then
 				local insertIndex = #category + 1
+				local foundCosmeticToInsertAfter = false
 				if cosmeticData.InsertAfterCosmetic ~= nil then
 					for index, existingCosmeticId in ipairs(category) do
 						if existingCosmeticId == cosmeticData.InsertAfterCosmetic then
+							foundCosmeticToInsertAfter = true
 							insertIndex = index + 1
 							break
 						end
+					end
+					if not foundCosmeticToInsertAfter then
+						mod.DebugPrint("[CosmeticsAPI] Warning: Could not find InsertAfterCosmetic '" ..
+							cosmeticData.InsertAfterCosmetic ..
+							"' in category '" .. cosmeticData.ShopCategory ..
+							"'. Inserting new cosmetic at the end of the category instead. Cosmetic ID: " ..
+							tostring(cosmeticData.Id or "Unknown"), 2)
 					end
 				end
 				table.insert(category, insertIndex, newGameCosmetic.Name)
