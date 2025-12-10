@@ -34,7 +34,7 @@ local public = {}
 ---@field PreRevealVoiceLines table|nil A table of voicelines to play when this cosmetic is unlocked. Refer to existing voiceline tables for formatting. If nil, the default voicelines will be used. Input is not validated for correctness.
 ---@field RevealReactionVoiceLines table|nil A table of voicelines to play after this cosmetic is revealed, when the camera has panned back to Melinoe. Refer to existing voiceline tables for formatting. If nil, the default voicelines will be used. Input is not validated for correctness.
 ---@field CosmeticRemovedVoiceLines table|nil A table of voicelines to play when this cosmetic is removed. Refer to existing voiceline tables for formatting. If nil, the default voicelines will be used. Can only be used if Removable is true. Input is not validated for correctness.
----@field CosmeticReAddedVoiceLines table|nil A table of voicelines to play when this cosmetic is re-equipped after being removed. Refer to existing voiceline tables for formatting. If nil, the default voicelines will be used. Can only be used if Removable is true. Input is not validated for correctness.
+---@field CosmeticReEquipVoiceLines table|nil A table of voicelines to play when this cosmetic is re-equipped after being removed. Refer to existing voiceline tables for formatting. If nil, the default voicelines will be used. Can only be used if Removable is true. Input is not validated for correctness.
 
 ---Registers a new cosmetic to be added to the game.
 ---@param cosmeticData CosmeticData The input data for the new cosmetic item. Must be a valid CosmeticData table.

@@ -323,11 +323,11 @@ public.RegisterCosmetic = function(cosmeticData)
 	end
 	-- #endregion
 
-	-- #region CosmeticReAddedVoiceLines
-	if cosmeticData.CosmeticReAddedVoiceLines ~= nil and type(cosmeticData.CosmeticReAddedVoiceLines) == "table" then
-		newGameCosmetic.CosmeticReAddedVoiceLines = cosmeticData.CosmeticReAddedVoiceLines
-	elseif cosmeticData.CosmeticReAddedVoiceLines ~= nil then
-		mod.WarnIncorrectType("CosmeticReAddedVoiceLines", "table", type(cosmeticData.CosmeticReAddedVoiceLines),
+	-- #region CosmeticReEquipVoiceLines
+	if cosmeticData.CosmeticReEquipVoiceLines ~= nil and type(cosmeticData.CosmeticReEquipVoiceLines) == "table" then
+		newGameCosmetic.CosmeticReEquipVoiceLines = cosmeticData.CosmeticReEquipVoiceLines
+	elseif cosmeticData.CosmeticReEquipVoiceLines ~= nil then
+		mod.WarnIncorrectType("CosmeticReEquipVoiceLines", "table", type(cosmeticData.CosmeticReEquipVoiceLines),
 			cosmeticData.Id)
 	end
 	-- #endregion

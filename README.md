@@ -84,7 +84,7 @@ CosmeticsAPI.RegisterCosmetic({
 	PreRevealVoiceLines = { ... },
 	RevealReactionVoiceLines = { ... },
 	CosmeticRemovedVoiceLines = { ... },
-	CosmeticReAddedVoiceLines = { ... },
+	CosmeticReEquipVoiceLines = { ... },
 })
 ```
 
