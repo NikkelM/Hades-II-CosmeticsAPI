@@ -39,15 +39,17 @@ local animationOrder = {
 	"InheritFrom",
 	"FilePath",
 	"Scale",
+	"OffsetX",
+	"OffsetY",
 }
 
 local cosmeticAnimationEntry = nil
 local cosmeticIconEntry = nil
-local hadesTwoGUIScreensVFXFile = rom.path.combine(rom.paths.Content(),
-	"Game/Animations/GUI_Screens_VFX.sjson")
+local hadesTwoObstacleCrossroadsVFXFile = rom.path.combine(rom.paths.Content(),
+	"Game/Animations/Obstacle_Crossroads_VFX.sjson")
 
 for _, cosmetic in ipairs(mod.AddedCosmeticSjsonAnimationData) do
-	sjson.hook(hadesTwoGUIScreensVFXFile, function(data)
+	sjson.hook(hadesTwoObstacleCrossroadsVFXFile, function(data)
 		cosmeticIconEntry = {
 			Name = cosmetic.IconId,
 			FilePath = cosmetic.IconPath,
@@ -55,8 +57,11 @@ for _, cosmetic in ipairs(mod.AddedCosmeticSjsonAnimationData) do
 		}
 		cosmeticAnimationEntry = {
 			Name = cosmetic.AnimationId,
+			InheritFrom = cosmetic.AnimationInheritFrom,
 			FilePath = cosmetic.CosmeticAnimationPath,
 			Scale = cosmetic.AnimationScale or 1.0,
+			OffsetX = cosmetic.AnimationOffsetX or 0,
+			OffsetY = cosmetic.AnimationOffsetY or 0,
 		}
 
 		table.insert(data.Animations, sjson.to_object(cosmeticAnimationEntry, animationOrder))

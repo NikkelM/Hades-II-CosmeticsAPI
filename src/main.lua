@@ -49,6 +49,8 @@ local function on_ready()
 	import "Scripts/Utils.lua"
 	import "Scripts/PatchLogic.lua"
 	import "Scripts/CosmeticsAPI.lua"
+	
+	import "Scripts/Wraps/CosmeticsLogic.lua"
 end
 
 -- Loaded after all other mods

@@ -16,6 +16,9 @@ mod.KnownExtraDecorBaseAnimations = {
 		-- Otherwise, all of it's ActivateIds get set to the SetAnimationValue
 		SetAnimationIds = { 743049 },
 	},
+	Cosmetic_CauldronRing01 = {
+		SetAnimationValue = "Tilesets\\Crossroads\\Crossroads_Terrain_StoneCircle_01",
+	},
 	-- #endregion
 	-- #region CosmeticsShop_Taverna
 	-- #endregion
@@ -43,6 +46,8 @@ mod.ValidLanguageCodes = {
 
 mod.AddedCosmeticSjsonTextData = {}
 mod.AddedCosmeticSjsonAnimationData = {}
+-- Is used to track mappings of CosmeticIds to their lid animation paths, to be used in ApplyCauldronCookTopGraphic()
+mod.RegisteredCauldrons = {}
 
 ---Logs a message at the specified log level with colour coding.
 ---@param t any The message to log.

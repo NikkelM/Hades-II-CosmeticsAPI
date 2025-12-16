@@ -258,6 +258,14 @@ public.RegisterCosmetic = function(cosmeticData)
 	end
 	-- #endregion
 
+	-- #region ActivateFunctionName
+	if cosmeticData.ActivateFunctionName ~= nil and type(cosmeticData.ActivateFunctionName) == "string" then
+		newGameCosmetic.ActivateFunctionName = cosmeticData.ActivateFunctionName
+	elseif cosmeticData.ActivateFunctionName ~= nil then
+		mod.WarnIncorrectType("ActivateFunctionName", "string", type(cosmeticData.ActivateFunctionName), cosmeticData.Id)
+	end
+	-- #endregion
+
 	-- #region OnRevealFunctionName
 	if cosmeticData.OnRevealFunctionName ~= nil and type(cosmeticData.OnRevealFunctionName) == "string" then
 		newGameCosmetic.OnRevealFunctionName = cosmeticData.OnRevealFunctionName
@@ -332,6 +340,35 @@ public.RegisterCosmetic = function(cosmeticData)
 	end
 	-- #endregion
 
+	-- #Cauldron-specifc: IsCauldron and CauldronLidAnimationPath
+	if cosmeticData.IsCauldron ~= nil then
+		if type(cosmeticData.IsCauldron) == "boolean" then		
+			if cosmeticData.IsCauldron then
+				-- If this is a cauldron, CauldronLidAnimationPath is required
+				if cosmeticData.CauldronLidAnimationPath ~= nil and type(cosmeticData.CauldronLidAnimationPath) == "string" then
+					mod.RegisteredCauldrons[cosmeticData.Id] = cosmeticData.CauldronLidAnimationPath
+					-- In case the user forgot to set the ActiveFunctionName, set it for them
+					-- But don't overwrite it if they set it to something custom
+					if newGameCosmetic.ActivateFunctionName == nil then
+						newGameCosmetic.ActivateFunctionName = "ApplyCauldronCookTopGraphic"
+					end
+				else
+					mod.DebugPrint(
+						"[CosmeticsAPI] Error: CauldronLidAnimationPath is required for cauldron cosmetics, cannot register cosmetic: " ..
+						tostring(cosmeticData.Id or "Unknown"), 1)
+					return false
+				end
+			end
+		else
+			mod.WarnIncorrectType("IsCauldron", "boolean", type(cosmeticData.IsCauldron), cosmeticData.Id)
+		end
+	elseif cosmeticData.CauldronLidAnimationPath ~= nil then
+		mod.DebugPrint(
+			"[CosmeticsAPI] Warning: CauldronLidAnimationPath is set but IsCauldron is not true, ignoring CauldronLidAnimationPath for cosmetic: " ..
+			tostring(cosmeticData.Id or "Unknown"), 2)
+	end
+	-- #endregion
+
 	-- #region ID/Add to WorldUpgradeData - Must be done last
 	-- Equivalent to what ProcessDataStore would do
 	game.WorldUpgradeData[cosmeticData.Id] = newGameCosmetic
@@ -358,18 +395,30 @@ public.RegisterCosmetic = function(cosmeticData)
 	if cosmeticData.AnimationScale ~= nil and type(cosmeticData.AnimationScale) ~= "number" then
 		mod.WarnIncorrectType("AnimationScale", "number", type(cosmeticData.AnimationScale), cosmeticData.Id)
 	end
+	if cosmeticData.AnimationInheritFrom ~= nil and type(cosmeticData.AnimationInheritFrom) ~= "string" then
+		mod.WarnIncorrectType("AnimationInheritFrom", "string", type(cosmeticData.AnimationInheritFrom), cosmeticData.Id)
+	end
+	if cosmeticData.AnimationOffsetX ~= nil and type(cosmeticData.AnimationOffsetX) ~= "number" then
+		mod.WarnIncorrectType("AnimationOffsetX", "number", type(cosmeticData.AnimationOffsetX), cosmeticData.Id)
+	end
+	if cosmeticData.AnimationOffsetY ~= nil and type(cosmeticData.AnimationOffsetY) ~= "number" then
+		mod.WarnIncorrectType("AnimationOffsetY", "number", type(cosmeticData.AnimationOffsetY), cosmeticData.Id)
+	end
 
 	-- This is used in SjsonHooks.lua to add the animation and Icon to GUI_Screens_VFX.sjson
 	local newGameCosmeticSjsonAnimationData = {
 		Id = cosmeticData.Id,
-		-- cosmeticData.Id .. "_Icon"
+		-- The Icon is made up of <cosmeticData.Id .. "_Icon">
 		IconId = newGameCosmetic.Icon,
 		IconPath = cosmeticData.IconPath,
 		IconScale = cosmeticData.IconScale or 1.0,
-		-- cosmeticData.Id .. "_Animation"
+		-- The Animation value is made up of <cosmeticData.Id .. "_Animation">
 		AnimationId = newGameCosmetic.SetAnimationValue,
+		AnimationInheritFrom = cosmeticData.AnimationInheritFrom,
 		CosmeticAnimationPath = cosmeticData.CosmeticAnimationPath,
 		AnimationScale = cosmeticData.AnimationScale or 1.0,
+		AnimationOffsetX = cosmeticData.AnimationOffsetX or 0,
+		AnimationOffsetY = cosmeticData.AnimationOffsetY or 0,
 	}
 	table.insert(mod.AddedCosmeticSjsonAnimationData, newGameCosmeticSjsonAnimationData)
 	-- #endregion

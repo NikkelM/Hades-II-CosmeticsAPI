@@ -11,6 +11,9 @@ local public = {}
 ---@field CosmeticsGroup string Which group of cosmetics to remove/replace this cosmetic with when equipped. Must be the ID of an existing cosmetic in the same ShopCategory. This cosmetic will be added to the same group, or create a group if none exists yet.
 ---@field CosmeticAnimationPath string The path to the asset texture for this cosmetic in your package.
 ---@field AnimationScale number|nil The scale factor for the cosmetic's asset in the Crossroads. If nil, defaults to 1.
+---@field AnimationInheritFrom string|nil An existing sjson object to inherit from for the cosmetic animation (e.g. "CriticalItemWorldObject01" for a new Cauldron). If nil, no inheritance is applied.
+---@field AnimationOffsetX number|nil The X offset to apply to the cosmetic's animation in the Crossroads. If nil, defaults to 0.
+---@field AnimationOffsetY number|nil The Y offset to apply to the cosmetic's animation in the Crossroads. If nil, defaults to 0.
 ---@field IconPath string The path to the shop menu icon for the cosmetic in your package. Usually has a resolution of 125x125 or 110x110. You can reuse the same asset as CosmeticAnimationPath with proper scaling in many cases.
 ---@field IconScale number|nil The scale factor for the cosmetic's icon in the shop menu. If nil, defaults to 1.
 ---@field GameStateRequirements table|nil The requirements that must be met to show this cosmetic in the shop. Supports all base game requirement logic. If nil, the cosmetic will always be eligible.
@@ -24,9 +27,9 @@ local public = {}
 -- ---@field ActivateRoomObstacleIds table|nil Which RoomObstacleIds to activate when this cosmetic is equipped. Cannot be set if SetAnimationIds or ActivateIds are set. The camera will pan to the first ID in this table if CameraFocusId is not set. Not used for the API. Note: There is no validation on this field, so ensure the IDs exist.
 -- ---@field ToggleCollision boolean|nil If true, toggles collision for the activated/deactivated objects when this cosmetic is equipped. Only used if ActivateRoomObstacleIds is set. Defaults to true. Not used for the API.
 -- ---@field ToggleShadows boolean|nil If true, toggles shadows for the activated/deactivated objects when this cosmetic is equipped. Only used if ActivateRoomObstacleIds is set. Defaults to true. Not used for the API.
+---@field ActivateFunctionName string|nil The name of a function to call whenever the cosmetic is equipped. You can use <_PLUGIN.guid .. "." .. "YourModFunctionName"> to reference a function in your mod's namespace. If nil, no function is called.
 ---@field OnRevealFunctionName string|nil The name of a function to call after the cosmetic is revealed, but before the camera pans back to Melinoe. You can use <_PLUGIN.guid .. "." .. "YourModFunctionName"> to reference a function in your mod's namespace. If nil, no function is called.
 -- ---@field RotateOnly boolean|nil If true, indicates this cosmetic is part of a group of other cosmetics (an "Alt Decor"). If false, indicates this is an "Extra Decor" cosmetic. Defaults to true. Must be true if CosmeticsGroup is set. Not used for the API.
--- ---@field AlwaysRevealImmediately boolean|nil This cosmetic is the default for it's group and already visible in the world. Not used for the API.
 ---@field PanDuration number|nil The duration of the panning from Melinoe's location to the cosmetic's location in the Crossroads. If nil, defaults to 1 second.
 ---@field PreActivationHoldDuration number|nil The duration to hold before activating the cosmetic after panning to its location. If nil, defaults to 0.5 seconds.
 ---@field PostActivationHoldDuration number|nil The duration to hold after the new cosmetic is revealed. If nil, defaults to 1.5 seconds.
@@ -35,6 +38,8 @@ local public = {}
 ---@field RevealReactionVoiceLines table|nil A table of voicelines to play after this cosmetic is revealed, when the camera has panned back to Melinoe. Refer to existing voiceline tables for formatting. If nil, the default voicelines will be used. Input is not validated for correctness.
 ---@field CosmeticRemovedVoiceLines table|nil A table of voicelines to play when this cosmetic is removed. Refer to existing voiceline tables for formatting. If nil, the default voicelines will be used. Can only be used if Removable is true. Input is not validated for correctness.
 ---@field CosmeticReEquipVoiceLines table|nil A table of voicelines to play when this cosmetic is re-equipped after being removed. Refer to existing voiceline tables for formatting. If nil, the default voicelines will be used. Can only be used if Removable is true. Input is not validated for correctness.
+---@field IsCauldron boolean|nil If true, indicates this cosmetic is a cauldron. If set to true, CauldronLidAnimationPath is required. Defaults to false.
+---@field CauldronLidAnimationPath string|nil The path to the asset texture for the cauldron lid animation in your package. Required if IsCauldron is true. Note that the position and scale of the lid in-game is preset and cannot be changed, modify your asset if needed.
 
 ---Registers a new cosmetic to be added to the game.
 ---@param cosmeticData CosmeticData The input data for the new cosmetic item. Must be a valid CosmeticData table.
