@@ -60,6 +60,9 @@ CosmeticsAPI.RegisterCosmetic({
 	IconPath = "AuthorName-ModName\\FolderPath\\Pillars_Chronos_Icon",
 	-- OPTIONAL FIELDS (with their defaults)
 	AnimationScale = 1,
+	AnimationInheritFrom = nil,
+	AnimationOffsetX = 0,
+	AnimationOffsetY = 0,
 	IconScale = 1,
 	-- Which other cosmetic in the same category to insert your new one after, or nil to add to the end
 	InsertAfterCosmetic = nil,
@@ -77,6 +80,7 @@ CosmeticsAPI.RegisterCosmetic({
 	SetAnimationIds = nil,
 	ActivateIds = nil,
 	DeactivateIds = nil,
+	ActivateFunctionName = nil,
 	OnRevealFunctionName = nil,
 	PanDuration = 1,
 	PreActivationHoldDuration = 0.5,
@@ -85,6 +89,8 @@ CosmeticsAPI.RegisterCosmetic({
 	RevealReactionVoiceLines = { ... },
 	CosmeticRemovedVoiceLines = { ... },
 	CosmeticReEquipVoiceLines = { ... },
+	IsCauldron = false,
+	CauldronLidAnimationPath = nil,
 })
 ```
 
