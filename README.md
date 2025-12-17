@@ -64,6 +64,8 @@ CosmeticsAPI.RegisterCosmetic({
 	AnimationOffsetX = 0,
 	AnimationOffsetY = 0,
 	IconScale = 1,
+	IconOffsetX = 0,
+	IconOffsetY = 0,
 	-- Which other cosmetic in the same category to insert your new one after, or nil to add to the end
 	InsertAfterCosmetic = nil,
 	Cost = {

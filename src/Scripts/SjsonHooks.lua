@@ -54,6 +54,8 @@ for _, cosmetic in ipairs(mod.AddedCosmeticSjsonAnimationData) do
 			Name = cosmetic.IconId,
 			FilePath = cosmetic.IconPath,
 			Scale = cosmetic.IconScale or 1.0,
+			OffsetX = cosmetic.IconOffsetX or 0,
+			OffsetY = cosmetic.IconOffsetY or 0,
 		}
 		cosmeticAnimationEntry = {
 			Name = cosmetic.AnimationId,

@@ -392,6 +392,12 @@ public.RegisterCosmetic = function(cosmeticData)
 	if cosmeticData.IconScale ~= nil and type(cosmeticData.IconScale) ~= "number" then
 		mod.WarnIncorrectType("IconScale", "number", type(cosmeticData.IconScale), cosmeticData.Id)
 	end
+	if cosmeticData.IconOffsetX ~= nil and type(cosmeticData.IconOffsetX) ~= "number" then
+		mod.WarnIncorrectType("IconOffsetX", "number", type(cosmeticData.IconOffsetX), cosmeticData.Id)
+	end
+	if cosmeticData.IconOffsetY ~= nil and type(cosmeticData.IconOffsetY) ~= "number" then
+		mod.WarnIncorrectType("IconOffsetY", "number", type(cosmeticData.IconOffsetY), cosmeticData.Id)
+	end
 	if cosmeticData.AnimationScale ~= nil and type(cosmeticData.AnimationScale) ~= "number" then
 		mod.WarnIncorrectType("AnimationScale", "number", type(cosmeticData.AnimationScale), cosmeticData.Id)
 	end
@@ -412,6 +418,8 @@ public.RegisterCosmetic = function(cosmeticData)
 		IconId = newGameCosmetic.Icon,
 		IconPath = cosmeticData.IconPath,
 		IconScale = cosmeticData.IconScale or 1.0,
+		IconOffsetX = cosmeticData.IconOffsetX or 0,
+		IconOffsetY = cosmeticData.IconOffsetY or 0,
 		-- The Animation value is made up of <cosmeticData.Id .. "_Animation">
 		AnimationId = newGameCosmetic.SetAnimationValue,
 		AnimationInheritFrom = cosmeticData.AnimationInheritFrom,
