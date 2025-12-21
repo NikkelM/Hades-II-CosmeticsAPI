@@ -21,6 +21,9 @@ mod.KnownExtraDecorBaseAnimations = {
 	},
 	-- #endregion
 	-- #region CosmeticsShop_Taverna
+	Cosmetic_TavernaStarMosaic = {
+		SetAnimationValue = "Tilesets\\Crossroads\\Crossroads_Terrain_Taverna_Mosaic_01",
+	}
 	-- #endregion
 	-- #region CosmeticsShop_PreRun
 	-- #endregion
