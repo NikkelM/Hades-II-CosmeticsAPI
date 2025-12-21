@@ -47,9 +47,12 @@ local function on_ready()
 	if config.enabled == false then return end
 
 	import "Scripts/Utils.lua"
+
+	-- TODO: WIP
+	-- import "Scripts/MetaUpgradeCardScreenLogic.lua"
 	import "Scripts/PatchLogic.lua"
 	import "Scripts/CosmeticsAPI.lua"
-	
+
 	import "Scripts/Wraps/CosmeticsLogic.lua"
 end
 
