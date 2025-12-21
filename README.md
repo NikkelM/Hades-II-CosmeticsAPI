@@ -11,7 +11,7 @@ Adding entirely new cosmetics (in different locations), or replacing assets that
 The library will automatically handle grouping cosmetics so that equipping one will unequip any other already equipped cosmetic in the same group.
 You can provide names, descriptions and flavour texts for various languages, as well as customize the voicelines used when purchasing, equipping or unequipping the cosmetic.
 
-For even more advanced usecases, you can also provide a function name that is called when your cosmetic is equipped.
+For even more advanced usecases, you can also provide a function name that is called when your cosmetic is bought or equipped.
 
 ## Usage
 
@@ -30,7 +30,7 @@ CosmeticsAPI = mods["NikkelM-Cosmetics_API"]
 
 Now, you can add a new cosmetic by calling `CosmeticsAPI.RegisterCosmetic(cosmeticData)`, where `cosmeticData` is of type `CosmeticData`.
 If you have your development environment set up correctly, VS Code should offer autocompletion and type hints for this table.
-Otherwise, you can always refer to the `def.lua` file in the Cosmetics API source for all available fields.
+Otherwise, you can always refer to the `def.lua` file in the Cosmetics API source, or the below example, for all available fields.
 
 ```lua
 CosmeticsAPI.RegisterCosmetic({
@@ -58,6 +58,7 @@ CosmeticsAPI.RegisterCosmetic({
 	CosmeticAnimationPath = "AuthorName-ModName\\FolderPath\\Pillars_Chronos",
 	-- You can often reuse your animation path asset as an icon if you scale it correctly
 	IconPath = "AuthorName-ModName\\FolderPath\\Pillars_Chronos_Icon",
+
 	-- OPTIONAL FIELDS (with their defaults)
 	AnimationScale = 1,
 	AnimationInheritFrom = nil,
@@ -66,13 +67,15 @@ CosmeticsAPI.RegisterCosmetic({
 	IconScale = 1,
 	IconOffsetX = 0,
 	IconOffsetY = 0,
-	-- Which other cosmetic in the same category to insert your new one after, or nil to add to the end
+	-- Which other cosmetic in the same shop category to insert your new one after, or nil to add to the end
 	InsertAfterCosmetic = nil,
+	-- Try to limit to a maximum of four resources (including CosmeticsPoints) for optimal display in the UI
 	Cost = {
 		CosmeticsPoints = 50,
 	},
+	-- Must be met before the cosmetic becomes available for purchase
 	GameStateRequirements = {},
-	-- Some field validations are disabled if you provide this property
+	-- Note: some field validations performed by the API are disabled if you provide this property
 	InheritFrom = { "DefaultCosmeticItem" },
 	-- If the new cosmetic can show up in the shop as soon as eligible, even if the shop has already been viewed in the current Crossroads session. Otherwise, will show after the next run
 	AlwaysRevealImmediately = false,
@@ -91,7 +94,9 @@ CosmeticsAPI.RegisterCosmetic({
 	RevealReactionVoiceLines = { ... },
 	CosmeticRemovedVoiceLines = { ... },
 	CosmeticReEquipVoiceLines = { ... },
+	-- If your cosmetic is a new cauldron, you will need to set this to true so the API knows to apply cauldron-specific logic (like handling which cauldron lid the game uses)
 	IsCauldron = false,
+	-- Cauldron scaling and location is not changeable through sjson, if your lid is not aligned properly, you will need to change your asset directly
 	CauldronLidAnimationPath = nil,
 })
 ```
