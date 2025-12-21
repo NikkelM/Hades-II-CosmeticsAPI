@@ -101,9 +101,15 @@ CosmeticsAPI.RegisterCosmetic({
 })
 ```
 
+## Limitations
+
+The following is a list of existing cosmetic types that are known to *not* work/be replaceable through the Cosmetics API:
+
+- Arcana Card Backs (`Cosmetic_CardDeck01`): The Arcana card back menu can hold a maximum of 40 different card backs, which is filled through vanilla unlockables. Any additional modded card backs would not show in the menu. For card backs to work, the Cosmetics API needs to first implement a scrollable multi-page menu for the card backs screen.
+
 ## Important Note & Contributing
 
-If you want to add a variant cosmetic for a base game "Extra Decor" item, the Cosmetics API *must* know the `CosmeticAnimationPath (SetAnimationValue)` of the base game cosmetic, as these are not part of the cosmetics definition for all "Extra Decor" items.
+If you want to add a variant cosmetic for a base game "Extra Decor" item, the Cosmetics API *must* know the `CosmeticAnimationPath` (`SetAnimationValue`) of the base game cosmetic, as these are not part of the cosmetics definition for all "Extra Decor" items.
 The Cosmetics API has a list of known animation names for some cosmetics (naturally growing on-demand), so if you want to add a new variant, you must first open a PR against the Cosmetics API to add the unknown animation name to the list.
 If the Cosmetics API does not know the base animation name, it will throw an error when you try to register your new cosmetic.
 
