@@ -319,6 +319,52 @@ public.RegisterCosmetic = function(cosmeticData)
 	elseif cosmeticData.RevealReactionVoiceLines ~= nil then
 		mod.WarnIncorrectType("RevealReactionVoiceLines", "table", type(cosmeticData.RevealReactionVoiceLines),
 			cosmeticData.Id)
+	else
+		local cosmeticReactionMelinoeVoicelines = game.DeepCopyTable(game.GlobalVoiceLines.PositiveReactionVoiceLines)
+		table.insert(cosmeticReactionMelinoeVoicelines,
+			{ Cue = "/VO/Melinoe_1403", Text = "No harm in having just a bit of luxury..." })
+		table.insert(cosmeticReactionMelinoeVoicelines, {
+			Cue = "/VO/Melinoe_1401",
+			Text = "Always wanted something like this in the tent...",
+			GameStateRequirements = {
+				{
+					PathFromSource = true,
+					Path = { "DefaultCategoryIndex" },
+					Comparison = "==",
+					Value = 1,
+				},
+			}
+		})
+		table.insert(cosmeticReactionMelinoeVoicelines, {
+			Cue = "/VO/Melinoe_1404",
+			Text = "That ought to raise the Shades' morale a bit...",
+			GameStateRequirements = {
+				{
+					PathFromSource = true,
+					Path = { "DefaultCategoryIndex" },
+					Comparison = "!=",
+					Value = 1,
+				},
+			}
+		})
+		-- Set default values ourselves, to prevent the only three default Melinoe voicelines from playing for each one
+		newGameCosmetic.RevealReactionVoiceLines = {
+			cosmeticReactionMelinoeVoicelines,
+			{
+				RandomRemaining = true,
+				BreakIfPlayed = true,
+				SuccessiveChanceToPlay = 0.75,
+				ObjectType = "NPC_Skelly_01",
+				Queue = "Always",
+				{ Cue = "/VO/Skelly_0118", Text = "The path to perfection!" },
+				{ Cue = "/VO/Skelly_0119", Text = "The path to perfection..." },
+				{ Cue = "/VO/Skelly_0016", Text = "A fine choice." },
+				{ Cue = "/VO/Skelly_0129", Text = "A fine selection!" },
+				{ Cue = "/VO/Skelly_0130", Text = "A fine selection." },
+				{ Cue = "/VO/Skelly_0063", Text = "Excellent!" },
+			},
+			{ GlobalVoiceLines = "DoraCosmeticReactionVoiceLines" },
+		}
 	end
 	-- #endregion
 
@@ -342,7 +388,7 @@ public.RegisterCosmetic = function(cosmeticData)
 
 	-- #Cauldron-specifc: IsCauldron and CauldronLidAnimationPath
 	if cosmeticData.IsCauldron ~= nil then
-		if type(cosmeticData.IsCauldron) == "boolean" then		
+		if type(cosmeticData.IsCauldron) == "boolean" then
 			if cosmeticData.IsCauldron then
 				-- If this is a cauldron, CauldronLidAnimationPath is required
 				if cosmeticData.CauldronLidAnimationPath ~= nil and type(cosmeticData.CauldronLidAnimationPath) == "string" then
