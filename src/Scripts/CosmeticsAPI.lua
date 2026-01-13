@@ -201,6 +201,14 @@ public.RegisterCosmetic = function(cosmeticData)
 	end
 	-- #endregion
 
+	-- #region ToggleCollision
+	if cosmeticData.ToggleCollision ~= nil and type(cosmeticData.ToggleCollision) == "boolean" then
+		newGameCosmetic.ToggleCollision = cosmeticData.ToggleCollision
+	elseif cosmeticData.ToggleCollision ~= nil then
+		mod.WarnIncorrectType("ToggleCollision", "boolean", type(cosmeticData.ToggleCollision), cosmeticData.Id)
+	end
+	-- #endregion
+
 	-- #region CosmeticsGroup
 	-- Validate the cosmetic that the group points to exists
 	if game.WorldUpgradeData[cosmeticData.CosmeticsGroup] == nil then

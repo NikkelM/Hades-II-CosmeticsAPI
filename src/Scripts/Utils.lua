@@ -1,6 +1,6 @@
 -- Add the base cosmetic overrides for vanilla cosmetics here
 -- You can most often get the SetAnimationValue from the Game/Obstacles/Crossroads.sjson file
--- Most obstacles in this file are named "Crossroads<Cosmetic name without "Cosmetic_" prefix>01"
+-- Most obstacles in this file are named "Crossroads<Cosmetic name without 'Cosmetic_' prefix>01"
 -- The SetAnimationValue we need is the "Thing.Graphic" of the obstacle, NOT the obstacle name itself
 -- Some cosmetics may require additional overrides to work correctly with modded cosmetics, you can add them here as well
 -- This is e.g. the case if the vanilla cosmetic defines ActivateIds, which would all get set to the new SetAnimationValue if no separate SetAnimationIds table is provided
@@ -23,9 +23,12 @@ mod.KnownExtraDecorBaseAnimations = {
 	-- #region CosmeticsShop_Taverna
 	Cosmetic_TavernaStarMosaic = {
 		SetAnimationValue = "Tilesets\\Crossroads\\Crossroads_Terrain_Taverna_Mosaic_01",
-	}
+	},
 	-- #endregion
 	-- #region CosmeticsShop_PreRun
+	Cosmetic_SkellyZagreusStatue = {
+		SetAnimationValue = "Tilesets\\Crossroads\\Crossroads_Skelly_ZagreusStatue_01",
+	},
 	-- #endregion
 }
 

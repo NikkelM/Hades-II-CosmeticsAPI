@@ -85,6 +85,7 @@ CosmeticsAPI.RegisterCosmetic({
 	SetAnimationIds = nil,
 	ActivateIds = nil,
 	DeactivateIds = nil,
+	ToggleCollision = nil,
 	ActivateFunctionName = nil,
 	OnRevealFunctionName = nil,
 	PanDuration = 1,
