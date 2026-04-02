@@ -56,7 +56,7 @@ CosmeticsAPI.RegisterCosmetic({
 	CosmeticsGroup = "Cosmetic_CauldronPillars01",
 	-- The in-world asset when the cosmetic is equipped
 	CosmeticAnimationPath = "AuthorName-ModName\\FolderPath\\Pillars_Chronos",
-	-- You can often reuse your animation path asset as an icon if you scale it correctly
+	-- You can often reuse your animation path asset as an icon if you scale it correctly, though the icon might look grainy and be harder to decipher if the cosmetic is detailed
 	IconPath = "AuthorName-ModName\\FolderPath\\Pillars_Chronos_Icon",
 
 	-- OPTIONAL FIELDS (with their defaults)

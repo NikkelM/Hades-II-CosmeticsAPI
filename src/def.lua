@@ -14,7 +14,7 @@ local public = {}
 ---@field AnimationInheritFrom string|nil An existing sjson object to inherit from for the cosmetic animation (e.g. "CriticalItemWorldObject01" for a new Cauldron). If nil, no inheritance is applied.
 ---@field AnimationOffsetX number|nil The X offset to apply to the cosmetic's animation in the Crossroads. Positive values move the item right, negative values move it left. If nil, defaults to 0.
 ---@field AnimationOffsetY number|nil The Y offset to apply to the cosmetic's animation in the Crossroads. Positive values move the item down, negative values move it up. If nil, defaults to 0.
----@field IconPath string The path to the shop menu icon for the cosmetic in your package. Usually has a resolution of 125x125 or 110x110. You can reuse the same asset as CosmeticAnimationPath with proper scaling in many cases.
+---@field IconPath string The path to the shop menu icon for the cosmetic in your package. You can reuse the same asset as CosmeticAnimationPath with proper scaling in many cases, though the icon might look noisy and be hard to read if the cosmetic is detailed.
 ---@field IconScale number|nil The scale factor for the cosmetic's icon in the shop menu. If nil, defaults to 1.
 ---@field IconOffsetX number|nil The X offset to apply to the cosmetic's icon in the shop menu. Positive values move the icon right, negative values move it left. If nil, defaults to 0.
 ---@field IconOffsetY number|nil The Y offset to apply to the cosmetic's icon in the shop menu. Positive values move the icon down, negative values move it up. If nil, defaults to 0.
