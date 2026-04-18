@@ -48,8 +48,6 @@ local function on_ready()
 
 	import "Scripts/Utils.lua"
 
-	-- TODO: WIP
-	-- import "Scripts/MetaUpgradeCardScreenLogic.lua"
 	import "Scripts/PatchLogic.lua"
 	import "Scripts/CosmeticsAPI.lua"
 
