@@ -50,8 +50,11 @@ local function on_ready()
 
 	import "Scripts/PatchLogic.lua"
 	import "Scripts/CosmeticsAPI.lua"
+	import "Scripts/CardBackAPI.lua"
 
 	import "Scripts/Wraps/CosmeticsLogic.lua"
+	import "Scripts/Wraps/EventPresentation.lua"
+	import "Scripts/Wraps/MetaUpgradeCardScreenLogic.lua"
 end
 
 -- Loaded after all other mods

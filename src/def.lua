@@ -2,7 +2,7 @@
 local public = {}
 
 ---@class CosmeticData
----@field Id string The internal name of the cosmetic. Prefix this with your mod's "_PLUGIN.guid" to ensure uniqueness!
+---@field Id string The internal name of the cosmetic. Prefix this with your mod's `_PLUGIN.guid` to ensure uniqueness!
 ---@field Name table The display name of the cosmetic. Provide a table for localized names in the format of { de = "German Name", el = "Greek Name", en = "English Name", ... }. "en" key is required. Any missing languages will fall back to English.
 ---@field Description table The description text for the cosmetic. Prefix with "{$Keywords.CosmeticSwap}:" for Alt Decor that replaces something, "{$Keywords.CosmeticAltAdd}:" for Extra Decor that adds or replaces something similar, and "{$Keywords.CosmeticAdd}:" for Extra Decor that adds something entirely new (you should not need to use this one, as all modded cosmetics replace something existing). Provide a table for localized names in the format of { de = "German Description", el = "Greek Description", en = "English Description", ... }. "en" key is required. Any missing languages will fall back to English.
 ---@field FlavorText table The description text for the cosmetic. Provide a table for localized names in the format of { de = "German Flavor", el = "Greek Flavor", en = "English Flavor", ... }. "en" key is required. Any missing languages will fall back to English.
@@ -54,5 +54,51 @@ public.RegisterCosmetic = function(cosmeticData) end
 ---@param packageNames table A list of package names (table of strings) to register. Do not include the `.pkg` extension.
 ---@return boolean successfullyRegistered True if at least one package was successfully registered, false otherwise.
 public.RegisterCrossroadsPackages = function(packageNames) end
+
+---@class CardBackPackData
+---@field Id string Unique pack identifier. Prefix this with your mod's `_PLUGIN.guid` to ensure uniqueness!
+---@field Name table Localized display name. { en = "Arcana, English Name", de = "Arkana (Deutscher Name)", ... }. "en" key is required.
+---@field Description table Localized description. { en = "Set of language-based card backs.", ... }. "en" key is required.
+---@field FlavorText table Localized flavor text. { en = "Language is a strange thing...", ... }. "en" key is required.
+---@field IconPath string Path to the shop menu icon for this pack in your package.
+---@field IconScale number|nil Scale for the icon. Defaults to 1.
+---@field IconOffsetX number|nil X offset for the icon. Defaults to 0.
+---@field IconOffsetY number|nil Y offset for the icon. Defaults to 0.
+---@field Cost table|nil Resource costs. Defaults to { CosmeticsPoints = 300 }.
+---@field GameStateRequirements table|nil Shop visibility requirements. Defaults to requiring WorldUpgradeMetaUpgradeSaveLayout (layout saving unlocked).
+---@field InsertAfterCosmetic string|nil ID of an existing cosmetic in CosmeticsShop_PreRun to insert after. If nil, appended to end.
+---@field PreRevealVoiceLines table|nil Custom voice lines on purchase. If nil, uses a default Melinoe line.
+
+---Registers a new card back pack to be added to the cosmetics shop in the Training Grounds.
+---A pack is a cosmetic item that, when purchased, unlocks a set of card backs registered via `RegisterCardBack`.
+---Must be called before registering any card backs that belong to this pack.
+---@param packData CardBackPackData The input data for the new card back pack.
+---@return boolean successfullyRegistered True if the pack was successfully registered, false otherwise.
+public.RegisterCardBackPack = function(packData) end
+
+---@class CardBackData
+---@field Id string Unique card back identifier. Prefix this with your mod's `_PLUGIN.guid` to ensure uniqueness!
+---@field PackId string The ID of the CardBackPack this card back belongs to. Must have been registered first via `RegisterCardBackPack`.
+---@field DeckArtPath string Path to the card art texture for the selection UI (the idle/normal version displayed in the card back picker overlay). This texture should be in a package registered via `RegisterCrossroadsPackages`.
+---@field DeckArtMouseoverPath string|nil Path to the mouseover variant of the card art (a brighter/highlighted version shown on hover in the selection UI). This texture should be in a package registered via `RegisterCrossroadsPackages`. If nil, uses DeckArtPath.
+---@field CardBackPath string Path to the card back texture shown during the in-combat Arcana card flip animation. This texture should be in a package registered via `RegisterCardBackPackages`.
+---@field DeckArtScale number|nil Scale for DeckArt animation in the selection UI.
+---@field CardBackScale number|nil Scale for CardBack animation during combat.
+
+---Registers an individual card back. The card back is unlocked when its associated pack is purchased in the shop.
+---The pack must be registered via `RegisterCardBackPack` before calling this function.
+---The API auto-assigns a stable TextureNum that persists across mod install/uninstall cycles.
+---@param cardBackData CardBackData The input data for the new card back.
+---@return boolean successfullyRegistered True if the card back was successfully registered, false otherwise.
+public.RegisterCardBack = function(cardBackData) end
+
+---Registers one or more .pkg package files that contain the textures for card backs.
+---These packages will be loaded at ALL times (including during runs), not just in the Crossroads, because card back art is used when an Arcana is added during a run (e.g. through Judgment).
+---IMPORTANT: Only include CardBack_XX textures in these packages. Because they are always loaded, any unnecessary assets will consume memory permanently.
+---Use `RegisterCrossroadsPackages` for DeckArt/selection UI textures that are only needed in the Crossroads.
+---The .pkg files must be placed in your mod's `plugins_data` folder.
+---@param packageNames table A list of package names (table of strings) to register. Do not include the `.pkg` extension.
+---@return boolean successfullyRegistered True if at least one package was successfully registered, false otherwise.
+public.RegisterCardBackPackages = function(packageNames) end
 
 return public

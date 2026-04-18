@@ -70,5 +70,55 @@ for _, cosmetic in ipairs(mod.AddedCosmeticSjsonAnimationData) do
 		table.insert(data.Animations, sjson.to_object(cosmeticIconEntry, animationOrder))
 	end)
 end
+-- #endregion
 
+-- #region Card Back Animations (DeckArt, DeckArt_Mouseover, CardBack)
+local cardBackAnimationOrder = {
+	"Name",
+	"InheritFrom",
+	"FilePath",
+	"Scale",
+	"Material",
+}
+
+local hadesTwoGUIScreensVFXFile = rom.path.combine(rom.paths.Content(),
+	"Game/Animations/GUI_Screens_VFX.sjson")
+
+sjson.hook(hadesTwoGUIScreensVFXFile, function(data)
+	for _, cardBack in ipairs(mod.AddedCardBackSjsonAnimationData) do
+		-- DeckArt_XX - selection UI art (inherits from DeckArt_01 like vanilla entries)
+		local deckArtEntry = {
+			Name = cardBack.DeckArtName,
+			InheritFrom = "DeckArt_01",
+			FilePath = cardBack.DeckArtPath,
+			Material = "Unlit",
+		}
+		if cardBack.DeckArtScale then
+			deckArtEntry.Scale = cardBack.DeckArtScale
+		end
+		table.insert(data.Animations, sjson.to_object(deckArtEntry, cardBackAnimationOrder))
+
+		-- DeckArt_Mouseover_XX - hover state art
+		local deckArtMouseoverEntry = {
+			Name = cardBack.DeckArtMouseoverName,
+			FilePath = cardBack.DeckArtMouseoverPath,
+			Material = "Unlit",
+		}
+		if cardBack.DeckArtScale then
+			deckArtMouseoverEntry.Scale = cardBack.DeckArtScale
+		end
+		table.insert(data.Animations, sjson.to_object(deckArtMouseoverEntry, cardBackAnimationOrder))
+
+		-- CardBack_XX - in-combat card flip art
+		local cardBackEntry = {
+			Name = cardBack.CardBackName,
+			FilePath = cardBack.CardBackPath,
+			Material = "Unlit",
+		}
+		if cardBack.CardBackScale then
+			cardBackEntry.Scale = cardBack.CardBackScale
+		end
+		table.insert(data.Animations, sjson.to_object(cardBackEntry, cardBackAnimationOrder))
+	end
+end)
 -- #endregion

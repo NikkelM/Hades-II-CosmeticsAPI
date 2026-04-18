@@ -6,6 +6,9 @@ local function normalizeCosmeticEquipState()
 
 	local worldUpgradesAdded = game.GameState.WorldUpgradesAdded or {}
 
+	-- Initialize the persistent card back TextureNum registry if it doesn't exist yet
+	game.GameState.CosmeticsAPI_CardBackRegistry = game.GameState.CosmeticsAPI_CardBackRegistry or {}
+
 	-- For each cosmetic group, ensure exactly one owned item is equipped
 	-- Fixes two potential issues:
 	-- 1. No cosmetic equipped (a mod that added the equipped cosmetic is no longer loaded) -> re-equip first *owned* cosmetic
@@ -54,6 +57,7 @@ end
 -- This must be the same as the wrap for HubPostBountyLoad and HubPostDreamLoad
 modutil.mod.Path.Wrap("DeathAreaRoomTransition", function(base, source, args)
 	LoadPackages({ Names = mod.RegisteredCrossroadsPackages })
+	LoadPackages({ Names = mod.RegisteredCardBackPackages })
 	normalizeCosmeticEquipState()
 
 	return base(source, args)
@@ -62,6 +66,7 @@ end)
 -- If returning from a Chaos Trial, this will be called instead of DeathAreaRoomTransition
 modutil.mod.Path.Wrap("HubPostBountyLoad", function(base, source, args)
 	LoadPackages({ Names = mod.RegisteredCrossroadsPackages })
+	LoadPackages({ Names = mod.RegisteredCardBackPackages })
 	normalizeCosmeticEquipState()
 
 	return base(source, args)
@@ -70,7 +75,15 @@ end)
 -- If returning from a Dream Dive, this will be called instead of DeathAreaRoomTransition
 modutil.mod.Path.Wrap("HubPostDreamLoad", function(base, source, args)
 	LoadPackages({ Names = mod.RegisteredCrossroadsPackages })
+	LoadPackages({ Names = mod.RegisteredCardBackPackages })
 	normalizeCosmeticEquipState()
+
+	return base(source, args)
+end)
+
+-- Card back packages must be loaded at all times as they are also used during runs
+modutil.mod.Path.Wrap("SetupMap", function(base, source, args)
+	LoadPackages({ Names = mod.RegisteredCardBackPackages })
 
 	return base(source, args)
 end)
