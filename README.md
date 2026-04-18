@@ -28,6 +28,22 @@ Next, include the Cosmetics API in your `main.lua`, alongside other dependencies
 CosmeticsAPI = mods["NikkelM-Cosmetics_API"]
 ```
 
+### Registering Packages
+
+If your cosmetics use custom textures bundled in `.pkg` files, you can register those packages so the API loads them when entering the Crossroads.
+Place your `.pkg` (and `.pkg_manifest`) files in your mod's `plugins_data` folder and call `RegisterCrossroadsPackages` with a table of package names (without the `.pkg` extension):
+
+```lua
+CosmeticsAPI.RegisterCrossroadsPackages({ "AuthorName-ModNameCosmetics" })
+```
+
+The API will automatically load all registered packages when the player enters the Crossroads (including the Training Grounds), regardless of which transition is used (`DeathAreaRoomTransition`, `HubPostBountyLoad`, or `HubPostDreamLoad`).
+Duplicate package names are silently ignored.
+
+You can alternatively also load the packages yourself within your mod code.
+
+### Registering Cosmetics
+
 Now, you can add a new cosmetic by calling `CosmeticsAPI.RegisterCosmetic(cosmeticData)`, where `cosmeticData` is of type `CosmeticData`.
 If you have your development environment set up correctly, VS Code should offer autocompletion and type hints for this table.
 Otherwise, you can always refer to the `def.lua` file in the Cosmetics API source, or the below example, for all available fields.

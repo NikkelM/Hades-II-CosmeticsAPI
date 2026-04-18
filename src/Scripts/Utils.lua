@@ -54,6 +54,8 @@ mod.AddedCosmeticSjsonTextData = {}
 mod.AddedCosmeticSjsonAnimationData = {}
 -- Is used to track mappings of CosmeticIds to their lid animation paths, to be used in ApplyCauldronCookTopGraphic()
 mod.RegisteredCauldrons = {}
+-- Stores package names registered by mods, to be loaded when entering the Crossroads
+mod.RegisteredCrossroadsPackages = {}
 
 ---Logs a message at the specified log level with colour coding.
 ---@param t any The message to log.

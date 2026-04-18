@@ -1,11 +1,15 @@
 # Changelog
 
-## v1.0.4
+## v1.1.0
 
 <!--Releasenotes start-->
+- New: `RegisterCrossroadsPackages(packageNamesArray)` now allows registering one or more `.pkg` packages that the Cosmetics API will automatically load in the Crossroads. Use this to register packages containing the cosmetic textures.
+<!--Releasenotes end-->
+
+## v1.0.4
+
 - Fixed an issue where the game could fall back and display a cosmetic you do not own if a mod is disabled while a cosmetic it added is equipped.
 - Fixed an issue where returning from a Dream Dive would not run some validation logic.
-<!--Releasenotes end-->
 
 ## v1.0.3
 

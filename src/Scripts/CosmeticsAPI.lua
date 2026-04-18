@@ -488,3 +488,43 @@ public.RegisterCosmetic = function(cosmeticData)
 	mod.DebugPrint("[CosmeticsAPI] Successfully registered new cosmetic: " .. cosmeticData.Id, 3)
 	return true
 end
+
+---Registers one or more .pkg package files that contain the textures for cosmetics that are added to the Crossroads (including the Training Grounds).
+---These packages will be automatically loaded by the CosmeticsAPI when entering the Crossroads.
+---The .pkg files must be placed in your mod's `plugins_data` folder.
+---@param packageNames table A list of package names (table of strings) to register. Do not include the `.pkg` extension.
+---@return boolean successfullyRegistered True if at least one package was successfully registered, false otherwise.
+public.RegisterCrossroadsPackages = function(packageNames)
+	if type(packageNames) ~= "table" then
+		mod.DebugPrint(
+			"[CosmeticsAPI] Error: RegisterCrossroadsPackages expects a table of strings, got '" ..
+			type(packageNames) .. "'.", 1)
+		return false
+	end
+
+	local registeredAny = false
+	for _, name in ipairs(packageNames) do
+		if type(name) ~= "string" then
+			mod.DebugPrint(
+				"[CosmeticsAPI] Warning: Skipping non-string package name of type '" ..
+				type(name) .. "' in RegisterCrossroadsPackages.", 2)
+		elseif name == "" then
+			mod.DebugPrint("[CosmeticsAPI] Warning: Skipping empty package name in RegisterCrossroadsPackages.", 2)
+		else
+			local alreadyRegistered = false
+			for _, existing in ipairs(mod.RegisteredCrossroadsPackages) do
+				if existing == name then
+					alreadyRegistered = true
+					break
+				end
+			end
+			if not alreadyRegistered then
+				table.insert(mod.RegisteredCrossroadsPackages, name)
+				mod.DebugPrint("[CosmeticsAPI] Successfully registered new Crossroads package: " .. name, 3)
+			end
+			registeredAny = true
+		end
+	end
+
+	return registeredAny
+end
