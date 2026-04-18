@@ -48,4 +48,11 @@ local public = {}
 ---@return boolean successfullyRegistered True if the cosmetic was successfully registered, false otherwise.
 public.RegisterCosmetic = function(cosmeticData) end
 
+---Registers one or more .pkg package files that contain the textures for cosmetics that are added to the Crossroads (including the Training Grounds).
+---These packages will be automatically loaded by the CosmeticsAPI when entering the Crossroads.
+---The .pkg files must be placed in your mod's `plugins_data` folder.
+---@param packageNames table A list of package names (table of strings) to register. Do not include the `.pkg` extension.
+---@return boolean successfullyRegistered True if at least one package was successfully registered, false otherwise.
+public.RegisterCrossroadsPackages = function(packageNames) end
+
 return public
