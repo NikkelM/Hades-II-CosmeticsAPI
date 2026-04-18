@@ -1,11 +1,15 @@
 # Changelog
 
-## v1.0.3
+## v1.0.4
 
 <!--Releasenotes start-->
+- Fixed an issue where the game could fall back and display a cosmetic you do not own if a mod is disabled while a cosmetic it added is equipped.
+<!--Releasenotes end-->
+
+## v1.0.3
+
 - Added `ToggleCollision` property.
 - Added vanilla `SetAnimationValue` for `Cosmetic_SkellyZagreusStatue`. 
-<!--Releasenotes end-->
 
 ## v1.0.2
 
