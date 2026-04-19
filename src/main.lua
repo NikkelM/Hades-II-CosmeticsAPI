@@ -53,7 +53,6 @@ local function on_ready()
 	import "Scripts/CardBackAPI.lua"
 
 	import "Scripts/Wraps/CosmeticsLogic.lua"
-	import "Scripts/Wraps/EventPresentation.lua"
 	import "Scripts/Wraps/MetaUpgradeCardScreenLogic.lua"
 end
 
