@@ -6,6 +6,17 @@ local function normalizeCosmeticEquipState()
 
 	local worldUpgradesAdded = game.GameState.WorldUpgradesAdded or {}
 
+	-- Reset any orphaned card back TextureNums (from uninstalled mods) to the default (1)
+	if game.GameState.MetaUpgradeLayoutsArt then
+		for layoutIndex, textureNum in pairs(game.GameState.MetaUpgradeLayoutsArt) do
+			if textureNum ~= nil and not mod.ActiveCardBackTextureNums[textureNum] then
+				mod.DebugPrint("[CosmeticsAPI] Resetting orphaned card back TextureNum " .. tostring(textureNum)
+					.. " on layout " .. tostring(layoutIndex) .. " to default.", 2)
+				game.GameState.MetaUpgradeLayoutsArt[layoutIndex] = 1
+			end
+		end
+	end
+
 	-- For each cosmetic group, ensure exactly one owned item is equipped
 	-- Fixes two potential issues:
 	-- 1. No cosmetic equipped (a mod that added the equipped cosmetic is no longer loaded) -> re-equip first *owned* cosmetic
