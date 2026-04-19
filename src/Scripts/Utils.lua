@@ -54,6 +54,18 @@ mod.AddedCosmeticSjsonTextData = {}
 mod.AddedCosmeticSjsonAnimationData = {}
 -- Is used to track mappings of CosmeticIds to their lid animation paths, to be used in ApplyCauldronCookTopGraphic()
 mod.RegisteredCauldrons = {}
+
+-- Card back registration tracking
+mod.RegisteredCardBackPacks = {}
+mod.RegisteredCardBacks = {}
+mod.AddedCardBackSjsonAnimationData = {}
+-- Set of all currently active TextureNums (vanilla 1-40 + registered modded), used for fallback validation
+mod.ActiveCardBackTextureNums = {}
+for i = 1, 40 do
+	mod.ActiveCardBackTextureNums[i] = true
+end
+-- Package names for card back textures that must be loaded at all times (including during runs)
+mod.RegisteredCardBackPackages = {}
 -- Stores package names registered by mods, to be loaded when entering the Crossroads
 mod.RegisteredCrossroadsPackages = {}
 

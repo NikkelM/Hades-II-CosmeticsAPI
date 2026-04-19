@@ -47,10 +47,13 @@ local function on_ready()
 	if config.enabled == false then return end
 
 	import "Scripts/Utils.lua"
+
 	import "Scripts/PatchLogic.lua"
 	import "Scripts/CosmeticsAPI.lua"
-	
+	import "Scripts/CardBackAPI.lua"
+
 	import "Scripts/Wraps/CosmeticsLogic.lua"
+	import "Scripts/Wraps/MetaUpgradeCardScreenLogic.lua"
 end
 
 -- Loaded after all other mods

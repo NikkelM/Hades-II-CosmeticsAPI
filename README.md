@@ -13,6 +13,8 @@ You can provide names, descriptions and flavour texts for various languages, as 
 
 For even more advanced usecases, you can also provide a function name that is called when your cosmetic is bought or equipped.
 
+You can also register new **Arcana Card Back** packs. The API handles shop integration, animation hookup and pagination when the card back selection screen exceeds one page.
+
 ## Usage
 
 Start by adding `NikkelM-Cosmetics_API` as a dependency in your `thunderstore.toml` (ensure you use the latest version):
@@ -118,11 +120,88 @@ CosmeticsAPI.RegisterCosmetic({
 })
 ```
 
-## Limitations
+### Registering Card Back Packs
 
-The following is a list of existing cosmetic types that are known to *not* work/be replaceable through the Cosmetics API:
+You can add new Arcana card back packs to the Training Grounds cosmetics shop.
+Each pack unlocks a set of card backs when purchased.
+The API handles shop display, animation hookup and pagination when the selection screen exceeds one page.
 
-- Arcana Card Backs (`Cosmetic_CardDeck01`): The Arcana card back menu can hold a maximum of 40 different card backs, which is filled through vanilla unlockables. Any additional modded card backs would not show in the menu. For card backs to work, the Cosmetics API needs to first implement a scrollable multi-page menu for the card backs screen.
+Card backs require **three types of textures**, in different packages:
+
+| Texture | Used Where | Package Type |
+|---------|-----------|-------------|
+| **DeckArt** (idle) + **DeckArtMouseover** (hover) | Card back picker overlay in the Crossroads | `RegisterCrossroadsPackages` |
+| **IconPath** (shop preview) | Training Grounds cosmetics shop | `RegisterCrossroadsPackages` |
+| **CardBack** (in-combat flip) | During runs when an Arcana is added | `RegisterCardBackPackages` |
+
+First, register your packages:
+
+```lua
+-- DeckArt textures + shop icon - only needed in the Crossroads
+CosmeticsAPI.RegisterCrossroadsPackages({ "AuthorName-ModName-DeckArt" })
+
+-- CardBack textures - loaded at ALL times (including during runs), keep these packages small!
+CosmeticsAPI.RegisterCardBackPackages({ "AuthorName-ModName-CardBacks" })
+```
+
+Then register a card back pack:
+
+```lua
+CosmeticsAPI.RegisterCardBackPack({
+	-- REQUIRED FIELDS
+	Id = _PLUGIN.guid .. "." .. "MyCardBackPack",
+	Name = {
+		en = "Custom Card Backs",
+	},
+	Description = {
+		en = "A set of custom card backs for the Arcana.",
+	},
+	FlavorText = {
+		en = "Every card tells a story.",
+	},
+	-- Shop preview icon - a small thumbnail. See vanilla examples: GUI\Screens\CosmeticIcons\cosmetic_deckMisc
+	IconPath = "AuthorName-ModName\\Icons\\MyPackIcon",
+
+	-- OPTIONAL FIELDS (with their defaults)
+	IconScale = 1,
+	IconOffsetX = 0,
+	IconOffsetY = 0,
+	Cost = { CosmeticsPoints = 300 },
+	-- Unlocking Arcana card packs will always require layout saving to be unlocked (WorldUpgradeMetaUpgradeSaveLayout), in addition to any custom checks
+	GameStateRequirements = nil,
+	-- Insert after a specific cosmetic in the Training Grounds shop, or nil to append to end
+	InsertAfterCosmetic = nil,
+	-- Defaults to "How about a new look for the old Arcana..." when nil
+	PreRevealVoiceLines = nil,
+})
+```
+
+### Registering Card Backs
+
+After registering a pack, register individual card backs for it:
+
+```lua
+CosmeticsAPI.RegisterCardBack({
+	-- REQUIRED FIELDS
+	Id = _PLUGIN.guid .. "." .. "MyCardBack_01",
+	-- Must match a previously registered pack ID
+	PackId = _PLUGIN.guid .. "." .. "MyCardBackPack",
+	-- Idle card art for the selection overlay. See vanilla: GUI\Screens\MetaUpgrade\DeckArt\Deck01
+	DeckArtPath = "AuthorName-ModName\\DeckArt\\MyDeck01",
+	-- Card back for the in-combat flip animation. See vanilla: GUI\Screens\CardBack\CardBack01
+	CardBackPath = "AuthorName-ModName\\CardBack\\MyCardBack01",
+
+	-- OPTIONAL FIELDS
+	-- Highlighted variant shown on hover. See vanilla: GUI\Screens\MetaUpgrade\DeckArt\DeckMouseover01
+	-- If nil, uses DeckArtPath (no hover effect)
+	DeckArtMouseoverPath = "AuthorName-ModName\\DeckArt\\MyDeckMouseover01",
+	DeckArtScale = nil,
+	CardBackScale = nil,
+})
+```
+
+Card backs from the same pack will appear grouped together in the selection screen.
+The API automatically handles pagination when the total number of unlocked card backs exceeds 40 (one page).
 
 ## Important Note & Contributing
 
