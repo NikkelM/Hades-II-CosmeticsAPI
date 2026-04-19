@@ -51,16 +51,16 @@ public.RegisterCosmetic = function(cosmeticData) end
 ---Registers one or more .pkg package files that contain the textures for cosmetics that are added to the Crossroads (including the Training Grounds).
 ---These packages will be automatically loaded by the CosmeticsAPI when entering the Crossroads.
 ---The .pkg files must be placed in your mod's `plugins_data` folder.
----@param packageNames table A list of package names (table of strings) to register. Do not include the `.pkg` extension.
+---@param packageNamesArray table A list of package names (table of strings) to register. Do not include the `.pkg` extension.
 ---@return boolean successfullyRegistered True if at least one package was successfully registered, false otherwise.
-public.RegisterCrossroadsPackages = function(packageNames) end
+public.RegisterCrossroadsPackages = function(packageNamesArray) end
 
 ---@class CardBackPackData
 ---@field Id string Unique pack identifier. Prefix this with your mod's `_PLUGIN.guid` to ensure uniqueness!
 ---@field Name table Localized display name. { en = "Arcana, English Name", de = "Arkana (Deutscher Name)", ... }. "en" key is required.
 ---@field Description table Localized description. { en = "Set of language-based card backs.", ... }. "en" key is required.
 ---@field FlavorText table Localized flavor text. { en = "Language is a strange thing...", ... }. "en" key is required.
----@field IconPath string Path to the shop menu icon for this pack in your package.
+---@field IconPath string Path to the shop preview icon texture for this pack. This usually shows three different card backs in a slight spread overlayed on each other. See `GUI\Screens\CosmeticIcons\cosmetic_deckMisc`. This texture should be in a package registered via `RegisterCrossroadsPackages`, as the shop is only accessible in the Crossroads.
 ---@field IconScale number|nil Scale for the icon. Defaults to 1.
 ---@field IconOffsetX number|nil X offset for the icon. Defaults to 0.
 ---@field IconOffsetY number|nil Y offset for the icon. Defaults to 0.
@@ -70,7 +70,7 @@ public.RegisterCrossroadsPackages = function(packageNames) end
 ---@field PreRevealVoiceLines table|nil Custom voice lines on purchase. If nil, uses a default Melinoe line.
 
 ---Registers a new card back pack to be added to the cosmetics shop in the Training Grounds.
----A pack is a cosmetic item that, when purchased, unlocks a set of card backs registered via `RegisterCardBack`.
+---A pack is a cosmetic item that, when purchased, unlocks all card backs registered for it via `RegisterCardBack`.
 ---Must be called before registering any card backs that belong to this pack.
 ---@param packData CardBackPackData The input data for the new card back pack.
 ---@return boolean successfullyRegistered True if the pack was successfully registered, false otherwise.
@@ -79,26 +79,28 @@ public.RegisterCardBackPack = function(packData) end
 ---@class CardBackData
 ---@field Id string Unique card back identifier. Prefix this with your mod's `_PLUGIN.guid` to ensure uniqueness!
 ---@field PackId string The ID of the CardBackPack this card back belongs to. Must have been registered first via `RegisterCardBackPack`.
----@field DeckArtPath string Path to the card art texture for the selection UI (the idle/normal version displayed in the card back picker overlay). This texture should be in a package registered via `RegisterCrossroadsPackages`.
----@field DeckArtMouseoverPath string|nil Path to the mouseover variant of the card art (a brighter/highlighted version shown on hover in the selection UI). This texture should be in a package registered via `RegisterCrossroadsPackages`. If nil, uses DeckArtPath.
----@field CardBackPath string Path to the card back texture shown during the in-combat Arcana card flip animation. This texture should be in a package registered via `RegisterCardBackPackages`.
+---@field DeckArtPath string Path to the idle/normal card art texture shown in the card back picker overlay (Arcana screen). This is the default state before hovering. See `GUI\Screens\MetaUpgrade\DeckArt\Deck01`. This texture should be in a package registered via `RegisterCrossroadsPackages`, as the picker is only accessible in the Crossroads.
+---@field DeckArtMouseoverPath string|nil Path to the highlighted/brighter variant of the card art, shown on hover in the picker overlay. Each vanilla card back has a separate mouseover texture - see `GUI\Screens\MetaUpgrade\DeckArt\DeckMouseover01`. This texture should be in the same Crossroads package as DeckArtPath. If nil, uses DeckArtPath (no hover effect).
+---@field CardBackPath string Path to the card back texture shown during the in-combat Arcana card flip animation (e.g. when gaining an Arcana through Judgment). See `GUI\Screens\CardBack\CardBack01`. This texture should be in a package registered via `RegisterCardBackPackages`, as it must be available at all times including during runs.
 ---@field DeckArtScale number|nil Scale for DeckArt animation in the selection UI.
 ---@field CardBackScale number|nil Scale for CardBack animation during combat.
 
 ---Registers an individual card back. The card back is unlocked when its associated pack is purchased in the shop.
 ---The pack must be registered via `RegisterCardBackPack` before calling this function.
----The API auto-assigns a stable TextureNum that persists across mod install/uninstall cycles.
+---The API auto-assigns a deterministic TextureNum derived from the card back's string ID, ensuring the same ID always maps to the same number regardless of mod load order.
+---This TextureNum is used internally for animation name lookup and save persistence (GameState.MetaUpgradeLayoutsArt).
 ---@param cardBackData CardBackData The input data for the new card back.
 ---@return boolean successfullyRegistered True if the card back was successfully registered, false otherwise.
 public.RegisterCardBack = function(cardBackData) end
 
----Registers one or more .pkg package files that contain the textures for card backs.
----These packages will be loaded at ALL times (including during runs), not just in the Crossroads, because card back art is used when an Arcana is added during a run (e.g. through Judgment).
----IMPORTANT: Only include CardBack_XX textures in these packages. Because they are always loaded, any unnecessary assets will consume memory permanently.
----Use `RegisterCrossroadsPackages` for DeckArt/selection UI textures that are only needed in the Crossroads.
+---Registers one or more .pkg package files that contain the card back textures used during the in-combat Arcana card flip animation.
+---These packages will be loaded at ALL times (including during runs), not just in the Crossroads, because card back art is displayed when an Arcana is added (e.g. through Judgment).
+---IMPORTANT: Only include CardBack_XX textures in these packages.
+---Because they are always loaded, any unnecessary assets will consume memory permanently.
+---Use `RegisterCrossroadsPackages` for DeckArt/DeckArtMouseover/IconPath textures that are only needed in the Crossroads.
 ---The .pkg files must be placed in your mod's `plugins_data` folder.
----@param packageNames table A list of package names (table of strings) to register. Do not include the `.pkg` extension.
+---@param packageNamesArray table A list of package names (table of strings) to register. Do not include the `.pkg` extension.
 ---@return boolean successfullyRegistered True if at least one package was successfully registered, false otherwise.
-public.RegisterCardBackPackages = function(packageNames) end
+public.RegisterCardBackPackages = function(packageNamesArray) end
 
 return public

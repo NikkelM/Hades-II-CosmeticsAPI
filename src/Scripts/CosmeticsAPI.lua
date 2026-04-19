@@ -492,18 +492,18 @@ end
 ---Registers one or more .pkg package files that contain the textures for cosmetics that are added to the Crossroads (including the Training Grounds).
 ---These packages will be automatically loaded by the CosmeticsAPI when entering the Crossroads.
 ---The .pkg files must be placed in your mod's `plugins_data` folder.
----@param packageNames table A list of package names (table of strings) to register. Do not include the `.pkg` extension.
+---@param packageNamesArray table A list of package names (table of strings) to register. Do not include the `.pkg` extension.
 ---@return boolean successfullyRegistered True if at least one package was successfully registered, false otherwise.
-public.RegisterCrossroadsPackages = function(packageNames)
-	if type(packageNames) ~= "table" then
+public.RegisterCrossroadsPackages = function(packageNamesArray)
+	if type(packageNamesArray) ~= "table" then
 		mod.DebugPrint(
 			"[CosmeticsAPI] Error: RegisterCrossroadsPackages expects a table of strings, got '" ..
-			type(packageNames) .. "'.", 1)
+			type(packageNamesArray) .. "'.", 1)
 		return false
 	end
 
 	local registeredAny = false
-	for _, name in ipairs(packageNames) do
+	for _, name in ipairs(packageNamesArray) do
 		if type(name) ~= "string" then
 			mod.DebugPrint(
 				"[CosmeticsAPI] Warning: Skipping non-string package name of type '" ..

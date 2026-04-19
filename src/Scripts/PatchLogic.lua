@@ -6,9 +6,6 @@ local function normalizeCosmeticEquipState()
 
 	local worldUpgradesAdded = game.GameState.WorldUpgradesAdded or {}
 
-	-- Initialize the persistent card back TextureNum registry if it doesn't exist yet
-	game.GameState.CosmeticsAPI_CardBackRegistry = game.GameState.CosmeticsAPI_CardBackRegistry or {}
-
 	-- For each cosmetic group, ensure exactly one owned item is equipped
 	-- Fixes two potential issues:
 	-- 1. No cosmetic equipped (a mod that added the equipped cosmetic is no longer loaded) -> re-equip first *owned* cosmetic
