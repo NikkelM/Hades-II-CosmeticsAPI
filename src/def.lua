@@ -79,11 +79,10 @@ public.RegisterCardBackPack = function(packData) end
 ---@class CardBackData
 ---@field Id string Unique card back identifier. Prefix this with your mod's `_PLUGIN.guid` to ensure uniqueness!
 ---@field PackId string The ID of the CardBackPack this card back belongs to. Must have been registered first via `RegisterCardBackPack`.
----@field DeckArtPath string Path to the idle/normal card art texture shown in the card back picker overlay (Arcana screen). This is the default state before hovering. See `GUI\Screens\MetaUpgrade\DeckArt\Deck01`. This texture should be in a package registered via `RegisterCrossroadsPackages`, as the picker is only accessible in the Crossroads.
----@field DeckArtMouseoverPath string|nil Path to the highlighted/brighter variant of the card art, shown on hover in the picker overlay. Each vanilla card back has a separate mouseover texture - see `GUI\Screens\MetaUpgrade\DeckArt\DeckMouseover01`. This texture should be in the same Crossroads package as DeckArtPath. If nil, uses DeckArtPath (no hover effect).
----@field CardBackPath string Path to the card back texture shown during the in-combat Arcana card flip animation (e.g. when gaining an Arcana through Judgment). See `GUI\Screens\CardBack\CardBack01`. This texture should be in a package registered via `RegisterCardBackPackages`, as it must be available at all times including during runs.
+---@field DeckArtPath string Path to the idle/normal card art texture shown in the card back picker overlay (Arcana screen). This is the default state before hovering. See `GUI\Screens\MetaUpgrade\DeckArt\Deck10`. This texture should be in a package registered via `RegisterCrossroadsPackages`, as the picker is only accessible in the Crossroads.
+---@field DeckArtMouseoverPath string|nil Path to the highlighted/brighter variant of the card art, shown on hover in the picker overlay. Each vanilla card back has a separate mouseover texture - see `GUI\Screens\MetaUpgrade\DeckArt\DeckMouseover10`. This texture should be in the same Crossroads package as DeckArtPath. If nil, uses DeckArtPath (no hover effect).
+---@field CardBackPath string Path to the card back texture shown during the in-combat Arcana card flip animation (e.g. when gaining an Arcana through Judgment). See `GUI\Screens\CardBack\CardBack10`. This texture should be in a package registered via `RegisterCardBackPackages`, as it must be available at all times including during runs.
 ---@field DeckArtScale number|nil Scale for DeckArt animation in the selection UI.
----@field CardBackScale number|nil Scale for CardBack animation during combat.
 
 ---Registers an individual card back. The card back is unlocked when its associated pack is purchased in the shop.
 ---The pack must be registered via `RegisterCardBackPack` before calling this function.

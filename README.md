@@ -126,21 +126,23 @@ You can add new Arcana card back packs to the Training Grounds cosmetics shop.
 Each pack unlocks a set of card backs when purchased.
 The API handles shop display, animation hookup and pagination when the selection screen exceeds one page.
 
-Card backs require **three types of textures**, in different packages:
+Card backs require **four types of textures**, in different packages.
+See the bottom of this section for example textures for each of the four.
 
-| Texture | Used Where | Package Type |
+| Texture | Per pack or per card? | Used Where | Example path | Package Type |
 |---------|-----------|-------------|
-| **DeckArt** (idle) + **DeckArtMouseover** (hover) | Card back picker overlay in the Crossroads | `RegisterCrossroadsPackages` |
-| **IconPath** (shop preview) | Training Grounds cosmetics shop | `RegisterCrossroadsPackages` |
-| **CardBack** (in-combat flip) | During runs when an Arcana is added | `RegisterCardBackPackages` |
+| **DeckArt** (idle) | Per card | Card back picker idle animation in the Arcana screen (Three overlayed copies of the card) | `GUI\Screens\MetaUpgrade\DeckArt\Deck10` | `RegisterCrossroadsPackages` |
+| **DeckArtMouseover** (hover) | Per card | Card back picker hover animation in the Arcana screen (Four spread out copies of the card) | `GUI\Screens\MetaUpgrade\DeckArt\DeckMouseover10` | `RegisterCrossroadsPackages` |
+| **IconPath** (shop preview) | Per **pack** | Training Grounds cosmetics shop icon (Three *different* fanned-out cards from the pack) | `GUI\Screens\CosmeticIcons\cosmetic_deckMisc` | `RegisterCrossroadsPackages` |
+| **CardBack** (in-combat flip) | Per card | During runs when an Arcana is added, e.g. through Judgment (Single straight-aligned copy of the card) | `GUI\Screens\CardBack\CardBack10` | `RegisterCardBackPackages` |
 
 First, register your packages:
 
 ```lua
--- DeckArt textures + shop icon - only needed in the Crossroads
+-- DeckArt (Idle and Hover, per card) + shop icon (per pack) - only needed and loaded in the Crossroads
 CosmeticsAPI.RegisterCrossroadsPackages({ "AuthorName-ModName-DeckArt" })
 
--- CardBack textures - loaded at ALL times (including during runs), keep these packages small!
+-- CardBack (per card) - loaded at ALL times (including during runs), keep these packages small!
 CosmeticsAPI.RegisterCardBackPackages({ "AuthorName-ModName-CardBacks" })
 ```
 
@@ -178,7 +180,8 @@ CosmeticsAPI.RegisterCardBackPack({
 
 ### Registering Card Backs
 
-After registering a pack, register individual card backs for it:
+After registering a pack, register individual card backs for it.
+Card backs will be ordered by registration order within their pack.
 
 ```lua
 CosmeticsAPI.RegisterCardBack({
@@ -186,22 +189,47 @@ CosmeticsAPI.RegisterCardBack({
 	Id = _PLUGIN.guid .. "." .. "MyCardBack_01",
 	-- Must match a previously registered pack ID
 	PackId = _PLUGIN.guid .. "." .. "MyCardBackPack",
-	-- Idle card art for the selection overlay. See vanilla: GUI\Screens\MetaUpgrade\DeckArt\Deck01
-	DeckArtPath = "AuthorName-ModName\\DeckArt\\MyDeck01",
-	-- Card back for the in-combat flip animation. See vanilla: GUI\Screens\CardBack\CardBack01
-	CardBackPath = "AuthorName-ModName\\CardBack\\MyCardBack01",
+	-- Idle card art for the selection overlay. See vanilla: GUI\Screens\MetaUpgrade\DeckArt\Deck10
+	DeckArtPath = "AuthorName-ModName\\DeckArt\\MyDeck10",
+	-- Card back for the in-combat flip animation. See vanilla: GUI\Screens\CardBack\CardBack10
+	CardBackPath = "AuthorName-ModName\\CardBack\\MyCardBack10",
 
 	-- OPTIONAL FIELDS
-	-- Highlighted variant shown on hover. See vanilla: GUI\Screens\MetaUpgrade\DeckArt\DeckMouseover01
+	-- Highlighted variant shown on hover. See vanilla: GUI\Screens\MetaUpgrade\DeckArt\DeckMouseover10
 	-- If nil, uses DeckArtPath (no hover effect)
-	DeckArtMouseoverPath = "AuthorName-ModName\\DeckArt\\MyDeckMouseover01",
+	DeckArtMouseoverPath = "AuthorName-ModName\\DeckArt\\MyDeckMouseover10",
 	DeckArtScale = nil,
-	CardBackScale = nil,
 })
 ```
 
 Card backs from the same pack will appear grouped together in the selection screen.
 The API automatically handles pagination when the total number of unlocked card backs exceeds 40 (one page).
+
+### Sample card back textures
+
+#### DeckArt (per card)
+
+`GUI\Screens\MetaUpgrade\DeckArt\Deck10`
+
+![GUI\Screens\MetaUpgrade\DeckArt\Deck10](/img/Cardbacks/Deck10.png)
+
+#### DeckArtMouseover (per card)
+
+`GUI\Screens\MetaUpgrade\DeckArt\DeckMouseover10`
+
+![GUI\Screens\MetaUpgrade\DeckArt\DeckMouseover10](/img/Cardbacks/DeckMouseover10.png)
+
+#### IconPath (per pack)
+
+`GUI\Screens\CosmeticIcons\cosmetic_deckMisc`
+
+![GUI\Screens\CosmeticIcons\cosmetic_deckMisc](/img/Cardbacks/cosmetic_deckMisc.png)
+
+#### CardBack (per card)
+
+`GUI\Screens\CardBack\CardBack10`
+
+![GUI\Screens\CardBack\CardBack10](/img/Cardbacks/CardBack10.png)
 
 ## Important Note & Contributing
 
