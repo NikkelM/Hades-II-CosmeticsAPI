@@ -161,7 +161,7 @@ CosmeticsAPI.RegisterCardBackPack({
 	FlavorText = {
 		en = "Every card tells a story.",
 	},
-	-- Shop preview icon - a small thumbnail. See vanilla examples: GUI\Screens\CosmeticIcons\cosmetic_deckMisc
+	-- Shop preview icon - a small thumbnail (110×110 px). See vanilla examples: GUI\Screens\CosmeticIcons\cosmetic_deckMisc
 	IconPath = "AuthorName-ModName\\Icons\\MyPackIcon",
 
 	-- OPTIONAL FIELDS (with their defaults)
@@ -189,13 +189,13 @@ CosmeticsAPI.RegisterCardBack({
 	Id = _PLUGIN.guid .. "." .. "MyCardBack_01",
 	-- Must match a previously registered pack ID
 	PackId = _PLUGIN.guid .. "." .. "MyCardBackPack",
-	-- Idle card art for the selection overlay. See vanilla: GUI\Screens\MetaUpgrade\DeckArt\Deck10
+	-- Idle card art for the selection overlay (248×318 px). See vanilla: GUI\Screens\MetaUpgrade\DeckArt\Deck10
 	DeckArtPath = "AuthorName-ModName\\DeckArt\\MyDeck10",
-	-- Card back for the in-combat flip animation. See vanilla: GUI\Screens\CardBack\CardBack10
+	-- Card back for the in-combat flip animation (453×680 px). See vanilla: GUI\Screens\CardBack\CardBack10
 	CardBackPath = "AuthorName-ModName\\CardBack\\MyCardBack10",
 
 	-- OPTIONAL FIELDS
-	-- Highlighted variant shown on hover. See vanilla: GUI\Screens\MetaUpgrade\DeckArt\DeckMouseover10
+	-- Highlighted variant shown on hover (330×308 px). See vanilla: GUI\Screens\MetaUpgrade\DeckArt\DeckMouseover10
 	-- If nil, uses DeckArtPath (no hover effect)
 	DeckArtMouseoverPath = "AuthorName-ModName\\DeckArt\\MyDeckMouseover10",
 	DeckArtScale = nil,
@@ -206,6 +206,15 @@ Card backs from the same pack will appear grouped together in the selection scre
 The API automatically handles pagination when the total number of unlocked card backs exceeds 40 (one page).
 
 ### Sample card back textures
+
+Textures should match vanilla dimensions exactly - the engine derives the display scale from the source texture size, and mismatched dimensions will cause card backs to appear at the wrong size.
+
+| Texture | Vanilla Dimensions | Used In | Resizable via API? |
+|---|---|---|---|
+| **DeckArt** (per card) | 248 × 318 px | Card back picker overlay (idle) | Yes - `DeckArtScale` |
+| **DeckArtMouseover** (per card) | 330 × 308 px | Card back picker overlay (hover) | Yes - `DeckArtScale` |
+| **CardBack** (per card) | 453 × 680 px | In-combat Arcana card flip animation | **No** - the game applies a hardcoded scale during the flip animation, so this texture **must** match vanilla dimensions |
+| **IconPath** (per pack) | 110 × 110 px | Training Grounds cosmetics shop | Yes - `IconScale` |
 
 #### DeckArt (per card)
 

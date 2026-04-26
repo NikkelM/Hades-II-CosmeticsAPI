@@ -60,7 +60,7 @@ public.RegisterCrossroadsPackages = function(packageNamesArray) end
 ---@field Name table Localized display name. { en = "Arcana, English Name", de = "Arkana (Deutscher Name)", ... }. "en" key is required.
 ---@field Description table Localized description. { en = "Set of language-based card backs.", ... }. "en" key is required.
 ---@field FlavorText table Localized flavor text. { en = "Language is a strange thing...", ... }. "en" key is required.
----@field IconPath string Path to the shop preview icon texture for this pack. This usually shows three different card backs in a slight spread overlayed on each other. See `GUI\Screens\CosmeticIcons\cosmetic_deckMisc`. This texture should be in a package registered via `RegisterCrossroadsPackages`, as the shop is only accessible in the Crossroads.
+---@field IconPath string Path to the shop preview icon texture for this pack (110×110 px). This usually shows three different card backs in a slight spread overlayed on each other. See `GUI\Screens\CosmeticIcons\cosmetic_deckMisc`. This texture should be in a package registered via `RegisterCrossroadsPackages`, as the shop is only accessible in the Crossroads.
 ---@field IconScale number|nil Scale for the icon. Defaults to 1.
 ---@field IconOffsetX number|nil X offset for the icon. Defaults to 0.
 ---@field IconOffsetY number|nil Y offset for the icon. Defaults to 0.
@@ -79,9 +79,9 @@ public.RegisterCardBackPack = function(packData) end
 ---@class CardBackData
 ---@field Id string Unique card back identifier. Prefix this with your mod's `_PLUGIN.guid` to ensure uniqueness!
 ---@field PackId string The ID of the CardBackPack this card back belongs to. Must have been registered first via `RegisterCardBackPack`.
----@field DeckArtPath string Path to the idle/normal card art texture shown in the card back picker overlay (Arcana screen). This is the default state before hovering. See `GUI\Screens\MetaUpgrade\DeckArt\Deck10`. This texture should be in a package registered via `RegisterCrossroadsPackages`, as the picker is only accessible in the Crossroads.
----@field DeckArtMouseoverPath string|nil Path to the highlighted/brighter variant of the card art, shown on hover in the picker overlay. Each vanilla card back has a separate mouseover texture - see `GUI\Screens\MetaUpgrade\DeckArt\DeckMouseover10`. This texture should be in the same Crossroads package as DeckArtPath. If nil, uses DeckArtPath (no hover effect).
----@field CardBackPath string Path to the card back texture shown during the in-combat Arcana card flip animation (e.g. when gaining an Arcana through Judgment). See `GUI\Screens\CardBack\CardBack10`. This texture should be in a package registered via `RegisterCardBackPackages`, as it must be available at all times including during runs.
+---@field DeckArtPath string Path to the idle/normal card art texture shown in the card back picker overlay (Arcana screen, 248×318 px). This is the default state before hovering. See `GUI\Screens\MetaUpgrade\DeckArt\Deck10`. This texture should be in a package registered via `RegisterCrossroadsPackages`, as the picker is only accessible in the Crossroads.
+---@field DeckArtMouseoverPath string|nil Path to the highlighted/brighter variant of the card art, shown on hover in the picker overlay (330×308 px). Each vanilla card back has a separate mouseover texture - see `GUI\Screens\MetaUpgrade\DeckArt\DeckMouseover10`. This texture should be in the same Crossroads package as DeckArtPath. If nil, uses DeckArtPath (no hover effect).
+---@field CardBackPath string Path to the card back texture shown during the in-combat Arcana card flip animation, e.g. when gaining an Arcana through Judgment (453×680 px). See `GUI\Screens\CardBack\CardBack10`. This texture should be in a package registered via `RegisterCardBackPackages`, as it must be available at all times including during runs. Textures must match the vanilla dimensions exactly, as the engine derives the display scale from the source texture size.
 ---@field DeckArtScale number|nil Scale for DeckArt animation in the selection UI.
 
 ---Registers an individual card back. The card back is unlocked when its associated pack is purchased in the shop.

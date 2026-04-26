@@ -115,9 +115,6 @@ sjson.hook(hadesTwoGUIScreensVFXFile, function(data)
 			FilePath = cardBack.CardBackPath,
 			Material = "Unlit",
 		}
-		if cardBack.CardBackScale then
-			cardBackEntry.Scale = cardBack.CardBackScale
-		end
 		table.insert(data.Animations, sjson.to_object(cardBackEntry, cardBackAnimationOrder))
 	end
 end)

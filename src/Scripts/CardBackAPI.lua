@@ -279,9 +279,7 @@ public.RegisterCardBack = function(cardBackData)
 	if cardBackData.DeckArtScale ~= nil and type(cardBackData.DeckArtScale) ~= "number" then
 		mod.WarnIncorrectType("DeckArtScale", "number", type(cardBackData.DeckArtScale), cardBackData.Id)
 	end
-	if cardBackData.CardBackScale ~= nil and type(cardBackData.CardBackScale) ~= "number" then
-		mod.WarnIncorrectType("CardBackScale", "number", type(cardBackData.CardBackScale), cardBackData.Id)
-	end
+
 	-- #endregion
 
 	-- #region Allocate stable TextureNum
@@ -313,7 +311,6 @@ public.RegisterCardBack = function(cardBackData)
 		DeckArtMouseoverPath = cardBackData.DeckArtMouseoverPath or cardBackData.DeckArtPath,
 		CardBackName = "CardBack_" .. numStr,
 		CardBackPath = cardBackData.CardBackPath,
-		CardBackScale = cardBackData.CardBackScale,
 	})
 	-- #endregion
 
