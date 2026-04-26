@@ -1,12 +1,18 @@
 # Changelog
 
-## v1.1.0
+## v1.1.1
 
 <!--Releasenotes start-->
+- Removed `CardBackScale` property, as the game won't honour it.
+- Added recommended texture sizes for card back (pack) textures.
+- Added example textures for card back (packs) to the Readme.
+<!--Releasenotes end-->
+
+## v1.1.0
+
 - The API now supports adding new Arcana card backs, and adds additional pages to the selection screen to display them. Use `RegisterCardBackPack(packData)` to register a card back pack and `RegisterCardBack(cardBackData)` to register card backs in a pack.
 - `RegisterCardBackPackages(packageNamesArray)` allows registering one or more `.pkg` packages that the Cosmetics API will automatically load everywhere. This should only contain the in-run card pack textures required when a new Arcana is equipped during a run, e.g. through Judgment.
 - `RegisterCrossroadsPackages(packageNamesArray)` allows registering one or more `.pkg` packages that the Cosmetics API will automatically load in the Crossroads. Use this to register packages containing cosmetics textures.
-<!--Releasenotes end-->
 
 ## v1.0.4
 
