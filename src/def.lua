@@ -57,15 +57,15 @@ public.RegisterCrossroadsPackages = function(packageNamesArray) end
 
 ---@class CardBackPackData
 ---@field Id string Unique pack identifier. Prefix this with your mod's `_PLUGIN.guid` to ensure uniqueness!
----@field Name table Localized display name. { en = "Arcana, English Name", de = "Arkana (Deutscher Name)", ... }. "en" key is required.
----@field Description table Localized description. { en = "Set of language-based card backs.", ... }. "en" key is required.
+---@field Name table Localized display name. { en = "Arcana, English", de = "Arkana, German", ... }. "en" key is required.
+---@field Description table Localized description. { en = "{$Keywords.CosmeticDeck}: Set of {#UpgradeFormatDark}<Number of cards in this deck> {#Prev}alternate themes, featuring <something about this deck>.", ... }. "en" key is required.
 ---@field FlavorText table Localized flavor text. { en = "Language is a strange thing...", ... }. "en" key is required.
 ---@field IconPath string Path to the shop preview icon texture for this pack (110×110 px). This usually shows three different card backs in a slight spread overlayed on each other. See `GUI\Screens\CosmeticIcons\cosmetic_deckMisc`. This texture should be in a package registered via `RegisterCrossroadsPackages`, as the shop is only accessible in the Crossroads.
 ---@field IconScale number|nil Scale for the icon. Defaults to 1.
 ---@field IconOffsetX number|nil X offset for the icon. Defaults to 0.
 ---@field IconOffsetY number|nil Y offset for the icon. Defaults to 0.
 ---@field Cost table|nil Resource costs. Defaults to { CosmeticsPoints = 300 }.
----@field GameStateRequirements table|nil Shop visibility requirements. Defaults to requiring WorldUpgradeMetaUpgradeSaveLayout (layout saving unlocked).
+---@field GameStateRequirements table|nil Shop visibility requirements. Will always require WorldUpgradeMetaUpgradeSaveLayout (layout saving unlocked), in addition to anything else added here.
 ---@field InsertAfterCosmetic string|nil ID of an existing cosmetic in CosmeticsShop_PreRun to insert after. If nil, appended to end.
 ---@field PreRevealVoiceLines table|nil Custom voice lines on purchase. If nil, uses a default Melinoe line.
 

@@ -153,10 +153,10 @@ CosmeticsAPI.RegisterCardBackPack({
 	-- REQUIRED FIELDS
 	Id = _PLUGIN.guid .. "." .. "MyCardBackPack",
 	Name = {
-		en = "Custom Card Backs",
+		en = "Arcana, Modded",
 	},
 	Description = {
-		en = "A set of custom card backs for the Arcana.",
+		en = "{$Keywords.CosmeticDeck}: Set of {#UpgradeFormatDark}<Number of cards in this deck> {#Prev}alternate themes, featuring <something about this deck>.",
 	},
 	FlavorText = {
 		en = "Every card tells a story.",
@@ -169,7 +169,7 @@ CosmeticsAPI.RegisterCardBackPack({
 	IconOffsetX = 0,
 	IconOffsetY = 0,
 	Cost = { CosmeticsPoints = 300 },
-	-- Unlocking Arcana card packs will always require layout saving to be unlocked (WorldUpgradeMetaUpgradeSaveLayout), in addition to any custom checks
+	-- Unlocking Arcana card packs will *always* require layout saving to be unlocked (WorldUpgradeMetaUpgradeSaveLayout), in addition to any custom checks added here
 	GameStateRequirements = nil,
 	-- Insert after a specific cosmetic in the Training Grounds shop, or nil to append to end
 	InsertAfterCosmetic = nil,
