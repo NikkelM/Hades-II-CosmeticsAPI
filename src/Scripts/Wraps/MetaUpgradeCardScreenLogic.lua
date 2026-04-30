@@ -25,6 +25,7 @@ local function createArrowData(x, isUp)
 		Y = isUp and 120 or 950,
 		Alpha = 0.0,
 		Scale = 1.0,
+		UseableOff = true,
 		InputBlockDuration = 0.02,
 		Data = {
 			OnPressedFunctionName = isUp and function(...)
@@ -50,6 +51,7 @@ cardLayoutComponentData["CosmeticsAPI_VisibleUp"] = {
 	Y = 120,
 	Alpha = 0.0,
 	Scale = 1.0,
+	UseableOff = true,
 	Data = {
 		OnPressedFunctionName = function(...)
 			return mod.CardBackPagePrev(...)
@@ -65,6 +67,7 @@ cardLayoutComponentData["CosmeticsAPI_VisibleDown"] = {
 	Y = 950,
 	Alpha = 0.0,
 	Scale = 1.0,
+	UseableOff = true,
 	Data = {
 		OnPressedFunctionName = function(...)
 			return mod.CardBackPageNext(...)

@@ -1,12 +1,16 @@
 # Changelog
 
-## v1.1.1
+## v1.1.2
 
 <!--Releasenotes start-->
+- Fixed: Navigating right from a rightmost Arcana card takes additional navigation events to select the Grasp count.
+<!--Releasenotes end-->
+
+## v1.1.1
+
 - Removed `CardBackScale` property, as the game won't honour it.
 - Added recommended texture sizes for card back (pack) textures.
 - Added example textures for card back (packs) to the Readme.
-<!--Releasenotes end-->
 
 ## v1.1.0
 
