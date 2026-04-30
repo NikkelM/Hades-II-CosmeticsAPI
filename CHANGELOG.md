@@ -1,10 +1,14 @@
 # Changelog
 
-## v1.1.2
+## v1.1.3
 
 <!--Releasenotes start-->
-- Fixed: Navigating right from a rightmost Arcana card takes additional navigation events to select the Grasp count.
+- Fixed: Table formatting in Readme is broken.
 <!--Releasenotes end-->
+
+## v1.1.2
+
+- Fixed: Navigating right from a rightmost Arcana card takes additional navigation events to select the Grasp count.
 
 ## v1.1.1
 

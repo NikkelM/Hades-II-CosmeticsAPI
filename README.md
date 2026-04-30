@@ -130,7 +130,7 @@ Card backs require **four types of textures**, in different packages.
 See the bottom of this section for example textures for each of the four.
 
 | Texture | Per pack or per card? | Used Where | Example path | Package Type |
-|---------|-----------|-------------|
+|---------|-----------|-------------|-------------|-------------|
 | **DeckArt** (idle) | Per card | Card back picker idle animation in the Arcana screen (Three overlayed copies of the card) | `GUI\Screens\MetaUpgrade\DeckArt\Deck10` | `RegisterCrossroadsPackages` |
 | **DeckArtMouseover** (hover) | Per card | Card back picker hover animation in the Arcana screen (Four spread out copies of the card) | `GUI\Screens\MetaUpgrade\DeckArt\DeckMouseover10` | `RegisterCrossroadsPackages` |
 | **IconPath** (shop preview) | Per **pack** | Training Grounds cosmetics shop icon (Three *different* fanned-out cards from the pack) | `GUI\Screens\CosmeticIcons\cosmetic_deckMisc` | `RegisterCrossroadsPackages` |
