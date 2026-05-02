@@ -266,6 +266,13 @@ public.RegisterCosmetic = function(cosmeticData)
 	end
 	-- #endregion
 
+	-- #region RotateOnly
+	-- Inherit RotateOnly from the group so that modded cosmetics don't show a non-functional "Remove" button in the shop UI
+	if game.WorldUpgradeData[cosmeticData.CosmeticsGroup].RotateOnly then
+		newGameCosmetic.RotateOnly = true
+	end
+	-- #endregion
+
 	-- #region ActivateFunctionName
 	if cosmeticData.ActivateFunctionName ~= nil and type(cosmeticData.ActivateFunctionName) == "string" then
 		newGameCosmetic.ActivateFunctionName = cosmeticData.ActivateFunctionName

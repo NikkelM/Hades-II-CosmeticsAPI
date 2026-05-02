@@ -1,10 +1,15 @@
 # Changelog
 
-## v1.1.3
+## v1.1.4
 
 <!--Releasenotes start-->
-- Fixed: Table formatting in Readme is broken.
+- Fixed: If a modded cosmetic is added to a `RotateOnly` group (cosmetics that cannot be unequipped), the option to unequip it still shows, but does nothing.
+- Fixed: If a cosmetic in a non-`RotateOnly` group is unequipped without replacement, the CosmeticsAPI will re-equip an owned cosmetic when the map is next loaded, instead of leaving the group unequipped. 
 <!--Releasenotes end-->
+
+## v1.1.3
+
+- Fixed: Table formatting in Readme is broken.
 
 ## v1.1.2
 

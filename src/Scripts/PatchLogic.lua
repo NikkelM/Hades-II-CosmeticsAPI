@@ -17,9 +17,10 @@ local function normalizeCosmeticEquipState()
 		end
 	end
 
-	-- For each cosmetic group, ensure exactly one owned item is equipped
+	-- For each cosmetic group, normalize the equip state
 	-- Fixes two potential issues:
-	-- 1. No cosmetic equipped (a mod that added the equipped cosmetic is no longer loaded) -> re-equip first *owned* cosmetic
+	-- 1. For RotateOnly groups (mandatory, always one equipped): if none is equipped (a mod that added the equipped cosmetic is no longer loaded) -> re-equip first *owned* cosmetic
+	--    Non-RotateOnly groups allow having nothing equipped (player can toggle them off), so those are left alone.
 	-- 2. Multiple cosmetics equipped (played vanilla and equipped a different cosmetic, then re-enabled the mod) -> keep first encountered, unequip rest
 	for _, category in ipairs(game.ScreenData.CosmeticsShop.ItemCategories) do
 		for _, name in ipairs(category) do
@@ -39,10 +40,11 @@ local function normalizeCosmeticEquipState()
 				end
 			end
 
-			if not anyEquipped and worldUpgradesAdded[name] then
-				-- No cosmetic in this group is equipped, but this one is owned - re-equip it
+			if not anyEquipped and worldUpgradesAdded[name] and cosmeticData.RotateOnly then
+				-- No cosmetic in this RotateOnly group is equipped, but this one is owned - re-equip it
+				-- Only RotateOnly groups require one to always be equipped; non-RotateOnly groups allow having nothing equipped (the player can toggle them off)
 				worldUpgrades[name] = true
-				mod.DebugPrint("[CosmeticsAPI] No cosmetic equipped in group containing '" ..
+				mod.DebugPrint("[CosmeticsAPI] No cosmetic equipped in RotateOnly group containing '" ..
 					name .. "', re-equipping owned cosmetic '" .. name .. "'.", 2)
 			elseif worldUpgrades[name] then
 				-- This one is equipped - unequip all siblings to ensure only one is active
