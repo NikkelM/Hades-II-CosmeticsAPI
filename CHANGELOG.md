@@ -1,11 +1,16 @@
 # Changelog
 
-## v1.1.4
+## v1.1.5
 
 <!--Releasenotes start-->
+- Fixed: Some minor typos across various warnings and log messages.
+- Fixed: A rare potential crash if invalid types are passed in during mod development.
+<!--Releasenotes end-->
+
+## v1.1.4
+
 - Fixed: If a modded cosmetic is added to a `RotateOnly` group (cosmetics that cannot be unequipped), the option to unequip it still shows, but does nothing.
 - Fixed: If a cosmetic in a non-`RotateOnly` group is unequipped without replacement, the CosmeticsAPI will re-equip an owned cosmetic when the map is next loaded, instead of leaving the group unequipped. 
-<!--Releasenotes end-->
 
 ## v1.1.3
 
