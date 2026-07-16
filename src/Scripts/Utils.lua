@@ -136,5 +136,5 @@ end
 function mod.WarnIncorrectType(fieldName, expectedType, actualType, cosmeticId)
 	mod.DebugPrint("[CosmeticsAPI] Warning: Field '" .. fieldName .. "' has incorrect type '" ..
 		actualType .. "' (expected '" .. expectedType ..
-		"') in cosmetic data: " .. cosmeticId, 2)
+		"') in cosmetic data: " .. tostring(cosmeticId), 2)
 end

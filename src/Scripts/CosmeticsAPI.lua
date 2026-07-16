@@ -35,7 +35,7 @@ public.RegisterCosmetic = function(cosmeticData)
 	-- Ensure no cosmetic with this ID already exists
 	if game.WorldUpgradeData[cosmeticData.Id] ~= nil then
 		mod.DebugPrint("[CosmeticsAPI] Error: A cosmetic with ID '" .. cosmeticData.Id ..
-			"' already exists, cannot register duplicate cosmetic. Make sure to prefix your cosmetic with you \"_PLUGIN.guid\"!",
+			"' already exists, cannot register duplicate cosmetic. Make sure to prefix your cosmetic with your \"_PLUGIN.guid\"!",
 			1)
 		return false
 	end
