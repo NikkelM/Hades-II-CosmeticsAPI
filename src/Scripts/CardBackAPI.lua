@@ -328,8 +328,8 @@ public.RegisterCardBack = function(cardBackData)
 	game.WorldUpgradeData[cardBackData.PackId].NumBackings = pack.CardBackCount
 	-- #endregion
 
-	mod.DebugPrint("[CosmeticsAPI] Successfully registered new card back '" .. cardBackData.Id
-		.. "' (TextureNum " .. textureNum .. ") in pack '" .. cardBackData.PackId .. "'", 3)
+	mod.DebugPrint("[CosmeticsAPI] Successfully registered new card back " .. cardBackData.Id
+		.. " (TextureNum " .. textureNum .. ") in pack " .. cardBackData.PackId, 3)
 	return true
 end
 

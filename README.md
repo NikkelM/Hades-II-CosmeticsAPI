@@ -20,7 +20,7 @@ You can also register new **Arcana Card Back** packs. The API handles shop integ
 Start by adding `NikkelM-Cosmetics_API` as a dependency in your `thunderstore.toml` (ensure you use the latest version):
 
 ```toml
-NikkelM-Cosmetics_API = "1.0.0"
+NikkelM-Cosmetics_API = "1.1.4"
 ```
 
 Next, include the Cosmetics API in your `main.lua`, alongside other dependencies:

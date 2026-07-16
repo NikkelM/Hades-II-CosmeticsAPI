@@ -19,7 +19,7 @@ local public = {}
 ---@field IconOffsetX number|nil The X offset to apply to the cosmetic's icon in the shop menu. Positive values move the icon right, negative values move it left. If nil, defaults to 0.
 ---@field IconOffsetY number|nil The Y offset to apply to the cosmetic's icon in the shop menu. Positive values move the icon down, negative values move it up. If nil, defaults to 0.
 ---@field GameStateRequirements table|nil The requirements that must be met to show this cosmetic in the shop. Supports all base game requirement logic. If nil, the cosmetic will always be eligible.
----@field Cost table|nil The resource costs to buy this cosmetic. For display purposes, limit to five different resources. If nil, will default to { CosmeticsPoints = 50 } (50 Kudos).
+---@field Cost table|nil The resource costs to buy this cosmetic. For display purposes, limit to at most five different resources. If nil, will default to { CosmeticsPoints = 50 } (50 Kudos).
 ---@field InheritFrom table|nil Which existing cosmetics to inherit properties from. If nil, will default to { "DefaultCosmeticItem" }. If set to anything else, some default values for other properties may not work, depending on what you inherit from, and the API will not validate some otherwise required fields, so ensure you know what you're doing.
 ---@field AlwaysRevealImmediately boolean|nil If true, this cosmetic will be shown as purchaseable as soon as it's GameStateRequirements are met. If false, the game will wait until the next run to reveal the cosmetic in the shop. Defaults to false.
 ---@field CameraFocusId integer|nil If set, the camera will pan to this ID when equipping the cosmetic. Use to override panning to the first ID in SetAnimationIds or ActivateIds.
