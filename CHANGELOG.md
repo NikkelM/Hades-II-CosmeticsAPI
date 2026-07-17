@@ -3,8 +3,8 @@
 ## v1.1.5
 
 <!--Releasenotes start-->
+- Fixed: The game may crash if invalid types are passed in during mod development.
 - Fixed: Some minor typos across various warnings and log messages.
-- Fixed: A rare potential crash if invalid types are passed in during mod development.
 <!--Releasenotes end-->
 
 ## v1.1.4
