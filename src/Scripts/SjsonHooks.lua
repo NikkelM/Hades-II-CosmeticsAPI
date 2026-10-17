@@ -48,8 +48,8 @@ local cosmeticIconEntry = nil
 local hadesTwoObstacleCrossroadsVFXFile = rom.path.combine(rom.paths.Content(),
 	"Game/Animations/Obstacle_Crossroads_VFX.sjson")
 
-for _, cosmetic in ipairs(mod.AddedCosmeticSjsonAnimationData) do
-	sjson.hook(hadesTwoObstacleCrossroadsVFXFile, function(data)
+sjson.hook(hadesTwoObstacleCrossroadsVFXFile, function(data)
+	for _, cosmetic in ipairs(mod.AddedCosmeticSjsonAnimationData) do
 		cosmeticIconEntry = {
 			Name = cosmetic.IconId,
 			FilePath = cosmetic.IconPath,
@@ -68,8 +68,8 @@ for _, cosmetic in ipairs(mod.AddedCosmeticSjsonAnimationData) do
 
 		table.insert(data.Animations, sjson.to_object(cosmeticAnimationEntry, animationOrder))
 		table.insert(data.Animations, sjson.to_object(cosmeticIconEntry, animationOrder))
-	end)
-end
+	end
+end)
 -- #endregion
 
 -- #region Card Back Animations (DeckArt, DeckArt_Mouseover, CardBack)
