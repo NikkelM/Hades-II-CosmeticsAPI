@@ -1,12 +1,16 @@
 # Changelog
 
-## v1.1.5
+## v1.1.6
 
 <!--Releasenotes start-->
+- Updated developer documentation.
+<!--Releasenotes end-->
+
+## v1.1.5
+
 - Fixed: The game may crash if invalid types are passed in during mod development.
 - Fixed: Some minor typos across various warnings and log messages.
 - Code optimizations.
-<!--Releasenotes end-->
 
 ## v1.1.4
 

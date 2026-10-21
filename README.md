@@ -99,7 +99,7 @@ CosmeticsAPI.RegisterCosmetic({
 	AlwaysRevealImmediately = false,
 	-- Overrides where the camera pans when equipping the cosmetic
 	CameraFocusId = nil,
-	-- At least one of SetAnimationIds or ActivateIds must be provided (or inherited)
+	-- At least one of SetAnimationIds or ActivateIds must be provided (or inherited by the vanilla cosmetic), use the one the vanilla cosmetic uses!
 	SetAnimationIds = nil,
 	ActivateIds = nil,
 	DeactivateIds = nil,
