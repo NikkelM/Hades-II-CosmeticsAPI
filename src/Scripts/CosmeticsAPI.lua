@@ -211,13 +211,16 @@ public.RegisterCosmetic = function(cosmeticData)
 
 	-- #region CosmeticsGroup
 	-- Validate the cosmetic that the group points to exists
-	if game.WorldUpgradeData[cosmeticData.CosmeticsGroup] == nil then
-		mod.DebugPrint("[CosmeticsAPI] Error: CosmeticsGroup '" .. cosmeticData.CosmeticsGroup ..
-			"' does not point to an existing cosmetic, cannot register cosmetic: " ..
-			tostring(cosmeticData.Id or "Unknown"), 1)
-		return false
-	end
+	--if game.WorldUpgradeData[cosmeticData.CosmeticsGroup] == nil then
+	--	mod.DebugPrint("[CosmeticsAPI] Error: CosmeticsGroup '" .. cosmeticData.CosmeticsGroup ..
+	--		"' does not point to an existing cosmetic, cannot register cosmetic: " ..
+	--		tostring(cosmeticData.Id or "Unknown"), 1)
+	--	return false
+	--end
 	-- This cosmetic already belongs to a group - collect all cosmetics in the same group, and add our new one to their RemoveCosmetics, as well as make all of them the RemoveCosmetics of our new one
+	if not game.WorldUpgradeData[cosmeticData.CosmeticsGroup] then
+		game.WorldUpgradeData[cosmeticData.CosmeticsGroup] = {}
+	end
 	if game.WorldUpgradeData[cosmeticData.CosmeticsGroup].RemoveCosmetics ~= nil then
 		-- Our cosmetic will remove all of these cosmetics when it is equipped
 		newGameCosmetic.RemoveCosmetics = game.DeepCopyTable(game.WorldUpgradeData[cosmeticData.CosmeticsGroup]
