@@ -220,6 +220,10 @@ public.RegisterCosmetic = function(cosmeticData)
 	-- This cosmetic already belongs to a group - collect all cosmetics in the same group, and add our new one to their RemoveCosmetics, as well as make all of them the RemoveCosmetics of our new one
 	if not game.WorldUpgradeData[cosmeticData.CosmeticsGroup] then
 		game.WorldUpgradeData[cosmeticData.CosmeticsGroup] = {}
+		if cosmeticData.DefaultItem then
+			table.insert(GameData.WorldUpgradeAutomaticUnlocks, cosmeticData.Name)
+			cosmeticData.AlwaysRevealImmediately = true
+		end
 	end
 	if game.WorldUpgradeData[cosmeticData.CosmeticsGroup].RemoveCosmetics ~= nil then
 		-- Our cosmetic will remove all of these cosmetics when it is equipped
@@ -233,10 +237,20 @@ public.RegisterCosmetic = function(cosmeticData)
 
 		-- We also need to set a SetAnimationValue for the original cosmetic if it doesn't exist yet, otherwise unequipping the new cosmetic will not replace it with the base cosmetic animation
 		-- Some cosmetics also need additional properties overridden, so we keep a list of known required overrides
-		if not game.WorldUpgradeData[cosmeticData.CosmeticsGroup].SetAnimationValue then
+		if not game.WorldUpgradeData[cosmeticData.CosmeticsGroup].SetAnimationValue or cosmeticData.DefaultItem then
 			if mod.KnownExtraDecorBaseAnimations[cosmeticData.CosmeticsGroup] then
 				for property, value in pairs(mod.KnownExtraDecorBaseAnimations[cosmeticData.CosmeticsGroup]) do
 					game.WorldUpgradeData[cosmeticData.CosmeticsGroup][property] = value
+				end
+			elseif cosmeticData.DefaultItem then
+				game.WorldUpgradeData[cosmeticData.CosmeticsGroup].SetAnimationValue = cosmeticData.CosmeticAnimationPath
+				if cosmeticData.RotateOnly then
+					game.WorldUpgradeData[cosmeticData.CosmeticsGroup].RotateOnly = true
+				end
+				if cosmeticData.SetAnimationIds then
+					game.WorldUpgradeData[cosmeticData.CosmeticsGroup].SetAnimationIds = cosmeticData.SetAnimationIds
+				elseif cosmeticData.ActivateIds then
+					game.WorldUpgradeData[cosmeticData.CosmeticsGroup].ActivateIds = cosmeticData.ActivateIds
 				end
 			else
 				mod.DebugPrint(
