@@ -75,6 +75,7 @@ local supportRowHeight = 200
 local displayGroup = _PLUGIN.guid .. "." .. "ChthonicChidDisplay"
 local backGroup = displayGroup .. "." .. "Back"
 local frontGroup = displayGroup .. "." .. "Front"
+local overlookStartFunctionName = _PLUGIN.guid .. "." .. "StartChthonicChidOverlook"
 
 local function spawnDisplayObstacle(args, scale, ambient)
 	local id = game.SpawnObstacle(args)
@@ -85,6 +86,71 @@ local function spawnDisplayObstacle(args, scale, ambient)
 	game.SetAlpha({ Id = id, Fraction = 0 })
 	return id
 end
+
+-- #region DistanceTrigger/"Overlook"
+function mod.EnterChthonicChidOverlook(room, args)
+	game.LockCamera({
+		Id = game.CurrentRun.Hero.ObjectId,
+		OffsetX = -50,
+		OffsetY = args.OffsetY,
+		Duration = 0.75,
+		Retarget = true,
+		FromCurrentLocation = true,
+	})
+end
+
+function mod.LeaveChthonicChidOverlook(room)
+	game.LockCamera({
+		Id = game.CurrentRun.Hero.ObjectId,
+		OffsetX = 0,
+		OffsetY = 0,
+		Duration = 0.75,
+		Retarget = true,
+		FromCurrentLocation = true,
+	})
+end
+
+function mod.StartChthonicChidOverlook(room, args)
+	game.DistanceTrigger(room, {
+		Id = args.Id,
+		WithinDistance = 175,
+		ScaleY = 0.65,
+		RepeatBufferDistance = 75,
+		Repeat = true,
+		PostTriggerEvents = {
+			{ FunctionName = _PLUGIN.guid .. "." .. "EnterChthonicChidOverlook", Args = { OffsetY = args.OffsetY } },
+		},
+		OnRepeatEvents = {
+			{ FunctionName = _PLUGIN.guid .. "." .. "LeaveChthonicChidOverlook" },
+		},
+	})
+end
+
+local function setupChthonicChidOverlook(room, rowCount)
+	local id = spawnDisplayObstacle({
+		Name = "BlankObstacle",
+		DestinationId = shelfAnchorId,
+		OffsetX = 160,
+		OffsetY = 180,
+		Group = "Standing",
+	}, 1.0, 0.0)
+	local args = {
+		Id = id,
+		OffsetY = rowCount > 1 and -250 or -150,
+	}
+
+	for _, event in ipairs(room.StartUnthreadedEvents or {}) do
+		-- Reusing the existing one if it still exists from being in the room before during this save load
+		if event.FunctionName == overlookStartFunctionName then
+			event.Args = args
+			return
+		end
+	end
+
+	room.StartUnthreadedEvents = game.ShallowCopyTable(room.StartUnthreadedEvents or {})
+	table.insert(room.StartUnthreadedEvents, { FunctionName = overlookStartFunctionName, Args = args, Threaded = true })
+end
+-- #endregion
 
 function mod.SetupChthonicChidDisplay(room)
 	if room == nil or room.Name ~= "Hub_PreRun" then
@@ -185,6 +251,7 @@ function mod.SetupChthonicChidDisplay(room)
 	end
 
 	game.SetAlpha({ Ids = structureIds, Fraction = 1 })
+	setupChthonicChidOverlook(room, rowCount)
 end
 
 -- #endregion
