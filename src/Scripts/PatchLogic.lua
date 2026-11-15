@@ -68,6 +68,7 @@ end
 modutil.mod.Path.Wrap("DeathAreaRoomTransition", function(base, source, args)
 	LoadPackages({ Names = mod.RegisteredCrossroadsPackages })
 	LoadPackages({ Names = mod.RegisteredCardBackPackages })
+	mod.SetupChthonicChidDisplay(source)
 	normalizeCosmeticEquipState()
 
 	return base(source, args)
@@ -77,6 +78,7 @@ end)
 modutil.mod.Path.Wrap("HubPostBountyLoad", function(base, source, args)
 	LoadPackages({ Names = mod.RegisteredCrossroadsPackages })
 	LoadPackages({ Names = mod.RegisteredCardBackPackages })
+	mod.SetupChthonicChidDisplay(source)
 	normalizeCosmeticEquipState()
 
 	return base(source, args)
@@ -86,6 +88,7 @@ end)
 modutil.mod.Path.Wrap("HubPostDreamLoad", function(base, source, args)
 	LoadPackages({ Names = mod.RegisteredCrossroadsPackages })
 	LoadPackages({ Names = mod.RegisteredCardBackPackages })
+	mod.SetupChthonicChidDisplay(source)
 	normalizeCosmeticEquipState()
 
 	return base(source, args)

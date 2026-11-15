@@ -1,10 +1,16 @@
 # Changelog
 
-## v1.1.6
+## v1.2.0
 
 <!--Releasenotes start-->
-- Updated developer documentation.
+- The mod now supports adding new Chthonic Chid cosmetics. Use `RegisterChthonicChid(chidData)` to register a new Chthonic Chid. To do so, you must first open a PR to reserve slots in `mod.ChthonicChidReservations` in `src\Scripts\Utils.lua`.
+- Up to 12 Chthonic Chids can be added through mods with the current setup, which adds two new levels to the shelf.
+- A template texture can be found in `img\Chthonic Chids\Chid_template.png`.
 <!--Releasenotes end-->
+
+## v1.1.6
+
+- Updated developer documentation.
 
 ## v1.1.5
 

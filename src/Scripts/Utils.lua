@@ -32,6 +32,15 @@ mod.KnownExtraDecorBaseAnimations = {
 	-- #endregion
 }
 
+-- Mapping of Mod GUID -> Number of Chthonic Chids it adds
+-- This can be a total of *12* Chids only with two new shelf levels, otherwise new levels need to be added, or existing levels need to accommodate more Chids
+mod.ChthonicChidReservations = {
+	-- Megaera, Thanatos, Sisyphus, Orpheus, Eurydice, Achilles, Patroclus, (Persephone, Dusa, Nyx)
+	["NikkelM-Zagreus_Journey"] = 10,
+	-- Chronos
+	["JarlUlsfark-MelinoeCallsForAid"] = 1
+}
+
 mod.ValidLanguageCodes = {
 	de = true,
 	el = true,

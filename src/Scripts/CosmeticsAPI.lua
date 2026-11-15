@@ -1,13 +1,17 @@
 ---@meta NikkelM-Cosmetics_API
 -- Can add new versions of existing Alt Decor, or alternate versions of Extra Decor cosmetics
--- Cannot add completely new cosmetics
+-- Cannot add completely new cosmetics through RegisterCosmetic
 -- If your mod is uninstalled with a custom cosmetic equipped, the game will not show any asset in this location, and the player must re-equip a valid cosmetic, but the save can still be loaded
 
----Registers a new cosmetic to be added to the game.
----@param cosmeticData CosmeticData The input data for the new cosmetic item. Must be a valid CosmeticData table.
----@return boolean successfullyRegistered True if the cosmetic was successfully registered, false otherwise.
-public.RegisterCosmetic = function(cosmeticData)
+---@param cosmeticData CosmeticBaseData
+---@return boolean valid
+function mod.ValidateCosmeticData(cosmeticData)
 	-- #region Basic Input Validation
+	if type(cosmeticData) ~= "table" then
+		mod.DebugPrint("[CosmeticsAPI] Error: Cosmetic registration expects cosmeticData to be a table.", 1)
+		return false
+	end
+
 	-- Ensure required fields exist with correct types
 	local requiredFields = {
 		Id = "string",
@@ -17,8 +21,8 @@ public.RegisterCosmetic = function(cosmeticData)
 		ShopCategory = "string",
 		IconPath = "string",
 		CosmeticAnimationPath = "string",
-		CosmeticsGroup = "string",
 	}
+
 	for fieldName, fieldType in pairs(requiredFields) do
 		if cosmeticData[fieldName] == nil then
 			mod.DebugPrint("[CosmeticsAPI] Error: Missing required field '" ..
@@ -76,7 +80,12 @@ public.RegisterCosmetic = function(cosmeticData)
 			tostring(cosmeticData.Id or "Unknown"), 2)
 	end
 	-- #endregion
+	return true
+end
 
+---@param cosmeticData CosmeticData|ChthonicChidData
+---@return table|nil newGameCosmetic
+function mod.CreateCosmeticData(cosmeticData)
 	-- #region Name (Id), (Icon) IconPath, SetAnimationValue (CosmeticAnimationPath)
 	local newGameCosmetic = {
 		-- This is NOT the DisplayName field, but the internal ID
@@ -134,7 +143,7 @@ public.RegisterCosmetic = function(cosmeticData)
 	else
 		mod.DebugPrint("[CosmeticsAPI] Error: Invalid ShopCategory '" .. tostring(cosmeticData.ShopCategory) ..
 			"' in cosmetic data, cannot register cosmetic: " .. tostring(cosmeticData.Id or "Unknown"), 1)
-		return false
+		return nil
 	end
 	-- #endregion
 
@@ -206,70 +215,6 @@ public.RegisterCosmetic = function(cosmeticData)
 		newGameCosmetic.ToggleCollision = cosmeticData.ToggleCollision
 	elseif cosmeticData.ToggleCollision ~= nil then
 		mod.WarnIncorrectType("ToggleCollision", "boolean", type(cosmeticData.ToggleCollision), cosmeticData.Id)
-	end
-	-- #endregion
-
-	-- #region CosmeticsGroup
-	-- Validate the cosmetic that the group points to exists
-	if game.WorldUpgradeData[cosmeticData.CosmeticsGroup] == nil then
-		mod.DebugPrint("[CosmeticsAPI] Error: CosmeticsGroup '" .. cosmeticData.CosmeticsGroup ..
-			"' does not point to an existing cosmetic, cannot register cosmetic: " ..
-			tostring(cosmeticData.Id or "Unknown"), 1)
-		return false
-	end
-	-- This cosmetic already belongs to a group - collect all cosmetics in the same group, and add our new one to their RemoveCosmetics, as well as make all of them the RemoveCosmetics of our new one
-	if game.WorldUpgradeData[cosmeticData.CosmeticsGroup].RemoveCosmetics ~= nil then
-		-- Our cosmetic will remove all of these cosmetics when it is equipped
-		newGameCosmetic.RemoveCosmetics = game.DeepCopyTable(game.WorldUpgradeData[cosmeticData.CosmeticsGroup]
-			.RemoveCosmetics)
-		-- Make sure to also remove the cosmetic provided as the group key when equipping our new cosmetic, as it won't be in its own RemoveCosmetics list that we just copied
-		table.insert(newGameCosmetic.RemoveCosmetics, cosmeticData.CosmeticsGroup)
-	else
-		-- This cosmetic did not belong to a group yet (it was an Extra Decor cosmetic) - create a new group with just that one cosmetic and our new one
-		newGameCosmetic.RemoveCosmetics = { cosmeticData.CosmeticsGroup }
-
-		-- We also need to set a SetAnimationValue for the original cosmetic if it doesn't exist yet, otherwise unequipping the new cosmetic will not replace it with the base cosmetic animation
-		-- Some cosmetics also need additional properties overridden, so we keep a list of known required overrides
-		if not game.WorldUpgradeData[cosmeticData.CosmeticsGroup].SetAnimationValue then
-			if mod.KnownExtraDecorBaseAnimations[cosmeticData.CosmeticsGroup] then
-				for property, value in pairs(mod.KnownExtraDecorBaseAnimations[cosmeticData.CosmeticsGroup]) do
-					game.WorldUpgradeData[cosmeticData.CosmeticsGroup][property] = value
-				end
-			else
-				mod.DebugPrint(
-					"[CosmeticsAPI] Error: The cosmetic to which you are adding an alternate version (CosmeticsGroup key): '" ..
-					cosmeticData.CosmeticsGroup ..
-					"' is an \"Extra Decor\" and does not have a SetAnimationValue defined in vanilla Hades II. The Cosmetics API keeps a list of known base animations for Extra Decor cosmetics, but this cosmetic is not on it. The base animation (and potential other required properties) must be added to the API before you can add an alternative version of the cosmetic. Please find the base animation and open a PR to add it to the \"mod.KnownExtraDecorBaseAnimations\" table in the \"Scripts/Utils.lua\" file on https://github.com/NikkelM/Hades-II-CosmeticsAPI",
-					1)
-			end
-		end
-	end
-
-	-- Now, for all cosmetics in this group, add our new cosmetic to their RemoveCosmetics list
-	for _, existingCosmeticId in ipairs(newGameCosmetic.RemoveCosmetics) do
-		-- Skip adding ourselves to our own RemoveCosmetics list
-		if existingCosmeticId ~= newGameCosmetic.Name then
-			local existingCosmetic = game.WorldUpgradeData[existingCosmeticId]
-			if existingCosmetic ~= nil then
-				if existingCosmetic.RemoveCosmetics == nil then
-					existingCosmetic.RemoveCosmetics = {}
-				end
-				-- Remember, the Name key is the Id of the cosmetic
-				table.insert(existingCosmetic.RemoveCosmetics, newGameCosmetic.Name)
-			else
-				mod.DebugPrint("[CosmeticsAPI] Warning: Could not find existing cosmetic '" ..
-					existingCosmeticId ..
-					"' to add new cosmetic '" ..
-					newGameCosmetic.Name .. "' to its RemoveCosmetics list. This should not be able to happen.", 2)
-			end
-		end
-	end
-	-- #endregion
-
-	-- #region RotateOnly
-	-- Inherit RotateOnly from the group so that modded cosmetics don't show a non-functional "Remove" button in the shop UI
-	if game.WorldUpgradeData[cosmeticData.CosmeticsGroup].RotateOnly then
-		newGameCosmetic.RotateOnly = true
 	end
 	-- #endregion
 
@@ -400,6 +345,93 @@ public.RegisterCosmetic = function(cosmeticData)
 			cosmeticData.Id)
 	end
 	-- #endregion
+	return newGameCosmetic
+end
+
+---Registers a new variant of an existing cosmetic.
+---@param cosmeticData CosmeticData The input data for the new cosmetic item.
+---@return boolean successfullyRegistered True if the cosmetic was successfully registered, false otherwise.
+public.RegisterCosmetic = function(cosmeticData)
+	if not mod.ValidateCosmeticData(cosmeticData) then
+		return false
+	end
+
+	-- #region CosmeticsGroup
+	if type(cosmeticData.CosmeticsGroup) ~= "string" then
+		mod.DebugPrint(
+			"[CosmeticsAPI] Error: CosmeticsGroup must be a string in cosmetic data, cannot register cosmetic: " ..
+			cosmeticData.Id, 1)
+		return false
+	end
+
+	local newGameCosmetic = mod.CreateCosmeticData(cosmeticData)
+	if newGameCosmetic == nil then
+		return false
+	end
+
+	-- Validate the cosmetic that the group points to exists
+	if game.WorldUpgradeData[cosmeticData.CosmeticsGroup] == nil then
+		mod.DebugPrint(
+			"[CosmeticsAPI] Error: CosmeticsGroup '" ..
+			cosmeticData.CosmeticsGroup ..
+			"' does not point to an existing cosmetic, cannot register cosmetic: " .. tostring(cosmeticData.Id or "Unknown"), 1)
+		return false
+	end
+	-- This cosmetic already belongs to a group - collect all cosmetics in the same group, and add our new one to their RemoveCosmetics, as well as make all of them the RemoveCosmetics of our new one
+	if game.WorldUpgradeData[cosmeticData.CosmeticsGroup].RemoveCosmetics ~= nil then
+		-- Our cosmetic will remove all of these cosmetics when it is equipped
+		newGameCosmetic.RemoveCosmetics = game.DeepCopyTable(game.WorldUpgradeData[cosmeticData.CosmeticsGroup]
+			.RemoveCosmetics)
+		-- Make sure to also remove the cosmetic provided as the group key when equipping our new cosmetic, as it won't be in its own RemoveCosmetics list that we just copied
+		table.insert(newGameCosmetic.RemoveCosmetics, cosmeticData.CosmeticsGroup)
+	else
+		-- This cosmetic did not belong to a group yet (it was an Extra Decor cosmetic) - create a new group with just that one cosmetic and our new one
+		newGameCosmetic.RemoveCosmetics = { cosmeticData.CosmeticsGroup }
+
+		-- We also need to set a SetAnimationValue for the original cosmetic if it doesn't exist yet, otherwise unequipping the new cosmetic will not replace it with the base cosmetic animation
+		-- Some cosmetics also need additional properties overridden, so we keep a list of known required overrides
+		if not game.WorldUpgradeData[cosmeticData.CosmeticsGroup].SetAnimationValue then
+			if mod.KnownExtraDecorBaseAnimations[cosmeticData.CosmeticsGroup] then
+				for property, value in pairs(mod.KnownExtraDecorBaseAnimations[cosmeticData.CosmeticsGroup]) do
+					game.WorldUpgradeData[cosmeticData.CosmeticsGroup][property] = value
+				end
+			else
+				mod.DebugPrint(
+					"[CosmeticsAPI] Error: The cosmetic to which you are adding an alternate version (CosmeticsGroup key): '" ..
+					cosmeticData.CosmeticsGroup ..
+					"' is an \"Extra Decor\" and does not have a SetAnimationValue defined in vanilla Hades II. The Cosmetics API keeps a list of known base animations for Extra Decor cosmetics, but this cosmetic is not on it. The base animation (and potential other required properties) must be added to the API before you can add an alternative version of the cosmetic. Please find the base animation and open a PR to add it to the \"mod.KnownExtraDecorBaseAnimations\" table in the \"Scripts/Utils.lua\" file on https://github.com/NikkelM/Hades-II-CosmeticsAPI",
+					1)
+			end
+		end
+	end
+
+	-- Now, for all cosmetics in this group, add our new cosmetic to their RemoveCosmetics list
+	for _, existingCosmeticId in ipairs(newGameCosmetic.RemoveCosmetics) do
+		-- Skip adding ourselves to our own RemoveCosmetics list
+		if existingCosmeticId ~= newGameCosmetic.Name then
+			local existingCosmetic = game.WorldUpgradeData[existingCosmeticId]
+			if existingCosmetic ~= nil then
+				if existingCosmetic.RemoveCosmetics == nil then
+					existingCosmetic.RemoveCosmetics = {}
+				end
+				-- Remember, the Name key is the Id of the cosmetic
+				table.insert(existingCosmetic.RemoveCosmetics, newGameCosmetic.Name)
+			else
+				mod.DebugPrint("[CosmeticsAPI] Warning: Could not find existing cosmetic '" ..
+					existingCosmeticId ..
+					"' to add new cosmetic '" ..
+					newGameCosmetic.Name .. "' to its RemoveCosmetics list. This should not be able to happen.", 2)
+			end
+		end
+	end
+	-- #endregion
+
+	-- #region RotateOnly
+	-- Inherit RotateOnly from the group so that modded cosmetics don't show a non-functional "Remove" button in the shop UI
+	if game.WorldUpgradeData[cosmeticData.CosmeticsGroup].RotateOnly then
+		newGameCosmetic.RotateOnly = true
+	end
+	-- #endregion
 
 	-- #Cauldron-specifc: IsCauldron and CauldronLidAnimationPath
 	if cosmeticData.IsCauldron ~= nil then
@@ -430,6 +462,14 @@ public.RegisterCosmetic = function(cosmeticData)
 	end
 	-- #endregion
 
+	return mod.FinalizeCosmeticRegistration(cosmeticData, newGameCosmetic)
+end
+
+---@param cosmeticData CosmeticBaseData
+---@param newGameCosmetic table
+---@param defaultAnimationScale number|nil
+---@return boolean successfullyRegistered
+function mod.FinalizeCosmeticRegistration(cosmeticData, newGameCosmetic, defaultAnimationScale)
 	-- #region ID/Add to WorldUpgradeData - Must be done last
 	-- Equivalent to what ProcessDataStore would do
 	game.WorldUpgradeData[cosmeticData.Id] = newGameCosmetic
@@ -485,7 +525,7 @@ public.RegisterCosmetic = function(cosmeticData)
 		AnimationId = newGameCosmetic.SetAnimationValue,
 		AnimationInheritFrom = cosmeticData.AnimationInheritFrom,
 		CosmeticAnimationPath = cosmeticData.CosmeticAnimationPath,
-		AnimationScale = cosmeticData.AnimationScale or 1.0,
+		AnimationScale = cosmeticData.AnimationScale or defaultAnimationScale or 1.0,
 		AnimationOffsetX = cosmeticData.AnimationOffsetX or 0,
 		AnimationOffsetY = cosmeticData.AnimationOffsetY or 0,
 	}

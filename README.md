@@ -60,7 +60,7 @@ CosmeticsAPI.RegisterCosmetic({
 		de = "...",
 	},
 	Description = {
-		-- "{$Keywords.CosmeticSwap}:" resolves to "Alt Decor" with a tooltip for something that replaces something, "{$Keywords.CosmeticAltAdd}:" to "Extra Decor" with a tooltip that it adds or replaces something similar, and {$Keywords.CosmeticAdd} resolves to "Extra Decor" for something that did not exist before. You should not need to use CosmeticAdd, since all cosmetics added through the Cosmetics API replace an existing cosmetic.
+		-- "{$Keywords.CosmeticSwap}:" resolves to "Alt Decor" with a tooltip for something that replaces something, "{$Keywords.CosmeticAltAdd}:" to "Extra Decor" with a tooltip that it adds or replaces something similar, and {$Keywords.CosmeticAdd} resolves to "Extra Decor" for something that did not exist before. You should not need to use CosmeticAdd, since all cosmetics added through the Cosmetics API replace an existing cosmetic (with the exception of Chthonic Chids, see below).
 		en = "{$Keywords.CosmeticSwap}: Time-worn monoliths that stand tall to either side of the {#BoldFormatGraftDark}Cauldron{#Prev}.",
 		de = "...",
 	},
@@ -239,6 +239,39 @@ Textures should match vanilla dimensions exactly - the engine derives the displa
 `GUI\Screens\CardBack\CardBack10`
 
 ![GUI\Screens\CardBack\CardBack10](/img/Cardbacks/CardBack10.png)
+
+### Registering Chthonic Chids
+
+You can register a new Chthonic Chid by calling `CosmeticsAPI.RegisterChthonicChid(chidData)`, where `chidData` is a `ChthonicChidData` table.
+
+```lua
+CosmeticsAPI.RegisterChthonicChid({
+	-- You must prefix Chthonic Chid IDs with your mod GUID so the API can check if you've registered your new Chids beforehand
+	Id = _PLUGIN.guid .. "." .. "MyChid",
+	Name = {
+		en = "Chthonic Chid, Custom",
+	},
+	Description = {
+		en = "{$Keywords.CosmeticAdd}: Oddly proportioned collectable figure fashioned after no-one in particular.",
+	},
+	FlavorText = {
+		en = "“These usually have some quote as FlavorText.”",
+	},
+	Cost = {
+		CosmeticsPoints = 50,
+	},
+	CosmeticAnimationPath = "AuthorName-ModName\\FolderPath\\MyChid",
+	IconPath = "AuthorName-ModName\\FolderPath\\MyChid_Icon",
+})
+```
+
+The API controls Chid placement on the shelf and uses a default animation scale of `0.247 * 391 / 94`.
+Draw your Chid on the [provided template](img/Chthonic%20Chids/Chid_template.png), keeping the location of the baseplate where it is.
+
+Before your mod can register a new Chthonic Chid, you need to open a PR to this mod and add your exact mod GUID and Chid count to `mod.ChthonicChidReservations` in `src\Scripts\Utils.lua`.
+
+Due to the limited number of slots available for Chthonic Chids on the shelf, the API requires all mods adding Chthonic Chids to register themselves explicitly to ensure there are no conflicts when users install multiple such mods.
+At the moment, 12 new slots are available (through two new levels added to the shelf).
 
 ## Important Note & Contributing
 
