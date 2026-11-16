@@ -137,6 +137,17 @@ function mod.PrintTable(t, maxDepth, indent)
 	end
 end
 
+---Logs an error about an incorrect type in the passed cosmeticsData.
+---@param fieldName string The name of the field with the incorrect type.
+---@param expectedType string The expected type of the field.
+---@param actualType string The actual type of the field.
+---@param cosmeticId string The ID of the cosmetic data where the incorrect type was found.
+function mod.ErrorIncorrectType(fieldName, expectedType, actualType, cosmeticId)
+	mod.DebugPrint("[CosmeticsAPI] Error: Field '" .. fieldName .. "' has incorrect type '" ..
+		actualType .. "' (expected '" .. expectedType ..
+		"') in cosmetic data, cannot register cosmetic: " .. tostring(cosmeticId), 1)
+end
+
 ---Logs a warning about an incorrect type in the passed cosmeticsData.
 ---@param fieldName string The name of the field with the incorrect type.
 ---@param expectedType string The expected type of the field.

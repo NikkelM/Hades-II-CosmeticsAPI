@@ -2,7 +2,13 @@
 mod.RegisteredChthonicChids = {}
 mod.RegisteredChthonicChidCounts = {}
 
-function mod.ValidateChthonicChid(cosmeticData)
+---@param cosmeticData ChthonicChidData
+---@return boolean valid
+function mod.ValidateChthonicChidData(cosmeticData)
+	if not mod.ValidateCosmeticBaseData(cosmeticData) then
+		return false
+	end
+
 	for _, field in ipairs({ "InheritFrom", "SetAnimationIds", "DeactivateIds", "AnimationOffsetX", "AnimationOffsetY" }) do
 		if cosmeticData[field] ~= nil then
 			mod.DebugPrint("[CosmeticsAPI] Error: Chthonic Chids cannot set " .. field .. ": " .. cosmeticData.Id, 1)
@@ -37,7 +43,7 @@ public.RegisterChthonicChid = function(chidData)
 		chidData.ShopCategory = "CosmeticsShop_PreRun"
 		chidData.ActivateIds = {}
 	end
-	if not mod.ValidateCosmeticData(chidData) or not mod.ValidateChthonicChid(chidData) then
+	if not mod.ValidateChthonicChidData(chidData) then
 		return false
 	end
 

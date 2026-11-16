@@ -1,11 +1,11 @@
 ---@meta NikkelM-Cosmetics_API
 -- Can add new versions of existing Alt Decor, or alternate versions of Extra Decor cosmetics
--- Cannot add completely new cosmetics through RegisterCosmetic
--- If your mod is uninstalled with a custom cosmetic equipped, the game will not show any asset in this location, and the player must re-equip a valid cosmetic, but the save can still be loaded
+-- Can create new cosmetics groups for existing obstacles
+-- After a cosmetic mod is uninstalled, the API re-equips an owned cosmetic in if one from that mod was equipped
 
 ---@param cosmeticData CosmeticBaseData
 ---@return boolean valid
-function mod.ValidateCosmeticData(cosmeticData)
+function mod.ValidateCosmeticBaseData(cosmeticData)
 	-- #region Basic Input Validation
 	if type(cosmeticData) ~= "table" then
 		mod.DebugPrint("[CosmeticsAPI] Error: Cosmetic registration expects cosmeticData to be a table.", 1)
@@ -29,9 +29,7 @@ function mod.ValidateCosmeticData(cosmeticData)
 				fieldName .. "' in cosmetic data, cannot register cosmetic: " .. tostring(cosmeticData.Id or "Unknown"), 1)
 			return false
 		elseif type(cosmeticData[fieldName]) ~= fieldType then
-			mod.DebugPrint("[CosmeticsAPI] Error: Field '" .. fieldName .. "' has incorrect type '" ..
-				type(cosmeticData[fieldName]) .. "' (expected '" .. fieldType ..
-				"') in cosmetic data, cannot register cosmetic: " .. tostring(cosmeticData.Id or "Unknown"), 1)
+			mod.ErrorIncorrectType(fieldName, fieldType, type(cosmeticData[fieldName]), cosmeticData.Id or "Unknown")
 			return false
 		end
 	end
@@ -83,6 +81,91 @@ function mod.ValidateCosmeticData(cosmeticData)
 	return true
 end
 
+---@param cosmeticData CosmeticData
+---@return boolean valid
+function mod.ValidateCosmeticData(cosmeticData)
+	if not mod.ValidateCosmeticBaseData(cosmeticData) then
+		return false
+	end
+
+	if cosmeticData.IsCauldron == true and type(cosmeticData.CauldronLidAnimationPath) ~= "string" then
+		mod.ErrorIncorrectType("CauldronLidAnimationPath", "string", type(cosmeticData.CauldronLidAnimationPath),
+			cosmeticData.Id)
+		return false
+	end
+
+	local cosmeticsGroup = cosmeticData.CosmeticsGroup
+	if type(cosmeticsGroup) ~= "string" then
+		mod.ErrorIncorrectType("CosmeticsGroup", "string", type(cosmeticsGroup), cosmeticData.Id)
+		return false
+	end
+
+	if cosmeticsGroup == "" then
+		mod.DebugPrint(
+			"[CosmeticsAPI] Error: CosmeticsGroup must not be an empty string in cosmetic data, cannot register cosmetic: " ..
+			cosmeticData.Id, 1)
+		return false
+	end
+
+	local createCosmeticsGroup = cosmeticData.CreateCosmeticsGroup == true
+	if type(cosmeticData.RotateOnly) == "boolean" and not createCosmeticsGroup then
+		mod.DebugPrint(
+			"[CosmeticsAPI] Error: RotateOnly can only be set when creating a cosmetics group, cannot register cosmetic: " ..
+			cosmeticData.Id, 1)
+		return false
+	end
+
+	if createCosmeticsGroup and cosmeticData.RotateOnly == true and cosmeticData.AutoUnlock ~= true then
+		mod.DebugPrint(
+			"[CosmeticsAPI] Error: Creating a RotateOnly cosmetics group requires AutoUnlock = true on the cosmetic that has CreateCosmeticsGroup, cannot register cosmetic: " ..
+			cosmeticData.Id, 1)
+		return false
+	end
+
+	local groupData = game.WorldUpgradeData[cosmeticsGroup]
+	if createCosmeticsGroup then
+		if cosmeticsGroup == cosmeticData.Id or groupData ~= nil then
+			mod.DebugPrint(
+				"[CosmeticsAPI] Error: Cannot create cosmetics group '" .. cosmeticsGroup ..
+				"' because that key is already in use, cannot register cosmetic: " .. cosmeticData.Id, 1)
+			return false
+		end
+	elseif groupData == nil then
+		mod.DebugPrint(
+			"[CosmeticsAPI] Error: CosmeticsGroup '" ..
+			cosmeticsGroup ..
+			"' does not point to an existing cosmetic group, cannot register cosmetic: " ..
+			tostring(cosmeticData.Id or "Unknown"), 1)
+		return false
+	end
+
+	local rotateOnly
+	if createCosmeticsGroup then
+		rotateOnly = cosmeticData.RotateOnly == true
+	else
+		rotateOnly = groupData.RotateOnly == true
+	end
+	local inheritedGameCosmetic = {
+		Name = cosmeticData.Id,
+		InheritFrom = { "DefaultCosmeticItem" },
+	}
+	if type(cosmeticData.InheritFrom) == "table" then
+		inheritedGameCosmetic.InheritFrom = game.DeepCopyTable(cosmeticData.InheritFrom)
+	end
+	if type(cosmeticData.SetAnimationIds) == "table" then
+		inheritedGameCosmetic.SetAnimationIds = game.DeepCopyTable(cosmeticData.SetAnimationIds)
+	end
+	game.ProcessDataInheritance(inheritedGameCosmetic, game.WorldUpgradeData)
+	if inheritedGameCosmetic.SetAnimationIds ~= nil and not rotateOnly then
+		mod.DebugPrint(
+			"[CosmeticsAPI] Error: Cosmetics using SetAnimationIds require a RotateOnly cosmetics group, cannot register cosmetic: " ..
+			cosmeticData.Id, 1)
+		return false
+	end
+
+	return true
+end
+
 ---@param cosmeticData CosmeticData|ChthonicChidData
 ---@return table|nil newGameCosmetic
 function mod.CreateCosmeticData(cosmeticData)
@@ -96,7 +179,7 @@ function mod.CreateCosmeticData(cosmeticData)
 	-- #endregion
 
 	-- #region InheritFrom
-	if cosmeticData.InheritFrom ~= nil and type(cosmeticData) == "table" then
+	if type(cosmeticData.InheritFrom) == "table" then
 		newGameCosmetic.InheritFrom = cosmeticData.InheritFrom
 	else
 		newGameCosmetic.InheritFrom = { "DefaultCosmeticItem" }
@@ -120,7 +203,7 @@ function mod.CreateCosmeticData(cosmeticData)
 			if category.Name == cosmeticData.ShopCategory then
 				local insertIndex = #category + 1
 				local foundCosmeticToInsertAfter = false
-				if cosmeticData.InsertAfterCosmetic ~= nil then
+				if type(cosmeticData.InsertAfterCosmetic) == "string" then
 					for index, existingCosmeticId in ipairs(category) do
 						if existingCosmeticId == cosmeticData.InsertAfterCosmetic then
 							foundCosmeticToInsertAfter = true
@@ -135,6 +218,9 @@ function mod.CreateCosmeticData(cosmeticData)
 							"'. Inserting new cosmetic at the end of the category instead. Cosmetic ID: " ..
 							tostring(cosmeticData.Id or "Unknown"), 2)
 					end
+				elseif cosmeticData.InsertAfterCosmetic ~= nil then
+					mod.WarnIncorrectType("InsertAfterCosmetic", "string", type(cosmeticData.InsertAfterCosmetic),
+						cosmeticData.Id)
 				end
 				table.insert(category, insertIndex, newGameCosmetic.Name)
 				break
@@ -348,7 +434,7 @@ function mod.CreateCosmeticData(cosmeticData)
 	return newGameCosmetic
 end
 
----Registers a new variant of an existing cosmetic.
+---Registers a cosmetic, either as a variant in an existing group or as the creator of a new group.
 ---@param cosmeticData CosmeticData The input data for the new cosmetic item.
 ---@return boolean successfullyRegistered True if the cosmetic was successfully registered, false otherwise.
 public.RegisterCosmetic = function(cosmeticData)
@@ -356,49 +442,59 @@ public.RegisterCosmetic = function(cosmeticData)
 		return false
 	end
 
+	for _, fieldName in ipairs({ "CreateCosmeticsGroup", "AutoUnlock", "RotateOnly", "IsCauldron" }) do
+		if cosmeticData[fieldName] ~= nil and type(cosmeticData[fieldName]) ~= "boolean" then
+			mod.WarnIncorrectType(fieldName, "boolean", type(cosmeticData[fieldName]), cosmeticData.Id)
+		end
+	end
+
 	-- #region CosmeticsGroup
-	if type(cosmeticData.CosmeticsGroup) ~= "string" then
-		mod.DebugPrint(
-			"[CosmeticsAPI] Error: CosmeticsGroup must be a string in cosmetic data, cannot register cosmetic: " ..
-			cosmeticData.Id, 1)
-		return false
+	local cosmeticsGroup = cosmeticData.CosmeticsGroup
+	local createCosmeticsGroup = cosmeticData.CreateCosmeticsGroup == true
+	local groupData = game.WorldUpgradeData[cosmeticsGroup]
+	local rotateOnly
+	if createCosmeticsGroup then
+		rotateOnly = cosmeticData.RotateOnly == true
+	else
+		rotateOnly = groupData.RotateOnly == true
 	end
 
 	local newGameCosmetic = mod.CreateCosmeticData(cosmeticData)
 	if newGameCosmetic == nil then
 		return false
 	end
+	newGameCosmetic.RotateOnly = rotateOnly
 
-	-- Validate the cosmetic that the group points to exists
-	if game.WorldUpgradeData[cosmeticData.CosmeticsGroup] == nil then
+	if createCosmeticsGroup then
+		groupData = {
+			RotateOnly = rotateOnly,
+		}
+		game.WorldUpgradeData[cosmeticsGroup] = groupData
 		mod.DebugPrint(
-			"[CosmeticsAPI] Error: CosmeticsGroup '" ..
-			cosmeticData.CosmeticsGroup ..
-			"' does not point to an existing cosmetic, cannot register cosmetic: " .. tostring(cosmeticData.Id or "Unknown"), 1)
-		return false
+			"[CosmeticsAPI] Creating new cosmetics group '" .. cosmeticsGroup ..
+			"' from cosmetic '" .. cosmeticData.Id .. "'.", 3)
 	end
 	-- This cosmetic already belongs to a group - collect all cosmetics in the same group, and add our new one to their RemoveCosmetics, as well as make all of them the RemoveCosmetics of our new one
-	if game.WorldUpgradeData[cosmeticData.CosmeticsGroup].RemoveCosmetics ~= nil then
+	if groupData.RemoveCosmetics ~= nil then
 		-- Our cosmetic will remove all of these cosmetics when it is equipped
-		newGameCosmetic.RemoveCosmetics = game.DeepCopyTable(game.WorldUpgradeData[cosmeticData.CosmeticsGroup]
-			.RemoveCosmetics)
+		newGameCosmetic.RemoveCosmetics = game.DeepCopyTable(groupData.RemoveCosmetics)
 		-- Make sure to also remove the cosmetic provided as the group key when equipping our new cosmetic, as it won't be in its own RemoveCosmetics list that we just copied
-		table.insert(newGameCosmetic.RemoveCosmetics, cosmeticData.CosmeticsGroup)
+		table.insert(newGameCosmetic.RemoveCosmetics, cosmeticsGroup)
 	else
 		-- This cosmetic did not belong to a group yet (it was an Extra Decor cosmetic) - create a new group with just that one cosmetic and our new one
-		newGameCosmetic.RemoveCosmetics = { cosmeticData.CosmeticsGroup }
+		newGameCosmetic.RemoveCosmetics = { cosmeticsGroup }
 
 		-- We also need to set a SetAnimationValue for the original cosmetic if it doesn't exist yet, otherwise unequipping the new cosmetic will not replace it with the base cosmetic animation
 		-- Some cosmetics also need additional properties overridden, so we keep a list of known required overrides
-		if not game.WorldUpgradeData[cosmeticData.CosmeticsGroup].SetAnimationValue then
-			if mod.KnownExtraDecorBaseAnimations[cosmeticData.CosmeticsGroup] then
-				for property, value in pairs(mod.KnownExtraDecorBaseAnimations[cosmeticData.CosmeticsGroup]) do
-					game.WorldUpgradeData[cosmeticData.CosmeticsGroup][property] = value
+		if not createCosmeticsGroup and not groupData.SetAnimationValue then
+			if mod.KnownExtraDecorBaseAnimations[cosmeticsGroup] then
+				for property, value in pairs(mod.KnownExtraDecorBaseAnimations[cosmeticsGroup]) do
+					groupData[property] = value
 				end
 			else
 				mod.DebugPrint(
 					"[CosmeticsAPI] Error: The cosmetic to which you are adding an alternate version (CosmeticsGroup key): '" ..
-					cosmeticData.CosmeticsGroup ..
+					cosmeticsGroup ..
 					"' is an \"Extra Decor\" and does not have a SetAnimationValue defined in vanilla Hades II. The Cosmetics API keeps a list of known base animations for Extra Decor cosmetics, but this cosmetic is not on it. The base animation (and potential other required properties) must be added to the API before you can add an alternative version of the cosmetic. Please find the base animation and open a PR to add it to the \"mod.KnownExtraDecorBaseAnimations\" table in the \"Scripts/Utils.lua\" file on https://github.com/NikkelM/Hades-II-CosmeticsAPI",
 					1)
 			end
@@ -426,43 +522,36 @@ public.RegisterCosmetic = function(cosmeticData)
 	end
 	-- #endregion
 
-	-- #region RotateOnly
-	-- Inherit RotateOnly from the group so that modded cosmetics don't show a non-functional "Remove" button in the shop UI
-	if game.WorldUpgradeData[cosmeticData.CosmeticsGroup].RotateOnly then
-		newGameCosmetic.RotateOnly = true
-	end
-	-- #endregion
-
 	-- #Cauldron-specifc: IsCauldron and CauldronLidAnimationPath
-	if cosmeticData.IsCauldron ~= nil then
-		if type(cosmeticData.IsCauldron) == "boolean" then
-			if cosmeticData.IsCauldron then
-				-- If this is a cauldron, CauldronLidAnimationPath is required
-				if cosmeticData.CauldronLidAnimationPath ~= nil and type(cosmeticData.CauldronLidAnimationPath) == "string" then
-					mod.RegisteredCauldrons[cosmeticData.Id] = cosmeticData.CauldronLidAnimationPath
-					-- In case the user forgot to set the ActiveFunctionName, set it for them
-					-- But don't overwrite it if they set it to something custom
-					if newGameCosmetic.ActivateFunctionName == nil then
-						newGameCosmetic.ActivateFunctionName = "ApplyCauldronCookTopGraphic"
-					end
-				else
-					mod.DebugPrint(
-						"[CosmeticsAPI] Error: CauldronLidAnimationPath is required for cauldron cosmetics, cannot register cosmetic: " ..
-						tostring(cosmeticData.Id or "Unknown"), 1)
-					return false
-				end
-			end
-		else
-			mod.WarnIncorrectType("IsCauldron", "boolean", type(cosmeticData.IsCauldron), cosmeticData.Id)
+	if cosmeticData.IsCauldron == true then
+		mod.RegisteredCauldrons[cosmeticData.Id] = cosmeticData.CauldronLidAnimationPath
+		-- In case the user forgot to set the ActiveFunctionName, set it for them
+		-- But don't overwrite it if they set it to something custom
+		if newGameCosmetic.ActivateFunctionName == nil then
+			newGameCosmetic.ActivateFunctionName = "ApplyCauldronCookTopGraphic"
 		end
 	elseif cosmeticData.CauldronLidAnimationPath ~= nil then
-		mod.DebugPrint(
-			"[CosmeticsAPI] Warning: CauldronLidAnimationPath is set but IsCauldron is not true, ignoring CauldronLidAnimationPath for cosmetic: " ..
-			tostring(cosmeticData.Id or "Unknown"), 2)
+		if type(cosmeticData.CauldronLidAnimationPath) ~= "string" then
+			mod.WarnIncorrectType("CauldronLidAnimationPath", "string", type(cosmeticData.CauldronLidAnimationPath),
+				cosmeticData.Id)
+		elseif cosmeticData.IsCauldron == nil then
+			mod.DebugPrint(
+				"[CosmeticsAPI] Warning: CauldronLidAnimationPath is set but IsCauldron is not true, ignoring CauldronLidAnimationPath for cosmetic: " ..
+				tostring(cosmeticData.Id or "Unknown"), 2)
+		end
 	end
 	-- #endregion
 
-	return mod.FinalizeCosmeticRegistration(cosmeticData, newGameCosmetic)
+	local successfullyRegistered = mod.FinalizeCosmeticRegistration(cosmeticData, newGameCosmetic)
+	if not successfullyRegistered then
+		return false
+	end
+
+	if cosmeticData.AutoUnlock == true then
+		table.insert(game.GameData.WorldUpgradeAutomaticUnlocks, cosmeticData.Id)
+	end
+
+	return true
 end
 
 ---@param cosmeticData CosmeticBaseData
