@@ -127,7 +127,7 @@ CosmeticsAPI.RegisterCosmetic({
 ### Creating a new cosmetics group
 
 To create a new cosmetics group, set `CreateCosmeticsGroup = true` on the first cosmetic registered for the new group.
-Set `CosmeticsGroup` to a key that does not exist in vanilla, and prefix it with your `_PLUGIN.guid`.
+Set `CosmeticsGroup` to a key that does not exist in vanilla, preferably set to the name of the vanilla cosmetic's animation (so it is easy to reuse by other mods if both want to add variants).
 
 When creating a group with `RotateOnly = true`, you must also set `AutoUnlock = true`, as the default for a rotation-only group is always already unlocked/visible.
 The game will hide this auto-unlocked cosmetic in the shop until the player buys a variant of the cosmetic, at which point it will become visible so the player can switch back to it.
@@ -154,8 +154,8 @@ CosmeticsAPI.RegisterCosmetic({
 	},
 	ShopCategory = "CosmeticsShop_PreRun",
 	InsertAfterCosmetic = "Cosmetic_SkellyFloor01c",
-	-- The name of the new group
-	CosmeticsGroup = _PLUGIN.guid .. "." .. "Cosmetic_TarotLight",
+	-- The name of the new group - recommended to set to the name of the vanilla cosmetic's animation so it is easy to reuse by other mods
+	CosmeticsGroup = "Crossroads_CardAltar_Terrain_On01",
 	CreateCosmeticsGroup = true,
 	AutoUnlock = true,
 	RotateOnly = true,
@@ -191,7 +191,7 @@ CosmeticsAPI.RegisterCosmetic({
 
 If your new cosmetic group is for an obstacle that doesn't exist in vanilla, you must spawn it through your mod yourself and ensure the ObjectIds match.
 
-If you and another mod both want to add variants for the same vanilla obstacle, both mods should agree on a `CosmeticsGroup` name (that then shouldn't contain the mods' `_PLUGIN.guid` as both would create a different group), and both should check if it already exists (registered by the other mod) before attempting to create it.
+If you and another mod both want to add variants for the same vanilla obstacle, both mods should agree on a `CosmeticsGroup` name (preferably the name of the vanilla cosmetic's animation), and both should check if the new default cosmetic/the new group already exists ( if registered by the other mod first) before attempting to create it.
 Do this by checking `game.WorldUpgradeData[cosmeticsGroupNameYouAgreedOn]`.
 
 ### Registering Card Back Packs
