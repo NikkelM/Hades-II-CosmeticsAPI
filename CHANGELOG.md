@@ -1,12 +1,17 @@
 # Changelog
 
-## v2.0.0
+## v2.1.0
 
 <!--Releasenotes start-->
+- Added support for `ActivateFunctionArgs`.
+- Added support for `OnRevealFunctionArgs`.
+<!--Releasenotes end-->
+
+## v2.0.0
+
 - The mod now supports turning existing vanilla obstacles or mod-spawned obstacles into cosmetics.
 - To create a new cosmetics group from an obstacle, define it as a cosmetic and set the `CreateCosmeticsGroup` property to `true`.
 - See the Readme for the full guidance and restrictions.
-<!--Releasenotes end-->
 
 ## v1.2.0
 

@@ -21,7 +21,9 @@ local public = {}
 ---@field AlwaysRevealImmediately boolean|nil If true, this cosmetic will be shown as purchaseable as soon as it's GameStateRequirements are met. If false, the game will wait until the next run to reveal the cosmetic in the shop. Defaults to false.
 ---@field CameraFocusId integer|nil If set, the camera will pan to this ID when equipping the cosmetic. Use to override panning to the first ID in SetAnimationIds or ActivateIds.
 ---@field ActivateFunctionName string|nil The name of a function to call whenever the cosmetic is equipped. You can use <_PLUGIN.guid .. "." .. "YourModFunctionName"> to reference a function in your mod's namespace. If nil, no function is called.
+---@field ActivateFunctionArgs table|nil Optional arguments passed as the second parameter to the ActivateFunctionName, after the cosmetic's item data.
 ---@field OnRevealFunctionName string|nil The name of a function to call after the cosmetic is revealed, but before the camera pans back to Melinoe. You can use <_PLUGIN.guid .. "." .. "YourModFunctionName"> to reference a function in your mod's namespace. If nil, no function is called.
+---@field OnRevealFunctionArgs table|nil Optional arguments passed as the only parameter to the OnRevealFunctionName.
 ---@field PanDuration number|nil The duration of the panning from Melinoe's location to the cosmetic's location in the Crossroads. If nil, defaults to 1 second.
 ---@field PreActivationHoldDuration number|nil The duration to hold before activating the cosmetic after panning to its location. If nil, defaults to 0.5 seconds.
 ---@field PostActivationHoldDuration number|nil The duration to hold after the new cosmetic is revealed. If nil, defaults to 1.5 seconds.

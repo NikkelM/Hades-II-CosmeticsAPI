@@ -304,19 +304,29 @@ function mod.CreateCosmeticData(cosmeticData)
 	end
 	-- #endregion
 
-	-- #region ActivateFunctionName
+	-- #region Activation callback
 	if cosmeticData.ActivateFunctionName ~= nil and type(cosmeticData.ActivateFunctionName) == "string" then
 		newGameCosmetic.ActivateFunctionName = cosmeticData.ActivateFunctionName
 	elseif cosmeticData.ActivateFunctionName ~= nil then
 		mod.WarnIncorrectType("ActivateFunctionName", "string", type(cosmeticData.ActivateFunctionName), cosmeticData.Id)
 	end
+	if type(cosmeticData.ActivateFunctionArgs) == "table" then
+		newGameCosmetic.ActivateFunctionArgs = cosmeticData.ActivateFunctionArgs
+	elseif cosmeticData.ActivateFunctionArgs ~= nil then
+		mod.WarnIncorrectType("ActivateFunctionArgs", "table", type(cosmeticData.ActivateFunctionArgs), cosmeticData.Id)
+	end
 	-- #endregion
 
-	-- #region OnRevealFunctionName
+	-- #region Reveal callback
 	if cosmeticData.OnRevealFunctionName ~= nil and type(cosmeticData.OnRevealFunctionName) == "string" then
 		newGameCosmetic.OnRevealFunctionName = cosmeticData.OnRevealFunctionName
 	elseif cosmeticData.OnRevealFunctionName ~= nil then
 		mod.WarnIncorrectType("OnRevealFunctionName", "string", type(cosmeticData.OnRevealFunctionName), cosmeticData.Id)
+	end
+	if type(cosmeticData.OnRevealFunctionArgs) == "table" then
+		newGameCosmetic.OnRevealFunctionArgs = cosmeticData.OnRevealFunctionArgs
+	elseif cosmeticData.OnRevealFunctionArgs ~= nil then
+		mod.WarnIncorrectType("OnRevealFunctionArgs", "table", type(cosmeticData.OnRevealFunctionArgs), cosmeticData.Id)
 	end
 	-- #endregion
 
