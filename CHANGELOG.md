@@ -1,14 +1,18 @@
 # Changelog
 
-## v2.1.0
+## v2.1.1
 
 <!--Releasenotes start-->
+- Fixed the new levels of the Chthonic Chids display shelf spawning as soon as another mod registers a Chid, even if the original shelf is not yet unlocked.
+<!--Releasenotes end-->
+
+## v2.1.0
+
 - Added support for `ActivateFunctionArgs`.
 - Added support for `OnRevealFunctionArgs`.
 - Cosmetics that create a new group can no longer pass `CosmeticsGroup`, and will instead create the group from their ID. The ID should be prefixed with `ModCosmetic_`.
 - Fixed Arcana card layouts becoming unselectable if they have a modded card back equipped and the game is started without the mod that adds the card back.
 - Removed the `enabled` config option.
-<!--Releasenotes end-->
 
 ## v2.0.0
 

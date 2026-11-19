@@ -95,6 +95,10 @@ end
 
 -- #region DistanceTrigger/"Overlook"
 function mod.EnterChthonicChidOverlook(room, args)
+	if not game.GameState.WorldUpgrades.Cosmetic_CollectableShelf then
+		return
+	end
+
 	game.LockCamera({
 		Id = game.CurrentRun.Hero.ObjectId,
 		OffsetX = -50,
@@ -106,6 +110,10 @@ function mod.EnterChthonicChidOverlook(room, args)
 end
 
 function mod.LeaveChthonicChidOverlook(room)
+	if not game.GameState.WorldUpgrades.Cosmetic_CollectableShelf then
+		return
+	end
+
 	game.LockCamera({
 		Id = game.CurrentRun.Hero.ObjectId,
 		OffsetX = 0,
@@ -256,8 +264,16 @@ function mod.SetupChthonicChidDisplay(room)
 		game.SetAnimation({ DestinationId = id, Name = cosmetic.SetAnimationValue })
 	end
 
-	game.SetAlpha({ Ids = structureIds, Fraction = 1 })
+	game.WorldUpgradeData.Cosmetic_CollectableShelf.ActivateFunctionName = _PLUGIN.guid .. "." .. "RevealChthonicChidDisplay"
+	game.WorldUpgradeData.Cosmetic_CollectableShelf.ActivateFunctionArgs = { StructureIds = structureIds }
+	if game.GameState.WorldUpgrades.Cosmetic_CollectableShelf then
+		game.SetAlpha({ Ids = structureIds, Fraction = 1 })
+	end
 	setupChthonicChidOverlook(room, rowCount)
+end
+
+function mod.RevealChthonicChidDisplay(shelf, args)
+	game.SetAlpha({ Ids = args.StructureIds, Fraction = 1 })
 end
 
 -- #endregion
