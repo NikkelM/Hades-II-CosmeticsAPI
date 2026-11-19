@@ -21,6 +21,38 @@ local function allocateTextureNum(cardBackId)
 	return textureNum
 end
 
+function mod.GetCardBack(index)
+	local textureNum = (game.GameState.MetaUpgradeLayoutsArt or {})[index] or 1
+
+	if textureNum == 1 then
+		local saved = game.GameState.ModsNikkelMCosmeticsAPI.CardBacks
+		local cardBack = mod.RegisteredCardBacks[saved[index]]
+		if cardBack then
+			return cardBack.TextureNum
+		end
+	end
+
+	return textureNum
+end
+
+function mod.SelectCardBack(index, textureNum)
+	local id
+	for cardBackId, cardBack in pairs(mod.RegisteredCardBacks) do
+		if cardBack.TextureNum == textureNum then
+			id = cardBackId
+			break
+		end
+	end
+
+	game.GameState.ModsNikkelMCosmeticsAPI.CardBacks[index] = id
+	game.GameState.MetaUpgradeLayoutsArt[index] = id and 1 or textureNum
+end
+
+public.lovely_env = {
+	GetCardBack = mod.GetCardBack,
+	SelectCardBack = mod.SelectCardBack,
+}
+
 ---Registers a new card back pack to be added to the cosmetics shop in the Training Grounds.
 ---A pack is a cosmetic item that, when purchased, unlocks all card backs registered for it via `RegisterCardBack`.
 ---Must be called before registering any card backs that belong to this pack.
@@ -231,7 +263,7 @@ end
 ---Registers an individual card back. The card back is unlocked when its associated pack is purchased in the shop.
 ---The pack must be registered via `RegisterCardBackPack` before calling this function.
 ---The API auto-assigns a deterministic TextureNum derived from the card back's string ID, ensuring the same ID always maps to the same number regardless of mod load order.
----This TextureNum is used internally for animation name lookup and save persistence (GameState.MetaUpgradeLayoutsArt).
+---This TextureNum is used internally for animation name lookup.
 ---@param cardBackData CardBackData The input data for the new card back.
 ---@return boolean successfullyRegistered True if the card back was successfully registered, false otherwise.
 public.RegisterCardBack = function(cardBackData)

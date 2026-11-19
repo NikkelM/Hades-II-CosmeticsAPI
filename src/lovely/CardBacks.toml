@@ -1,0 +1,60 @@
+[manifest]
+version = "1.0.0"
+priority = 0
+
+[vars]
+cosmeticsAPIEnv = "rom.mods['NikkelM-Cosmetics_API'].lovely_env"
+
+[[patches]]
+[patches.pattern]
+target = "MetaUpgradeCardScreenLogic.lua"
+pattern = "if (GameState.MetaUpgradeLayoutsArt[screen.SwappingLayoutArtIndex] or 1) == option.TextureNum then"
+position = "at"
+payload = "if {{lovely:cosmeticsAPIEnv}}.GetCardBack( screen.SwappingLayoutArtIndex ) == option.TextureNum then"
+match_indent = true
+times = 1
+
+[[patches]]
+[patches.pattern]
+target = "MetaUpgradeCardScreenLogic.lua"
+pattern = "if (GameState.MetaUpgradeLayoutsArt[screen.SwappingLayoutArtIndex] or 1) == button.TextureNum then"
+position = "at"
+payload = "if {{lovely:cosmeticsAPIEnv}}.GetCardBack( screen.SwappingLayoutArtIndex ) == button.TextureNum then"
+match_indent = true
+times = 2
+
+[[patches]]
+[patches.pattern]
+target = "MetaUpgradeCardScreenLogic.lua"
+pattern = "GameState.MetaUpgradeLayoutsArt[screen.SwappingLayoutArtIndex] = button.TextureNum"
+position = "at"
+payload = "{{lovely:cosmeticsAPIEnv}}.SelectCardBack( screen.SwappingLayoutArtIndex, button.TextureNum )"
+match_indent = true
+times = 1
+
+[[patches]]
+[patches.pattern]
+target = "MetaUpgradeCardScreenPresentation.lua"
+pattern = 'SetAnimation({ DestinationId = slotComponent.Id, Name = "DeckArt_Mouseover_"..GetTwoDigitString( GameState.MetaUpgradeLayoutsArt[i] or 1 ) })'
+position = "at"
+payload = 'SetAnimation({ DestinationId = slotComponent.Id, Name = "DeckArt_Mouseover_"..GetTwoDigitString( {{lovely:cosmeticsAPIEnv}}.GetCardBack( i ) ) })'
+match_indent = true
+times = 1
+
+[[patches]]
+[patches.pattern]
+target = "MetaUpgradeCardScreenPresentation.lua"
+pattern = 'SetAnimation({ DestinationId = slotComponent.Id, Name = "DeckArt_"..GetTwoDigitString( GameState.MetaUpgradeLayoutsArt[i] or 1 ) })'
+position = "at"
+payload = 'SetAnimation({ DestinationId = slotComponent.Id, Name = "DeckArt_"..GetTwoDigitString( {{lovely:cosmeticsAPIEnv}}.GetCardBack( i ) ) })'
+match_indent = true
+times = 1
+
+[[patches]]
+[patches.pattern]
+target = "EventPresentation.lua"
+pattern = "cardBackIndex = GameState.MetaUpgradeLayoutsArt[GameState.CurrentMetaUpgradeLayout] or 1"
+position = "at"
+payload = "cardBackIndex = {{lovely:cosmeticsAPIEnv}}.GetCardBack( GameState.CurrentMetaUpgradeLayout )"
+match_indent = true
+times = 1

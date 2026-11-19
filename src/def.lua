@@ -107,7 +107,7 @@ public.RegisterCardBackPack = function(packData) end
 ---Registers an individual card back. The card back is unlocked when its associated pack is purchased in the shop.
 ---The pack must be registered via `RegisterCardBackPack` before calling this function.
 ---The API auto-assigns a deterministic TextureNum derived from the card back's string ID, ensuring the same ID always maps to the same number regardless of mod load order.
----This TextureNum is used internally for animation name lookup and save persistence (GameState.MetaUpgradeLayoutsArt).
+---This TextureNum is used internally for animation name lookup.
 ---@param cardBackData CardBackData The input data for the new card back.
 ---@return boolean successfullyRegistered True if the card back was successfully registered, false otherwise.
 public.RegisterCardBack = function(cardBackData) end

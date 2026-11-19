@@ -6,6 +6,8 @@
 - Added support for `ActivateFunctionArgs`.
 - Added support for `OnRevealFunctionArgs`.
 - Cosmetics that create a new group can no longer pass `CosmeticsGroup`, and will instead create the group from their ID. The ID should be prefixed with `ModCosmetic_`.
+- Fixed Arcana card layouts becoming unselectable if they have a modded card back equipped and the game is started without the mod that adds the card back.
+- Removed the `enabled` config option.
 <!--Releasenotes end-->
 
 ## v2.0.0

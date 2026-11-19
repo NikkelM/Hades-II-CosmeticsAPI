@@ -130,7 +130,7 @@ function mod.CardBackUpdatePageVisibility(screen)
 	local spacingY = screen.LayoutSetArtOptionsSpacingY or DEFAULT_SPACING_Y
 	local newIconOffsetX = screen.LayoutSetArtOptionsNewIconOffsetX or DEFAULT_NEW_ICON_OFFSET_X
 	local newIconOffsetY = screen.LayoutSetArtOptionsNewIconOffsetY or DEFAULT_NEW_ICON_OFFSET_Y
-	local currentTextureNum = game.GameState.MetaUpgradeLayoutsArt[screen.SwappingLayoutArtIndex] or 1
+	local currentTextureNum = mod.GetCardBack(screen.SwappingLayoutArtIndex)
 	local highlightPlaced = false
 
 	for displayIndex, optionInfo in ipairs(eligibleOptions) do
@@ -276,7 +276,7 @@ modutil.mod.Path.Wrap("MetaUpgradeCardScreenLayoutSetSwapOpen", function(base, s
 
 	screen.CosmeticsAPI_EligibleOptions = eligibleOptions
 
-	local currentTextureNum = game.GameState.MetaUpgradeLayoutsArt[screen.SwappingLayoutArtIndex] or 1
+	local currentTextureNum = mod.GetCardBack(screen.SwappingLayoutArtIndex)
 	local startPage = 1
 	for displayIdx, optionInfo in ipairs(eligibleOptions) do
 		if optionInfo.textureNum == currentTextureNum then

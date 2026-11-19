@@ -44,7 +44,6 @@ public.config = config -- so other mods can access our config
 
 local function on_ready()
 	mod = modutil.mod.Mod.Register(_PLUGIN.guid)
-	if config.enabled == false then return end
 
 	import "Scripts/Utils.lua"
 
@@ -60,17 +59,13 @@ end
 -- Loaded after all other mods
 -- Define static Context Wraps in here to prevent issues as per https://github.com/SGG-Modding/ModUtil/issues/12
 local function on_ready_late()
-	if config.enabled == false then return end
-
 	import "Scripts/SjsonHooks.lua"
 end
 
 local function on_reload()
-	if config.enabled == false then return end
 end
 
 local function on_reload_late()
-	if config.enabled == false then return end
 end
 
 -- this allows us to limit certain functions to not be reloaded.
