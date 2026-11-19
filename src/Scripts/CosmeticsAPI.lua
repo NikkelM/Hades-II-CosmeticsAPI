@@ -34,6 +34,11 @@ function mod.ValidateCosmeticBaseData(cosmeticData)
 		end
 	end
 
+	if cosmeticData.Id == "" then
+		mod.DebugPrint("[CosmeticsAPI] Error: Id must not be an empty string, cannot register cosmetic.", 1)
+		return false
+	end
+
 	-- Ensure no cosmetic with this ID already exists
 	if game.WorldUpgradeData[cosmeticData.Id] ~= nil then
 		mod.DebugPrint("[CosmeticsAPI] Error: A cosmetic with ID '" .. cosmeticData.Id ..
@@ -95,19 +100,24 @@ function mod.ValidateCosmeticData(cosmeticData)
 	end
 
 	local cosmeticsGroup = cosmeticData.CosmeticsGroup
-	if type(cosmeticsGroup) ~= "string" then
+	local createCosmeticsGroup = cosmeticData.CreateCosmeticsGroup == true
+	if createCosmeticsGroup then
+		if cosmeticsGroup ~= nil then
+			mod.DebugPrint(
+				"[CosmeticsAPI] Error: Omit CosmeticsGroup when CreateCosmeticsGroup is true. The cosmetic's Id is the group anchor: " ..
+				cosmeticData.Id, 1)
+			return false
+		end
+	elseif type(cosmeticsGroup) ~= "string" then
 		mod.ErrorIncorrectType("CosmeticsGroup", "string", type(cosmeticsGroup), cosmeticData.Id)
 		return false
-	end
-
-	if cosmeticsGroup == "" then
+	elseif cosmeticsGroup == "" then
 		mod.DebugPrint(
 			"[CosmeticsAPI] Error: CosmeticsGroup must not be an empty string in cosmetic data, cannot register cosmetic: " ..
 			cosmeticData.Id, 1)
 		return false
 	end
 
-	local createCosmeticsGroup = cosmeticData.CreateCosmeticsGroup == true
 	if type(cosmeticData.RotateOnly) == "boolean" and not createCosmeticsGroup then
 		mod.DebugPrint(
 			"[CosmeticsAPI] Error: RotateOnly can only be set when creating a cosmetics group, cannot register cosmetic: " ..
@@ -123,14 +133,7 @@ function mod.ValidateCosmeticData(cosmeticData)
 	end
 
 	local groupData = game.WorldUpgradeData[cosmeticsGroup]
-	if createCosmeticsGroup then
-		if cosmeticsGroup == cosmeticData.Id or groupData ~= nil then
-			mod.DebugPrint(
-				"[CosmeticsAPI] Error: Cannot create cosmetics group '" .. cosmeticsGroup ..
-				"' because that key is already in use, cannot register cosmetic: " .. cosmeticData.Id, 1)
-			return false
-		end
-	elseif groupData == nil then
+	if not createCosmeticsGroup and groupData == nil then
 		mod.DebugPrint(
 			"[CosmeticsAPI] Error: CosmeticsGroup '" ..
 			cosmeticsGroup ..
@@ -476,17 +479,10 @@ public.RegisterCosmetic = function(cosmeticData)
 	newGameCosmetic.RotateOnly = rotateOnly
 
 	if createCosmeticsGroup then
-		groupData = {
-			RotateOnly = rotateOnly,
-		}
-		game.WorldUpgradeData[cosmeticsGroup] = groupData
-		mod.DebugPrint(
-			"[CosmeticsAPI] Creating new cosmetics group '" .. cosmeticsGroup ..
-			"' from cosmetic '" .. cosmeticData.Id .. "'.", 3)
-	end
-	-- This cosmetic already belongs to a group - collect all cosmetics in the same group, and add our new one to their RemoveCosmetics, as well as make all of them the RemoveCosmetics of our new one
-	if groupData.RemoveCosmetics ~= nil then
-		-- Our cosmetic will remove all of these cosmetics when it is equipped
+		newGameCosmetic.RemoveCosmetics = {}
+		mod.DebugPrint("[CosmeticsAPI] Creating new cosmetics group from cosmetic '" .. cosmeticData.Id .. "'.", 3)
+	elseif groupData.RemoveCosmetics ~= nil then
+		-- Copy the anchor's sibling list so equipping the new cosmetic removes the other group members
 		newGameCosmetic.RemoveCosmetics = game.DeepCopyTable(groupData.RemoveCosmetics)
 		-- Make sure to also remove the cosmetic provided as the group key when equipping our new cosmetic, as it won't be in its own RemoveCosmetics list that we just copied
 		table.insert(newGameCosmetic.RemoveCosmetics, cosmeticsGroup)
@@ -496,7 +492,7 @@ public.RegisterCosmetic = function(cosmeticData)
 
 		-- We also need to set a SetAnimationValue for the original cosmetic if it doesn't exist yet, otherwise unequipping the new cosmetic will not replace it with the base cosmetic animation
 		-- Some cosmetics also need additional properties overridden, so we keep a list of known required overrides
-		if not createCosmeticsGroup and not groupData.SetAnimationValue then
+		if not groupData.SetAnimationValue then
 			if mod.KnownExtraDecorBaseAnimations[cosmeticsGroup] then
 				for property, value in pairs(mod.KnownExtraDecorBaseAnimations[cosmeticsGroup]) do
 					groupData[property] = value

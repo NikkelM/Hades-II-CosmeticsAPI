@@ -129,7 +129,9 @@ CosmeticsAPI.RegisterCosmetic({
 ### Creating a new cosmetics group
 
 To create a new cosmetics group, set `CreateCosmeticsGroup = true` on the first cosmetic registered for the new group.
-Set `CosmeticsGroup` to a key that does not exist in vanilla, preferably set to the name of the vanilla cosmetic's animation (so it is easy to reuse by other mods if both want to add variants).
+This cosmetic's `Id` serves as the group anchor, and others in the group should use it as their `CosmeticsGroup` key.
+
+It is recommended to set the `Id` of such a group-creating cosmetic to the vanilla obstacle's animation name, prefixed with with `ModCosmetic_`, **not** your mod's GUID, as it should be easily identifiable and deduplicated across mods.
 
 When creating a group with `RotateOnly = true`, you must also set `AutoUnlock = true`, as the default for a rotation-only group is always already unlocked/visible.
 The game will hide this auto-unlocked cosmetic in the shop until the player buys a variant of the cosmetic, at which point it will become visible so the player can switch back to it.
@@ -142,32 +144,34 @@ Registering the existing animation as a cosmetic ensures that players can always
 For example, the two registrations below turn the "hover" highlight when Melinoë approaches the Altar of Ashes into two cosmetics - the default animation, and a new animation variant.
 
 ```lua
-CosmeticsAPI.RegisterCosmetic({
-	-- Decide on some name for the default appearance of the vanilla obstacle animation
-	Id = _PLUGIN.guid .. "." .. "Cosmetic_TarotLight_Default",
-	Name = {
-		en = "Tarot Light, Green",
-	},
-	Description = {
-		en = "{$Keywords.CosmeticSwap}: An eery green glow that surrounds the Altar of Ashes when the Princess approaches.",
-	},
-	FlavorText = {
-		en = "A familiar light, kept as it was.",
-	},
-	ShopCategory = "CosmeticsShop_PreRun",
-	InsertAfterCosmetic = "Cosmetic_SkellyFloor01c",
-	-- The name of the new group - recommended to set to the name of the vanilla cosmetic's animation so it is easy to reuse by other mods
-	CosmeticsGroup = "Crossroads_CardAltar_Terrain_On01",
-	CreateCosmeticsGroup = true,
-	AutoUnlock = true,
-	RotateOnly = true,
-	-- This is the ID of the vanilla obstacle
-	SetAnimationIds = { 588748 },
+-- First ensure no other mod has already registered this group creator cosmetic
+if not game.WorldUpgradeData["ModCosmetic_Crossroads_CardAltar_Terrain_On01"] then
+	CosmeticsAPI.RegisterCosmetic({
+		-- Use the vanilla obstacle's animation name, and prefix it with "ModCosmetic_" instead of your _PLUGIN.guid
+		Id = "ModCosmetic_Crossroads_CardAltar_Terrain_On01",
+		Name = {
+			en = "Tarot Light, Green",
+		},
+		Description = {
+			en = "{$Keywords.CosmeticSwap}: An eery green glow that surrounds the Altar of Ashes when the Princess approaches.",
+		},
+		FlavorText = {
+			en = "A familiar light, kept as it was.",
+		},
+		ShopCategory = "CosmeticsShop_PreRun",
+		InsertAfterCosmetic = "Cosmetic_SkellyFloor01c",
+		-- If CreateCosmeticsGroup is true, you cannot pass CosmeticsGroup
+		CreateCosmeticsGroup = true,
+		AutoUnlock = true,
+		RotateOnly = true,
+		-- This is the ID of the vanilla obstacle
+		SetAnimationIds = { 588748 },
 	-- This is the path to the vanilla animation texture
-	CosmeticAnimationPath = "Tilesets\\Crossroads\\Crossroads_CardAltar_Terrain_On01",
-	-- Use the animation itself as the icon (scaled if needed), or create a new icon for it, since it will show in the shop too
-	IconPath = "Tilesets\\Crossroads\\Crossroads_CardAltar_Terrain_On01",
-})
+		CosmeticAnimationPath = "Tilesets\\Crossroads\\Crossroads_CardAltar_Terrain_On01",
+		-- Use the animation itself as the icon (scaled if needed), or create a new icon for it, since it will show in the shop too
+		IconPath = "Tilesets\\Crossroads\\Crossroads_CardAltar_Terrain_On01",
+	})
+end
 -- After registering the default appearance, you can register additional variants for the new group
 CosmeticsAPI.RegisterCosmetic({
 	Id = _PLUGIN.guid .. "." .. "Cosmetic_TarotLight_Moonlit",
@@ -182,9 +186,9 @@ CosmeticsAPI.RegisterCosmetic({
 	},
 	ShopCategory = "CosmeticsShop_PreRun",
 	-- Your registered vanilla cosmetic, or another cosmetic in this group
-	InsertAfterCosmetic = _PLUGIN.guid .. "." .. "Cosmetic_TarotLight_Default",
-	-- The new group you registered above
-	CosmeticsGroup = _PLUGIN.guid .. "." .. "Cosmetic_TarotLight",
+	InsertAfterCosmetic = "ModCosmetic_Crossroads_CardAltar_Terrain_On01",
+	-- The new group you registered above/another mod already registered
+	CosmeticsGroup = "ModCosmetic_Crossroads_CardAltar_Terrain_On01",
 	SetAnimationIds = { 588748 },
 	CosmeticAnimationPath = "AuthorName-ModName\\TarotLight_Moonlit",
 	IconPath = "AuthorName-ModName\\TarotLight_Moonlit_Icon",
@@ -193,8 +197,8 @@ CosmeticsAPI.RegisterCosmetic({
 
 If your new cosmetic group is for an obstacle that doesn't exist in vanilla, you must spawn it through your mod yourself and ensure the ObjectIds match.
 
-If you and another mod both want to add variants for the same vanilla obstacle, both mods should agree on a `CosmeticsGroup` name (preferably the name of the vanilla cosmetic's animation), and both should check if the new default cosmetic/the new group already exists ( if registered by the other mod first) before attempting to create it.
-Do this by checking `game.WorldUpgradeData[cosmeticsGroupNameYouAgreedOn]`.
+If you and another mod both want to add variants for the same vanilla obstacle, both mods should agree on a `CosmeticsGroup` name (preferably the name of the vanilla cosmetic's animation, prefixed with `ModCosmetic_`), and both should check if the new default cosmetic/the new group already exists (if registered by the other mod first) before attempting to create it.
+Do this by checking `game.WorldUpgradeData[cosmeticsGroupNameYouAgreedOn]`, as in the example above.
 
 ### Registering Card Back Packs
 

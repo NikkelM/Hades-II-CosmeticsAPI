@@ -2,7 +2,7 @@
 local public = {}
 
 ---@class CosmeticBaseData
----@field Id string The internal name of the cosmetic. Prefix this with your mod's `_PLUGIN.guid` to ensure uniqueness!
+---@field Id string The non-empty internal name of the cosmetic. Prefix this with your mod's `_PLUGIN.guid` to ensure uniqueness (except when setting `CreateCosmeticsGroup = true`).
 ---@field Name table The display name of the cosmetic. Provide a table for localized names in the format of { de = "German Name", el = "Greek Name", en = "English Name", ... }. "en" key is required. Any missing languages will fall back to English.
 ---@field Description table The description text for the cosmetic. Prefix with "{$Keywords.CosmeticSwap}:" for Alt Decor that replaces something, "{$Keywords.CosmeticAltAdd}:" for Extra Decor that adds or replaces something similar, and "{$Keywords.CosmeticAdd}:" for Extra Decor that adds something entirely new. Use CosmeticAdd only for new cosmetic obstacles spawned by your mod that define a new group through CreateCosmeticsGroup. Provide a table for localized names in the format of { de = "German Description", el = "Greek Description", en = "English Description", ... }. "en" key is required. Any missing languages will fall back to English.
 ---@field FlavorText table The description text for the cosmetic. Provide a table for localized names in the format of { de = "German Flavor", el = "Greek Flavor", en = "English Flavor", ... }. "en" key is required. Any missing languages will fall back to English.
@@ -34,7 +34,7 @@ local public = {}
 
 ---@class CosmeticData : CosmeticBaseData
 ---@field ShopCategory string Which shop this cosmetic should be added to. Choose one of "CosmeticsShop_Tent" (Mel's Tent), "CosmeticsShop_Main" (Crossroads Main Grounds & West), "CosmeticsShop_Taverna" (Taverna & Crossroads West), "CosmeticsShop_PreRun" (Training Grounds).
----@field CosmeticsGroup string Which group of cosmetics to remove/replace this cosmetic with when equipped. Must be the ID of an existing cosmetic in the same ShopCategory unless CreateCosmeticsGroup is true on this registration, in which case the key must be new and should be prefixed by your _PLUGIN.guid.
+---@field CosmeticsGroup string|nil Which group of cosmetics to remove/replace this cosmetic with when equipped. Must be the ID of an existing cosmetic in the same ShopCategory unless CreateCosmeticsGroup is true on this registration, in which case this property must not be passed.
 ---@field CreateCosmeticsGroup boolean|nil If true, creates a new group for this cosmetic. The obstacle(s) for it must already exist, either through vanilla or by having been spawned through your mod separately. Defaults to false.
 ---@field AutoUnlock boolean|nil If true, automatically unlocks and equips the cosmetic after registration if it is not already owned. Must be true when CreateCosmeticsGroup and RotateOnly are both true. Should only be used for group defaults created with CreateCosmeticsGroup to not overwrite equipped cosmetics. Defaults to false.
 ---@field InheritFrom table|nil Which existing cosmetics to inherit properties from. If nil, will default to { "DefaultCosmeticItem" }. If set to anything else, some default values for other properties may not work, depending on what you inherit from, and the API will not validate some otherwise required fields, so ensure you know what you're doing.
