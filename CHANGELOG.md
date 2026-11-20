@@ -1,10 +1,15 @@
 # Changelog
 
-## v2.1.1
+## v3.0.0
 
 <!--Releasenotes start-->
-- Fixed the new levels of the Chthonic Chids display shelf spawning as soon as another mod registers a Chid, even if the original shelf is not yet unlocked.
+- The mod now supports adding new skins for familiars through `RegisterFamiliarCostume`.
+- Renamed `RegisterCardBackPackages` to `RegisterAlwaysLoadedPackages`. The old name can still be used.
 <!--Releasenotes end-->
+
+## v2.1.1
+
+- Fixed the new levels of the Chthonic Chids display shelf spawning as soon as another mod registers a Chid, even if the original shelf is not yet unlocked.
 
 ## v2.1.0
 

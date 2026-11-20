@@ -2,6 +2,7 @@ modutil.mod.Path.Wrap("DoPatches", function(base)
 	local result = base()
 
 	if game.GameState ~= nil then
+		game.GameState.ModFamiliarCostumes = game.GameState.ModFamiliarCostumes or {}
 		game.GameState.ModsNikkelMCosmeticsAPI = game.GameState.ModsNikkelMCosmeticsAPI or {}
 		game.GameState.ModsNikkelMCosmeticsAPI.CardBacks = game.GameState.ModsNikkelMCosmeticsAPI.CardBacks or {}
 
@@ -72,7 +73,6 @@ end)
 -- This must be the same as the wrap for HubPostBountyLoad and HubPostDreamLoad
 modutil.mod.Path.Wrap("DeathAreaRoomTransition", function(base, source, args)
 	LoadPackages({ Names = mod.RegisteredCrossroadsPackages })
-	LoadPackages({ Names = mod.RegisteredCardBackPackages })
 	mod.SetupChthonicChidDisplay(source)
 
 	return base(source, args)
@@ -81,7 +81,6 @@ end)
 -- If returning from a Chaos Trial, this will be called instead of DeathAreaRoomTransition
 modutil.mod.Path.Wrap("HubPostBountyLoad", function(base, source, args)
 	LoadPackages({ Names = mod.RegisteredCrossroadsPackages })
-	LoadPackages({ Names = mod.RegisteredCardBackPackages })
 	mod.SetupChthonicChidDisplay(source)
 
 	return base(source, args)
@@ -90,15 +89,13 @@ end)
 -- If returning from a Dream Dive, this will be called instead of DeathAreaRoomTransition
 modutil.mod.Path.Wrap("HubPostDreamLoad", function(base, source, args)
 	LoadPackages({ Names = mod.RegisteredCrossroadsPackages })
-	LoadPackages({ Names = mod.RegisteredCardBackPackages })
 	mod.SetupChthonicChidDisplay(source)
 
 	return base(source, args)
 end)
 
--- Card back packages must be loaded at all times as they are also used during runs
 modutil.mod.Path.Wrap("SetupMap", function(base, source, args)
-	LoadPackages({ Names = mod.RegisteredCardBackPackages })
+	LoadPackages({ Names = mod.RegisteredAlwaysLoadedPackages })
 
 	return base(source, args)
 end)

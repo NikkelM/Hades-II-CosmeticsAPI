@@ -365,17 +365,16 @@ public.RegisterCardBack = function(cardBackData)
 	return true
 end
 
----Registers one or more .pkg package files that contain the card back textures used during the in-combat Arcana card flip animation.
----These packages will be loaded at ALL times (including during runs), not just in the Crossroads, because card back art is displayed when an Arcana is added (e.g. through Judgment).
----IMPORTANT: Only include CardBack_XX textures in these packages.
----Because they are always loaded, any unnecessary assets will consume memory permanently.
----Use `RegisterCrossroadsPackages` for DeckArt/DeckArtMouseover/IconPath textures that are only needed in the Crossroads.
----The .pkg files must be placed in your mod's `plugins_data` folder.
----@param packageNamesArray table A list of package names (table of strings) to register. Do not include the `.pkg` extension.
----@return boolean successfullyRegistered True if at least one package was successfully registered, false otherwise.
-public.RegisterCardBackPackages = function(packageNamesArray)
+---Registers one or more `.pkg` package files in your mod's `plugins_data` folder.
+---These packages will be loaded at ALL times (including during runs), not just in the Crossroads.
+---Use this for assets needed in both places, such as in-combat Arcana card flip textures or familiar costume/skin textures.
+---Keep these packages small, as unused textures still take up memory.
+---For textures used only in the Crossroads, such as shop icons or card back idle and hover art, use `RegisterCrossroadsPackages`.
+---@param packageNamesArray string[] Package names without the `.pkg` extension.
+---@return boolean successfullyRegistered True if the list contains at least one valid package name, even if it was already registered.
+public.RegisterAlwaysLoadedPackages = function(packageNamesArray)
 	if type(packageNamesArray) ~= "table" then
-		mod.DebugPrint("[CosmeticsAPI] Error: RegisterCardBackPackages expects a table of strings, got '"
+		mod.DebugPrint("[CosmeticsAPI] Error: RegisterAlwaysLoadedPackages expects a table of strings, got '"
 			.. type(packageNamesArray) .. "'.", 1)
 		return false
 	end
@@ -384,20 +383,20 @@ public.RegisterCardBackPackages = function(packageNamesArray)
 	for _, packageName in ipairs(packageNamesArray) do
 		if type(packageName) ~= "string" then
 			mod.DebugPrint("[CosmeticsAPI] Warning: Skipping non-string package name of type '"
-				.. type(packageName) .. "' in RegisterCardBackPackages.", 2)
+				.. type(packageName) .. "' in RegisterAlwaysLoadedPackages.", 2)
 		elseif packageName == "" then
-			mod.DebugPrint("[CosmeticsAPI] Warning: Skipping empty package name in RegisterCardBackPackages.", 2)
+			mod.DebugPrint("[CosmeticsAPI] Warning: Skipping empty package name in RegisterAlwaysLoadedPackages.", 2)
 		else
 			local alreadyRegistered = false
-			for _, existing in ipairs(mod.RegisteredCardBackPackages) do
+			for _, existing in ipairs(mod.RegisteredAlwaysLoadedPackages) do
 				if existing == packageName then
 					alreadyRegistered = true
 					break
 				end
 			end
 			if not alreadyRegistered then
-				table.insert(mod.RegisteredCardBackPackages, packageName)
-				mod.DebugPrint("[CosmeticsAPI] Successfully registered new card back package: " .. packageName, 3)
+				table.insert(mod.RegisteredAlwaysLoadedPackages, packageName)
+				mod.DebugPrint("[CosmeticsAPI] Successfully registered new always-loaded package: " .. packageName, 3)
 			end
 			registeredAny = true
 		end
@@ -405,3 +404,6 @@ public.RegisterCardBackPackages = function(packageNamesArray)
 
 	return registeredAny
 end
+
+-- For backwards compatibility
+public.RegisterCardBackPackages = public.RegisterAlwaysLoadedPackages

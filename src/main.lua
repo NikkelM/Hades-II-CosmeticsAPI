@@ -51,6 +51,7 @@ local function on_ready()
 	import "Scripts/CosmeticsAPI.lua"
 	import "Scripts/CardBackAPI.lua"
 	import "Scripts/ChthonicChidAPI.lua"
+	import "Scripts/FamiliarCostumeAPI.lua"
 
 	import "Scripts/Wraps/CosmeticsLogic.lua"
 	import "Scripts/Wraps/MetaUpgradeCardScreenLogic.lua"

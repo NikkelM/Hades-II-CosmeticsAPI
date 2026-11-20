@@ -21,13 +21,14 @@ for language, _ in pairs(mod.ValidLanguageCodes) do
 				DisplayName = cosmetic.Name[language] or cosmetic.Name.en or "Unnamed Cosmetic",
 				Description = cosmetic.Description[language] or cosmetic.Description.en or "No Description",
 			}
-			flavorTextEntry = {
-				Id = cosmetic.Id .. "_Flavor",
-				Description = cosmetic.FlavorText[language] or cosmetic.FlavorText.en or "No Flavor Text",
-			}
-
+			if cosmetic.FlavorText then
+				flavorTextEntry = {
+					Id = cosmetic.Id .. "_Flavor",
+					Description = cosmetic.FlavorText[language] or cosmetic.FlavorText.en or "No Flavor Text",
+				}
+				table.insert(data.Texts, sjson.to_object(flavorTextEntry, textOrder))
+			end
 			table.insert(data.Texts, sjson.to_object(helpTextEntry, textOrder))
-			table.insert(data.Texts, sjson.to_object(flavorTextEntry, textOrder))
 		end
 	end)
 end
@@ -57,16 +58,17 @@ sjson.hook(hadesTwoObstacleCrossroadsVFXFile, function(data)
 			OffsetX = cosmetic.IconOffsetX or 0,
 			OffsetY = cosmetic.IconOffsetY or 0,
 		}
-		cosmeticAnimationEntry = {
-			Name = cosmetic.AnimationId,
-			InheritFrom = cosmetic.AnimationInheritFrom,
-			FilePath = cosmetic.CosmeticAnimationPath,
-			Scale = cosmetic.AnimationScale or 1.0,
-			OffsetX = cosmetic.AnimationOffsetX or 0,
-			OffsetY = cosmetic.AnimationOffsetY or 0,
-		}
-
-		table.insert(data.Animations, sjson.to_object(cosmeticAnimationEntry, animationOrder))
+		if cosmetic.AnimationId then
+			cosmeticAnimationEntry = {
+				Name = cosmetic.AnimationId,
+				InheritFrom = cosmetic.AnimationInheritFrom,
+				FilePath = cosmetic.CosmeticAnimationPath,
+				Scale = cosmetic.AnimationScale or 1.0,
+				OffsetX = cosmetic.AnimationOffsetX or 0,
+				OffsetY = cosmetic.AnimationOffsetY or 0,
+			}
+			table.insert(data.Animations, sjson.to_object(cosmeticAnimationEntry, animationOrder))
+		end
 		table.insert(data.Animations, sjson.to_object(cosmeticIconEntry, animationOrder))
 	end
 end)

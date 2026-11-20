@@ -5,7 +5,7 @@ local public = {}
 ---@field Id string The non-empty internal name of the cosmetic. Prefix this with your mod's `_PLUGIN.guid` to ensure uniqueness (except when setting `CreateCosmeticsGroup = true`).
 ---@field Name table The display name of the cosmetic. Provide a table for localized names in the format of { de = "German Name", el = "Greek Name", en = "English Name", ... }. "en" key is required. Any missing languages will fall back to English.
 ---@field Description table The description text for the cosmetic. Prefix with "{$Keywords.CosmeticSwap}:" for Alt Decor that replaces something, "{$Keywords.CosmeticAltAdd}:" for Extra Decor that adds or replaces something similar, and "{$Keywords.CosmeticAdd}:" for Extra Decor that adds something entirely new. Use CosmeticAdd only for new cosmetic obstacles spawned by your mod that define a new group through CreateCosmeticsGroup. Provide a table for localized names in the format of { de = "German Description", el = "Greek Description", en = "English Description", ... }. "en" key is required. Any missing languages will fall back to English.
----@field FlavorText table The description text for the cosmetic. Provide a table for localized names in the format of { de = "German Flavor", el = "Greek Flavor", en = "English Flavor", ... }. "en" key is required. Any missing languages will fall back to English.
+---@field FlavorText table The flavor text for the cosmetic. Provide a table for localized names in the format of { de = "German Flavor", el = "Greek Flavor", en = "English Flavor", ... }. "en" key is required. Any missing languages will fall back to English.
 ---@field InsertAfterCosmetic string|nil The ID of an existing cosmetic in the same ShopCategory to insert this cosmetic after. Can insert after another custom cosmetic if the other one is added first. If nil, the cosmetic will be added to the end of the category.
 ---@field CosmeticAnimationPath string The path to the asset texture for this cosmetic in your package.
 ---@field AnimationScale number|nil The scale factor for the cosmetic's asset in the Crossroads. Defaults to 1.
@@ -18,7 +18,7 @@ local public = {}
 ---@field IconOffsetY number|nil The Y offset to apply to the cosmetic's icon in the shop menu. Positive values move the icon down, negative values move it up. If nil, defaults to 0.
 ---@field GameStateRequirements table|nil The requirements that must be met to show this cosmetic in the shop. Supports all base game requirement logic. If nil, the cosmetic will always be eligible.
 ---@field Cost table|nil The resource costs to buy this cosmetic. For display purposes, limit to at most four different resources, including CosmeticsPoints. If nil, will default to { CosmeticsPoints = 50 } (50 Kudos).
----@field AlwaysRevealImmediately boolean|nil If true, this cosmetic will be shown as purchaseable as soon as it's GameStateRequirements are met. If false, the game will wait until the next run to reveal the cosmetic in the shop. Defaults to false.
+---@field AlwaysRevealImmediately boolean|nil If true, this cosmetic will be shown as purchaseable as soon as its GameStateRequirements are met. If false, the game will wait until the next run to reveal the cosmetic in the shop. Defaults to false.
 ---@field CameraFocusId integer|nil If set, the camera will pan to this ID when equipping the cosmetic. Use to override panning to the first ID in SetAnimationIds or ActivateIds.
 ---@field ActivateFunctionName string|nil The name of a function to call whenever the cosmetic is equipped. You can use <_PLUGIN.guid .. "." .. "YourModFunctionName"> to reference a function in your mod's namespace. If nil, no function is called.
 ---@field ActivateFunctionArgs table|nil Optional arguments passed as the second parameter to the ActivateFunctionName, after the cosmetic's item data.
@@ -76,18 +76,18 @@ public.RegisterChthonicChid = function(chidData) end
 public.RegisterCrossroadsPackages = function(packageNamesArray) end
 
 ---@class CardBackPackData
----@field Id string Unique pack identifier. Prefix this with your mod's `_PLUGIN.guid` to ensure uniqueness!
----@field Name table Localized display name. { en = "Arcana, English", de = "Arkana, German", ... }. "en" key is required.
----@field Description table Localized description. { en = "{$Keywords.CosmeticDeck}: Set of {#UpgradeFormatDark}<Number of cards in this deck> {#Prev}alternate themes, featuring <something about this deck>.", ... }. "en" key is required.
----@field FlavorText table Localized flavor text. { en = "Language is a strange thing...", ... }. "en" key is required.
----@field IconPath string Path to the shop preview icon texture for this pack (110×110 px). This usually shows three different card backs in a slight spread overlayed on each other. See `GUI\Screens\CosmeticIcons\cosmetic_deckMisc`. This texture should be in a package registered via `RegisterCrossroadsPackages`, as the shop is only accessible in the Crossroads.
----@field IconScale number|nil Scale for the icon. Defaults to 1.
----@field IconOffsetX number|nil X offset for the icon. Defaults to 0.
----@field IconOffsetY number|nil Y offset for the icon. Defaults to 0.
----@field Cost table|nil Resource costs. Defaults to { CosmeticsPoints = 300 }.
----@field GameStateRequirements table|nil Shop visibility requirements. Will always require WorldUpgradeMetaUpgradeSaveLayout (layout saving unlocked), in addition to anything else added here.
----@field InsertAfterCosmetic string|nil ID of an existing cosmetic in CosmeticsShop_PreRun to insert after. If nil, appended to end.
----@field PreRevealVoiceLines table|nil Custom voice lines on purchase. If nil, uses a default Melinoe line.
+---@field Id string The non-empty internal name of the pack. Prefix this with your mod's `_PLUGIN.guid` to ensure uniqueness
+---@field Name table The display name of the pack. Provide a table for localized names in the format of { en = "Arcana, English", de = "Arkana, German", ... }. "en" key is required. Any missing languages will fall back to English.
+---@field Description table The description text for the pack. Provide a table for localized names in the format of { en = "{$Keywords.CosmeticDeck}: Set of {#UpgradeFormatDark}<Number of cards in this deck> {#Prev}alternate themes, featuring <something about this deck>.", ... }. "en" key is required. Any missing languages will fall back to English.
+---@field FlavorText table The flavor text for the pack. Provide a table for localized names in the format of { de = "German Flavor", el = "Greek Flavor", en = "English Flavor", ... }. "en" key is required. Any missing languages will fall back to English.
+---@field IconPath string The path to the shop menu icon for the pack in your package (110×110 px). This usually shows three different card backs in a slight spread overlayed on each other. See `GUI\Screens\CosmeticIcons\cosmetic_deckMisc`. This texture should be in a package registered via `RegisterCrossroadsPackages`, as the shop is only accessible in the Crossroads.
+---@field IconScale number|nil The scale factor for the pack's icon in the shop menu. If nil, defaults to 1.
+---@field IconOffsetX number|nil The X offset to apply to the pack's icon in the shop menu. Positive values move the icon right, negative values move it left. If nil, defaults to 0.
+---@field IconOffsetY number|nil The Y offset to apply to the pack's icon in the shop menu. Positive values move the icon down, negative values move it up. If nil, defaults to 0.
+---@field Cost table|nil The resource costs to buy this pack. For display purposes, limit to at most four different resources, including CosmeticsPoints. If nil, will default to { CosmeticsPoints = 300 } (300 Kudos).
+---@field GameStateRequirements table|nil The requirements that must be met to show this pack in the shop. Supports all base game requirement logic. Will always require WorldUpgradeMetaUpgradeSaveLayout (layout saving unlocked), in addition to anything else added here.
+---@field InsertAfterCosmetic string|nil The ID of an existing pack in the same ShopCategory to insert this pack after. Can insert after another custom pack if the other one is added first. If nil, the pack will be added to the end of the category.
+---@field PreRevealVoiceLines table|nil A table of voicelines to play when this pack is unlocked. Refer to existing voiceline tables for formatting. If nil, the default voicelines will be used. Input is not validated for correctness.
 
 ---Registers a new card back pack to be added to the cosmetics shop in the Training Grounds.
 ---A pack is a cosmetic item that, when purchased, unlocks all card backs registered for it via `RegisterCardBack`.
@@ -101,7 +101,7 @@ public.RegisterCardBackPack = function(packData) end
 ---@field PackId string The ID of the CardBackPack this card back belongs to. Must have been registered first via `RegisterCardBackPack`.
 ---@field DeckArtPath string Path to the idle/normal card art texture shown in the card back picker overlay (Arcana screen, 248×318 px). This is the default state before hovering. See `GUI\Screens\MetaUpgrade\DeckArt\Deck10`. This texture should be in a package registered via `RegisterCrossroadsPackages`, as the picker is only accessible in the Crossroads.
 ---@field DeckArtMouseoverPath string|nil Path to the highlighted/brighter variant of the card art, shown on hover in the picker overlay (330×308 px). Each vanilla card back has a separate mouseover texture - see `GUI\Screens\MetaUpgrade\DeckArt\DeckMouseover10`. This texture should be in the same Crossroads package as DeckArtPath. If nil, uses DeckArtPath (no hover effect).
----@field CardBackPath string Path to the card back texture shown during the in-combat Arcana card flip animation, e.g. when gaining an Arcana through Judgment (453×680 px). See `GUI\Screens\CardBack\CardBack10`. This texture should be in a package registered via `RegisterCardBackPackages`, as it must be available at all times including during runs. Textures must match the vanilla dimensions exactly, as the engine derives the display scale from the source texture size.
+---@field CardBackPath string Path to the card back texture shown during the in-combat Arcana card flip animation, e.g. when gaining an Arcana through Judgment (453×680 px). See `GUI\Screens\CardBack\CardBack10`. This texture should be in a package registered via `RegisterAlwaysLoadedPackages`, as it must be available at all times including during runs. Textures must match the vanilla dimensions exactly, as the engine derives the display scale from the source texture size.
 ---@field DeckArtScale number|nil Scale for DeckArt animation in the selection UI.
 
 ---Registers an individual card back. The card back is unlocked when its associated pack is purchased in the shop.
@@ -112,14 +112,42 @@ public.RegisterCardBackPack = function(packData) end
 ---@return boolean successfullyRegistered True if the card back was successfully registered, false otherwise.
 public.RegisterCardBack = function(cardBackData) end
 
----Registers one or more .pkg package files that contain the card back textures used during the in-combat Arcana card flip animation.
----These packages will be loaded at ALL times (including during runs), not just in the Crossroads, because card back art is displayed when an Arcana is added (e.g. through Judgment).
----IMPORTANT: Only include CardBack_XX textures in these packages.
----Because they are always loaded, any unnecessary assets will consume memory permanently.
----Use `RegisterCrossroadsPackages` for DeckArt/DeckArtMouseover/IconPath textures that are only needed in the Crossroads.
----The .pkg files must be placed in your mod's `plugins_data` folder.
----@param packageNamesArray table A list of package names (table of strings) to register. Do not include the `.pkg` extension.
+---Registers one or more `.pkg` files in your mod's `plugins_data` folder for loading in the Crossroads and during runs.
+---Use this for assets needed in both places, such as in-combat Arcana card flip textures used by Judgment or familiar skin assets.
+---For textures used only in the Crossroads, such as shop icons or crossroads cosmetics textures, use `RegisterCrossroadsPackages`.
+---@param packageNamesArray string[] A list of package names to register. Do not include the `.pkg` extension.
 ---@return boolean successfullyRegistered True if at least one package was successfully registered, false otherwise.
-public.RegisterCardBackPackages = function(packageNamesArray) end
+public.RegisterAlwaysLoadedPackages = function(packageNamesArray) end
+
+---Compatibility alias for `RegisterAlwaysLoadedPackages`.
+public.RegisterCardBackPackages = public.RegisterAlwaysLoadedPackages
+
+---@class FamiliarCostumeData
+---@field Id string The non-empty internal name of the new costume/skin. Prefix this with your mod's `_PLUGIN.guid` to ensure uniqueness
+---@field FamiliarName string Internal name of the familiar, e.g. `FrogFamiliar`.
+---@field Name table The display name of the costume. Provide a table for localized names in the format of { de = "German Name", el = "Greek Name", en = "English Name", ... }. "en" key is required. Any missing languages will fall back to English.
+---@field Description table The description text for the costume. Provide a table for localized names in the format of { de = "German Description", el = "Greek Description", en = "English Description", ... }. "en" key is required. Any missing languages will fall back to English.
+---@field IconPath string The path to the shop menu icon for the costume in your package.
+---@field IconScale number|nil The scale factor for the costume's icon in the shop menu. If nil, defaults to 1.
+---@field GrannyModel string|nil Which 3D Granny model to use for the familiar when this costume is equipped. If nil, uses the familiar's default costume model.
+---@field GrannyTexture string|nil The texture to apply to the Granny model. If nil, uses the model's default texture. In most cases, this is the custom skin you want to add.
+---@field Outline table|nil Parameters for an outline to be added to the model when this skin is equipped. Can contain R, G, B, Alpha, Opacity, Thickness and Threshold values.
+---@field Cost table|nil The resource costs to buy this costume. For display purposes, limit to at most four different resources, including CosmeticsPoints. If nil, will default to { CosmeticsPoints = 50 } (50 Kudos).
+---@field GameStateRequirements table|nil The requirements that must be met to show this costume in the shop. Supports all base game requirement logic. If nil, the costume will always be eligible.
+---@field AlwaysRevealImmediately boolean|nil If true, this costume will be shown as purchaseable as soon as its GameStateRequirements are met. If false, the game will wait until the next run to reveal the costume in the shop. Defaults to false.
+---@field PreRevealVoiceLines table|nil A table of voicelines to play when this costume is unlocked. Refer to existing voiceline tables for formatting. If nil, the default voicelines will be used. Input is not validated for correctness.
+---@field SwitchCostumeVoiceLines table|nil A table of voicelines to play when this cosmetic is equipped after it had already been bought. Refer to existing voiceline tables for formatting. If nil, the default voicelines will be used. Input is not validated for correctness.
+
+---Adds a costume to an existing familiar's costume shop.
+---At least one of `GrannyModel` or `GrannyTexture` must be provided.
+---@param costume FamiliarCostumeData The costume data to register.
+---@return boolean successfullyRegistered True if the familiar costume was registered, false if it was rejected.
+public.RegisterFamiliarCostume = function(costume) end
+
+---Selects an owned costume. Its appearance is applied the next time the familiar's costume is set up.
+---@param familiarName string Internal familiar name, such as `FrogFamiliar`.
+---@param id string ID of an owned costume for this familiar.
+---@return boolean successfullySelected True if the selection was saved, false if the costume is unavailable.
+public.SelectFamiliarCostume = function(familiarName, id) end
 
 return public

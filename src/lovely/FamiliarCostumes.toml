@@ -1,0 +1,45 @@
+[manifest]
+version = "1.0.0"
+priority = 1
+
+[vars]
+cosmeticsAPIEnv = "rom.mods['NikkelM-Cosmetics_API'].lovely_env"
+
+[[patches]]
+[patches.pattern]
+target = "FamiliarCostumeLogic.lua"
+pattern = "Name = \"GhostAdminItem\","
+position = "at"
+payload = '''
+Name = screen.ItemButtonObstacle or "GhostAdminItem",
+Animation = screen.ItemButtonObstacle and screen.ItemAvailableAnimation,
+'''
+match_indent = true
+times = 1
+
+[[patches]]
+[patches.pattern]
+target = "FamiliarCostumeLogic.lua"
+pattern = "if GameState.FamiliarCostumes[screen.OpenedFrom.Name] ~= itemName then"
+position = "at"
+payload = "if {{lovely:cosmeticsAPIEnv}}.GetEquippedFamiliarCostume( screen.OpenedFrom.Name ) ~= itemName then"
+match_indent = true
+times = 1
+
+[[patches]]
+[patches.pattern]
+target = "FamiliarCostumeLogic.lua"
+pattern = "if args.ReAdd then"
+position = "before"
+payload = "{{lovely:cosmeticsAPIEnv}}.SelectFamiliarCostume( screen.OpenedFrom.Name, itemData.Name )"
+match_indent = true
+times = 1
+
+[[patches]]
+[patches.pattern]
+target = "FamiliarCostumePresentation.lua"
+pattern = "if GameState.FamiliarCostumes[screen.OpenedFrom.Name] ~= button.Data.Name then"
+position = "at"
+payload = "if {{lovely:cosmeticsAPIEnv}}.GetEquippedFamiliarCostume( screen.OpenedFrom.Name ) ~= button.Data.Name then"
+match_indent = true
+times = 1

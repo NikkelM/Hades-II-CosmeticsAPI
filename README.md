@@ -214,7 +214,7 @@ See the bottom of this section for example textures for each of the four.
 | **DeckArt** (idle) | Per card | Card back picker idle animation in the Arcana screen (Three overlayed copies of the card) | `GUI\Screens\MetaUpgrade\DeckArt\Deck10` | `RegisterCrossroadsPackages` |
 | **DeckArtMouseover** (hover) | Per card | Card back picker hover animation in the Arcana screen (Four spread out copies of the card) | `GUI\Screens\MetaUpgrade\DeckArt\DeckMouseover10` | `RegisterCrossroadsPackages` |
 | **IconPath** (shop preview) | Per **pack** | Training Grounds cosmetics shop icon (Three *different* fanned-out cards from the pack) | `GUI\Screens\CosmeticIcons\cosmetic_deckMisc` | `RegisterCrossroadsPackages` |
-| **CardBack** (in-combat flip) | Per card | During runs when an Arcana is added, e.g. through Judgment (Single straight-aligned copy of the card) | `GUI\Screens\CardBack\CardBack10` | `RegisterCardBackPackages` |
+| **CardBack** (in-combat flip) | Per card | During runs when an Arcana is added, e.g. through Judgment (Single straight-aligned copy of the card) | `GUI\Screens\CardBack\CardBack10` | `RegisterAlwaysLoadedPackages` |
 
 First, register your packages:
 
@@ -222,8 +222,8 @@ First, register your packages:
 -- DeckArt (Idle and Hover, per card) + shop icon (per pack) - only needed and loaded in the Crossroads
 CosmeticsAPI.RegisterCrossroadsPackages({ "AuthorName-ModName-DeckArt" })
 
--- CardBack (per card) - loaded at ALL times (including during runs), keep these packages small!
-CosmeticsAPI.RegisterCardBackPackages({ "AuthorName-ModName-CardBacks" })
+-- CardBack (per card) - loaded at ALL times (including during runs), keep these packages small
+CosmeticsAPI.RegisterAlwaysLoadedPackages({ "AuthorName-ModName-CardBacks" })
 ```
 
 Then register a card back pack:
@@ -352,6 +352,55 @@ Before your mod can register a new Chthonic Chid, you need to open a PR to this 
 
 Due to the limited number of slots available for Chthonic Chids on the shelf, the API requires all mods adding Chthonic Chids to register themselves explicitly to ensure there are no conflicts when users install multiple such mods.
 At the moment, 12 new slots are available (through two new levels added to the shelf).
+
+### Registering Familiar Costumes
+
+To add a new skin/costume for a familiar, use `RegisterFamiliarCostume`.
+You must provide at least one of `GrannyModel` or `GrannyTexture`, or both.
+In most cases, you will provide `GrannyTexture` to apply a custom skin to the familiar's default model, or pass both to apply a custom skin to a non-default model.
+
+You must register the package containing your custom skins with `RegisterAlwaysLoadedPackages`.
+Skin icons for the shop should be in a separate package registered with `RegisterCrossroadsPackages`.
+
+```lua
+CosmeticsAPI.RegisterCrossroadsPackages({ "AuthorName-ModName-FamiliarIcons" })
+CosmeticsAPI.RegisterAlwaysLoadedPackages({ "AuthorName-ModName-FamiliarSkins" })
+
+CosmeticsAPI.RegisterFamiliarCostume({
+	-- REQUIRED FIELDS
+	Id = _PLUGIN.guid .. "." .. "FamiliarCostume_FrogDisco",
+	-- Possible values are `FrogFamiliar`, `RavenFamiliar`, `CatFamiliar`, `HoundFamiliar`, `PolecatFamiliar` 
+	FamiliarName = "FrogFamiliar",
+	Name = { en = "Disco" },
+	Description = { en = "It's time to pump up the jam." },
+	IconPath = "AuthorName-ModName-FamiliarIcons\\Icons\\FamiliarCostume_FrogDisco_Icon",
+
+	-- OPTIONAL FIELDS
+	IconScale = 1,
+	-- Set a model name only to override the familiar's default costume model
+	GrannyModel = nil,
+	-- Override the model's texture
+	GrannyTexture = "AuthorName-ModName-FamiliarSkins\\Frog\\FamiliarCostume_FrogDisco_Color",
+	-- Outline arguments. Can contain R, G, B, Alpha, Opacity, Thickness and Threshold values. In vanilla, used e.g. for Nightmarish skins
+	Outline = nil,
+	Cost = { CosmeticsPoints = 50 },
+	GameStateRequirements = {},
+	AlwaysRevealImmediately = false,
+	-- Check the vanilla familiar costumes for the available tables for this and SwitchCostumeVoiceLines, there are variants per familiar and costume "vibe"
+	PreRevealVoiceLines = {
+		{ GlobalVoiceLines = "FamiliarFrogCostumeUnlocked" },
+	},
+	SwitchCostumeVoiceLines = {
+		{ GlobalVoiceLines = "FamiliarFrogSwitchCostumeVoiceLines" },
+	},
+})
+```
+
+You can use `SelectFamiliarCostume(familiarName, id)` to select an already-owned familiar costume through your mod's code, and the game will apply the selection the next time it sets up the familiar's costume (which happens whenever the familiar is spawned on a map, or during purchase/costume swap events).
+You do **not** need to call this to apply the costume after it is purchased, this will happen automatically.
+Only use this function if you want to change the equipped costume outside of the normal purchase or costume swap flow.
+
+Most of the implementation for custom familiar skins was first made by @zerp for the [Familiar Costume Randomizer](https://thunderstore.io/c/hades-ii/p/zerp/Familiar_Costume_Randomizer/) mod.
 
 ## Important Note & Contributing
 

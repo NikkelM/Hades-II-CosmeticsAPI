@@ -74,7 +74,7 @@ for i = 1, 40 do
 	mod.ActiveCardBackTextureNums[i] = true
 end
 -- Package names for card back textures that must be loaded at all times (including during runs)
-mod.RegisteredCardBackPackages = {}
+mod.RegisteredAlwaysLoadedPackages = {}
 -- Stores package names registered by mods, to be loaded when entering the Crossroads
 mod.RegisteredCrossroadsPackages = {}
 
