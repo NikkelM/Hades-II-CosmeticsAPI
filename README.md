@@ -1,19 +1,19 @@
 # Cosmetics API
 
-Developer library to simplify adding new Crossroads cosmetics to Hades II. Does nothing by itself.
+Developer library to simplify adding new cosmetics to Hades II. Allows adding variants of existing cosmetics, new card back packs, Chthonic Chids, familiar skins and even turning any obstacle into a cosmetic with variants. Does nothing by itself.
 
 ## Features
 
 Through this library, you can easily add new cosmetic items to the Crossroads, as offered by Dora.
-You can add alternative versions of *any* existing cosmetic, both "Alt Decor" and "Extra Decor" items are supported.
-Adding entirely new cosmetics (in different locations), or replacing assets that aren't already a cosmetic is *not* supported.
+You can add [alternative versions](#registering-cosmetics) of *any* existing cosmetic, or [turn any Crossroads obstacle into a cosmetic](#creating-a-new-cosmetics-group) with variants (including mod-spawned obstacles).
+You can also add new [**Arcana Card Back** packs](#registering-card-back-packs), [**Chthonic Chids**](#registering-chthonic-chids) and [**Familiar Skins**](#registering-familiar-costumes).
+
+Please see the relevant sections below for how to add each type of cosmetic.
 
 The library will automatically handle grouping cosmetics so that equipping one will unequip any other already equipped cosmetic in the same group.
 You can provide names, descriptions and flavour texts for various languages, as well as customize the voicelines used when purchasing, equipping or unequipping the cosmetic.
 
 For even more advanced usecases, you can also provide a function name that is called when your cosmetic is bought or equipped.
-
-You can also register new **Arcana Card Back** packs. The API handles shop integration, animation hookup and pagination when the card back selection screen exceeds one page.
 
 ## Usage
 
@@ -132,6 +132,10 @@ To create a new cosmetics group, set `CreateCosmeticsGroup = true` on the first 
 This cosmetic's `Id` serves as the group anchor, and others in the group should use it as their `CosmeticsGroup` key.
 
 It is recommended to set the `Id` of such a group-creating cosmetic to the vanilla obstacle's animation name, prefixed with with `ModCosmetic_`, **not** your mod's GUID, as it should be easily identifiable and deduplicated across mods.
+
+Please consult the [CosmeticsAPI wiki](https://github.com/NikkelM/Hades-II-CosmeticsAPI/wiki) first to find out if another mod is also creating a cosmetics group for the same obstacle.
+
+If you create a cosmetics group for a vanilla or mod-spawned obstacle, please consult the [CosmeticsAPI wiki](https://github.com/NikkelM/Hades-II-CosmeticsAPI/wiki) for how this can be documented there for other authors to find.
 
 When creating a group with `RotateOnly = true`, you must also set `AutoUnlock = true`, as the default for a rotation-only group is always already unlocked/visible.
 The game will hide this auto-unlocked cosmetic in the shop until the player buys a variant of the cosmetic, at which point it will become visible so the player can switch back to it.
@@ -358,6 +362,7 @@ At the moment, 12 new slots are available (through two new levels added to the s
 To add a new skin/costume for a familiar, use `RegisterFamiliarCostume`.
 You must provide at least one of `GrannyModel` or `GrannyTexture`, or both.
 In most cases, you will provide `GrannyTexture` to apply a custom skin to the familiar's default model, or pass both to apply a custom skin to a non-default model.
+Vanilla familiar costume categories contain six costumes, so `RegisterFamiliarCostume` keeps the standard shop layout while every category has six or fewer entries - once any category exceeds six, CosmeticsAPI applies one shared compact layout to the whole shop for consistent formatting.
 
 You must register the package containing your custom skins with `RegisterAlwaysLoadedPackages`.
 Skin icons for the shop should be in a separate package registered with `RegisterCrossroadsPackages`.
