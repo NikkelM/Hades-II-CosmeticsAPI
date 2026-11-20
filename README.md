@@ -5,8 +5,8 @@ Developer library to simplify adding new cosmetics to Hades II. Allows adding va
 ## Features
 
 Through this library, you can easily add new cosmetic items to the Crossroads, as offered by Dora.
-You can add [alternative versions](#registering-cosmetics) of *any* existing cosmetic, or [turn any Crossroads obstacle into a cosmetic](#creating-a-new-cosmetics-group) with variants (including mod-spawned obstacles).
-You can also add new [**Arcana Card Back** packs](#registering-card-back-packs), [**Chthonic Chids**](#registering-chthonic-chids) and [**Familiar Skins**](#registering-familiar-costumes).
+You can add [alternative versions](https://github.com/NikkelM/Hades-II-CosmeticsAPI#registering-cosmetics) of *any* existing cosmetic, or [turn any Crossroads obstacle into a cosmetic](https://github.com/NikkelM/Hades-II-CosmeticsAPI#creating-a-new-cosmetics-group) with variants (including mod-spawned obstacles).
+You can also add new [**Arcana Card Back** packs](https://github.com/NikkelM/Hades-II-CosmeticsAPI#registering-card-back-packs), [**Chthonic Chids**](https://github.com/NikkelM/Hades-II-CosmeticsAPI#registering-chthonic-chids) and [**Familiar Skins**](https://github.com/NikkelM/Hades-II-CosmeticsAPI#registering-familiar-costumes).
 
 Please see the relevant sections below for how to add each type of cosmetic.
 
@@ -304,25 +304,25 @@ Textures should match vanilla dimensions exactly - the engine derives the displa
 
 `GUI\Screens\MetaUpgrade\DeckArt\Deck10`
 
-![GUI\Screens\MetaUpgrade\DeckArt\Deck10](/img/Cardbacks/Deck10.png)
+![GUI\Screens\MetaUpgrade\DeckArt\Deck10](img/Cardbacks/Deck10.png)
 
 #### DeckArtMouseover (per card)
 
 `GUI\Screens\MetaUpgrade\DeckArt\DeckMouseover10`
 
-![GUI\Screens\MetaUpgrade\DeckArt\DeckMouseover10](/img/Cardbacks/DeckMouseover10.png)
+![GUI\Screens\MetaUpgrade\DeckArt\DeckMouseover10](img/Cardbacks/DeckMouseover10.png)
 
 #### IconPath (per pack)
 
 `GUI\Screens\CosmeticIcons\cosmetic_deckMisc`
 
-![GUI\Screens\CosmeticIcons\cosmetic_deckMisc](/img/Cardbacks/cosmetic_deckMisc.png)
+![GUI\Screens\CosmeticIcons\cosmetic_deckMisc](img/Cardbacks/cosmetic_deckMisc.png)
 
 #### CardBack (per card)
 
 `GUI\Screens\CardBack\CardBack10`
 
-![GUI\Screens\CardBack\CardBack10](/img/Cardbacks/CardBack10.png)
+![GUI\Screens\CardBack\CardBack10](img/Cardbacks/CardBack10.png)
 
 ### Registering Chthonic Chids
 
@@ -408,7 +408,7 @@ Most of the implementation for custom familiar skins was first made by @zerp for
 
 #### Packing Familiar Skin Textures
 
-Use MelSkin's [`build_pkg.py`](https://github.com/adi1998/MelSkin/blob/main/build_pkg.py) and [`pkg_builder.py`](https://github.com/adi1998/MelSkin/blob/main/pkg_builder.py), based on the [CG3H toolkit](https://github.com/Enderclem0/CG3H) to package your familiar skins (this avoids some texture flickering that you can get if packing normally through deppth2).
+Use MelSkin's [build_pkg.py](https://github.com/adi1998/MelSkin/blob/main/build_pkg.py) and [pkg_builder.py](https://github.com/adi1998/MelSkin/blob/main/pkg_builder.py), based on the [CG3H toolkit](https://github.com/Enderclem0/CG3H) to package your familiar skins (this avoids some texture flickering that you can get if packing normally through deppth2).
 
 Create the two script files in your mod repo's root directory, then create the `data` output directry and place your texture PNGs in a `textures` folder, for example `textures\FamiliarCostume_FrogDisco_Color.png`:
 
