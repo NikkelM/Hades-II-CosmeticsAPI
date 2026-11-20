@@ -362,7 +362,6 @@ At the moment, 12 new slots are available (through two new levels added to the s
 To add a new skin/costume for a familiar, use `RegisterFamiliarCostume`.
 You must provide at least one of `GrannyModel` or `GrannyTexture`, or both.
 In most cases, you will provide `GrannyTexture` to apply a custom skin to the familiar's default model, or pass both to apply a custom skin to a non-default model.
-Vanilla familiar costume categories contain six costumes, so `RegisterFamiliarCostume` keeps the standard shop layout while every category has six or fewer entries - once any category exceeds six, CosmeticsAPI applies one shared compact layout to the whole shop for consistent formatting.
 
 You must register the package containing your custom skins with `RegisterAlwaysLoadedPackages`.
 Skin icons for the shop should be in a separate package registered with `RegisterCrossroadsPackages`.
@@ -385,7 +384,7 @@ CosmeticsAPI.RegisterFamiliarCostume({
 	-- Set a model name only to override the familiar's default costume model
 	GrannyModel = nil,
 	-- Override the model's texture
-	GrannyTexture = "AuthorName-ModName-FamiliarSkins\\Frog\\FamiliarCostume_FrogDisco_Color",
+	GrannyTexture = "AuthorName-ModName-FamiliarSkins\\FamiliarCostume_FrogDisco_Color",
 	-- Outline arguments. Can contain R, G, B, Alpha, Opacity, Thickness and Threshold values. In vanilla, used e.g. for Nightmarish skins
 	Outline = nil,
 	Cost = { CosmeticsPoints = 50 },
@@ -406,6 +405,31 @@ You do **not** need to call this to apply the costume after it is purchased, thi
 Only use this function if you want to change the equipped costume outside of the normal purchase or costume swap flow.
 
 Most of the implementation for custom familiar skins was first made by @zerp for the [Familiar Costume Randomizer](https://thunderstore.io/c/hades-ii/p/zerp/Familiar_Costume_Randomizer/) mod.
+
+#### Packing Familiar Skin Textures
+
+Use MelSkin's [`build_pkg.py`](https://github.com/adi1998/MelSkin/blob/main/build_pkg.py) and [`pkg_builder.py`](https://github.com/adi1998/MelSkin/blob/main/pkg_builder.py), based on the [CG3H toolkit](https://github.com/Enderclem0/CG3H) to package your familiar skins (this avoids some texture flickering that you can get if packing normally through deppth2).
+
+Create the two script files in your mod repo's root directory, then create the `data` output directry and place your texture PNGs in a `textures` folder, for example `textures\FamiliarCostume_FrogDisco_Color.png`:
+
+```text
+.
+|-- build_pkg.py
+|-- pkg_builder.py
+|-- data/
+|-- textures/
+|   `-- FamiliarCostume_FrogDisco_Color.png
+```
+
+Then install the required dependencies and run the script through:
+
+```powershell
+python -m pip install pillow lz4 etcpak
+python .\build_pkg.py -s .\textures -t .\data\AuthorName-ModName-FamiliarSkins
+```
+
+Keep the package with your icons separate from the familiar skin textures.
+The familiar skin texture package does not need a `.pkg_manifest` file.
 
 ## Important Note & Contributing
 

@@ -1,31 +1,71 @@
 ---@meta NikkelM-Cosmetics_API
 
 local registeredCostumes = {}
-local compactShopLayoutApplied = false
 
--- #region Shop Layout
-local compactShopLayout = {
-	ItemButtonObstacle = "BlankInteractableObstacle",
-	ItemStartY = 150,
-	ItemSpacingY = 60,
-	IconScale = 0.5,
-	ItemsPerPage = 11,
-	ItemAvailableAnimation = "MusicPlayerItemButton",
-	ItemAvailableMouseOverAnimation = "MusicPlayerItemNowPlaying",
-	ItemAvailableMouseOffAnimation = "MusicPlayerItemButton",
-	ItemAvailableAffordableNameFormat = { FontSize = 16, ScaleY = 0.5 },
-	ItemAvailableUnaffordableNameFormat = { FontSize = 16, ScaleY = 0.5 },
-	ItemPurchasedNameFormat = { FontSize = 16, ScaleY = 0.5 },
-	CostDisplay = {
-		StartX = 1200,
-		StartY = 150,
-		SpacerX = 160,
-		InventoryAmountOffsetY = 90,
-		ResourceIconOffsetY = -5,
-		ResourceIconScale = 1.1,
-		InventoryIconScale = 0.45,
-	},
-}
+-- #region Shop Pagination
+public.lovely_env.SetupFamiliarCostumePagination = function(screen)
+	screen.ScrollOffset = 0
+	screen.NumItems = #screen.ItemCategories[screen.OpenedFrom.Name]
+	if screen.NumItems <= screen.ItemsPerPage then
+		return
+	end
+
+	local cosmeticsShop = game.ScreenData.CosmeticsShop
+	local offsetY = game.ScreenData.FamiliarCostumeShop.ItemStartY - cosmeticsShop.ItemStartY
+	screen.ScrollbarSliderTopY = cosmeticsShop.ScrollbarSliderTopY + offsetY
+	screen.ScrollbarSliderBottomY = cosmeticsShop.ScrollbarSliderBottomY + offsetY
+
+	for _, name in ipairs({ "Scrollbar", "ScrollbarSlider", "ScrollUp", "ScrollDown" }) do
+		local component = game.DeepCopyTable(cosmeticsShop.ComponentData[name])
+		component.Y = component.Y + offsetY
+		screen.ComponentData[name] = component
+		table.insert(screen.ComponentData.Order, name)
+	end
+	screen.ComponentData.ScrollUp.Data.OnPressedFunctionName = _PLUGIN.guid .. "." .. "FamiliarCostumeScrollUp"
+	screen.ComponentData.ScrollDown.Data.OnPressedFunctionName = _PLUGIN.guid .. "." .. "FamiliarCostumeScrollDown"
+end
+
+modutil.mod.Path.Wrap("FamiliarCostumeShopUpdateVisibility", function(base, screen, args)
+	if screen.SelectedItem then
+		game.MouseOffFamiliarCostumeItem(screen.SelectedItem)
+	end
+
+	if screen.Components.Scrollbar then
+		game.GhostAdminUpdateScrollbarPresentation(screen, args)
+	end
+
+	game.Destroy({ Ids = screen.ButtonIds })
+
+	return base(screen, args)
+end)
+
+local function scrollFamiliarCostumePage(screen, button, direction)
+	local offset = screen.ScrollOffset + (direction * screen.ItemsPerPage)
+	if offset < 0 or offset >= screen.NumItems then
+		return
+	end
+
+	screen.ScrollOffset = offset
+	game.GenericScrollPresentation(screen, button)
+	game.FamiliarCostumeShopUpdateVisibility(screen, { AnimateSlider = true })
+	game.wait(0.02)
+
+	local rowOffset = direction < 0 and screen.ItemsPerPage - 1 or 0
+	game.TeleportCursor({
+		OffsetX = screen.ItemStartX - 30,
+		OffsetY = screen.ItemStartY + rowOffset * screen.ItemSpacingY,
+		ForceUseCheck = true,
+	})
+end
+
+function mod.FamiliarCostumeScrollUp(screen, button)
+	scrollFamiliarCostumePage(screen, button, -1)
+end
+
+function mod.FamiliarCostumeScrollDown(screen, button)
+	scrollFamiliarCostumePage(screen, button, 1)
+end
+
 -- #endregion
 
 -- #region Registration
@@ -157,18 +197,6 @@ public.RegisterFamiliarCostume = function(costume)
 	game.ProcessSimpleExtractValues(upgrade)
 
 	table.insert(game.ScreenData.FamiliarCostumeShop.ItemCategories[costume.FamiliarName], costume.Id)
-
-	if not compactShopLayoutApplied then
-		for _, category in pairs(game.ScreenData.FamiliarCostumeShop.ItemCategories) do
-			-- Vanilla categories contain six costumes, apply the compact layout if any category exceeds six
-			if #category > 6 then
-				game.ScreenData.FamiliarCostumeShop = game.DeepMergeTables(game.ScreenData.FamiliarCostumeShop, compactShopLayout)
-				compactShopLayoutApplied = true
-				break
-			end
-		end
-	end
-
 	registeredCostumes[costume.Id] = costume.FamiliarName
 
 	table.insert(mod.AddedCosmeticSjsonTextData, {

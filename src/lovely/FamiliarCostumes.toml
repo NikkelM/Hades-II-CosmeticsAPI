@@ -8,11 +8,22 @@ cosmeticsAPIEnv = "rom.mods['NikkelM-Cosmetics_API'].lovely_env"
 [[patches]]
 [patches.pattern]
 target = "FamiliarCostumeLogic.lua"
-pattern = "Name = \"GhostAdminItem\","
+pattern = "CreateScreenFromData( screen, screen.ComponentData )"
+position = "before"
+payload = "{{lovely:cosmeticsAPIEnv}}.SetupFamiliarCostumePagination( screen )"
+match_indent = true
+times = 1
+
+[[patches]]
+[patches.pattern]
+target = "FamiliarCostumeLogic.lua"
+pattern = "for index, itemName in ipairs( screen.ItemCategories[screen.OpenedFrom.Name] ) do"
 position = "at"
 payload = '''
-Name = screen.ItemButtonObstacle or "GhostAdminItem",
-Animation = screen.ItemButtonObstacle and screen.ItemAvailableAnimation,
+local items = screen.ItemCategories[screen.OpenedFrom.Name]
+local offset = screen.ScrollOffset
+for index = 1, math.min( screen.ItemsPerPage, #items - offset ) do
+	local itemName = items[offset + index]
 '''
 match_indent = true
 times = 1
