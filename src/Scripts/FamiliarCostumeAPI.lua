@@ -1,6 +1,7 @@
 ---@meta NikkelM-Cosmetics_API
 
 local registeredCostumes = {}
+local compactShopLayoutApplied = false
 
 -- #region Shop Layout
 local compactShopLayout = {
@@ -157,9 +158,15 @@ public.RegisterFamiliarCostume = function(costume)
 
 	table.insert(game.ScreenData.FamiliarCostumeShop.ItemCategories[costume.FamiliarName], costume.Id)
 
-	-- First registered costume, switch the shop layouts to the compact version
-	if next(registeredCostumes) == nil then
-		game.ScreenData.FamiliarCostumeShop = game.DeepMergeTables(game.ScreenData.FamiliarCostumeShop, compactShopLayout)
+	if not compactShopLayoutApplied then
+		for _, category in pairs(game.ScreenData.FamiliarCostumeShop.ItemCategories) do
+			-- Vanilla categories contain six costumes, apply the compact layout if any category exceeds six
+			if #category > 6 then
+				game.ScreenData.FamiliarCostumeShop = game.DeepMergeTables(game.ScreenData.FamiliarCostumeShop, compactShopLayout)
+				compactShopLayoutApplied = true
+				break
+			end
+		end
 	end
 
 	registeredCostumes[costume.Id] = costume.FamiliarName
