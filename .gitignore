@@ -6,7 +6,8 @@
 /src/LICENSE
 /src/icon.png
 /src/manifest.json
-
+/src/README.md
+/src/CHANGELOG.md
 
 # Compiled Lua sources
 luac.out
