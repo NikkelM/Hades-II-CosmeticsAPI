@@ -113,6 +113,7 @@ local function validateFamiliarCostumeData(costume)
 		Cost = "table",
 		GameStateRequirements = "table",
 		AlwaysRevealImmediately = "boolean",
+		AutoUnlock = "boolean",
 		PreRevealVoiceLines = "table",
 		SwitchCostumeVoiceLines = "table",
 	}
@@ -210,6 +211,10 @@ public.RegisterFamiliarCostume = function(costume)
 		IconPath = costume.IconPath,
 		IconScale = costume.IconScale,
 	})
+
+	if costume.AutoUnlock == true then
+		table.insert(game.GameData.WorldUpgradeAutomaticUnlocks, costume.Id)
+	end
 
 	mod.DebugPrint("[CosmeticsAPI] Successfully registered new familiar costume: " .. costume.Id, 3)
 	return true

@@ -390,6 +390,7 @@ CosmeticsAPI.RegisterFamiliarCostume({
 	Cost = { CosmeticsPoints = 50 },
 	GameStateRequirements = {},
 	AlwaysRevealImmediately = false,
+	AutoUnlock = false,
 	-- Check the vanilla familiar costumes for the available tables for this and SwitchCostumeVoiceLines, there are variants per familiar and costume "vibe"
 	PreRevealVoiceLines = {
 		{ GlobalVoiceLines = "FamiliarFrogCostumeUnlocked" },

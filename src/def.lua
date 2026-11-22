@@ -135,6 +135,7 @@ public.RegisterCardBackPackages = public.RegisterAlwaysLoadedPackages
 ---@field Cost table|nil The resource costs to buy this costume. For display purposes, limit to at most four different resources, including CosmeticsPoints. If nil, will default to { CosmeticsPoints = 50 } (50 Kudos).
 ---@field GameStateRequirements table|nil The requirements that must be met to show this costume in the shop. Supports all base game requirement logic. If nil, the costume will always be eligible.
 ---@field AlwaysRevealImmediately boolean|nil If true, this costume will be shown as purchaseable as soon as its GameStateRequirements are met. If false, the game will wait until the next run to reveal the costume in the shop. Defaults to false.
+---@field AutoUnlock boolean|nil If true, automatically unlocks the costume after registration if it is not already owned. Does not equip it. Defaults to false.
 ---@field PreRevealVoiceLines table|nil A table of voicelines to play when this costume is unlocked. Refer to existing voiceline tables for formatting. If nil, the default voicelines will be used. Input is not validated for correctness.
 ---@field SwitchCostumeVoiceLines table|nil A table of voicelines to play when this cosmetic is equipped after it had already been bought. Refer to existing voiceline tables for formatting. If nil, the default voicelines will be used. Input is not validated for correctness.
 

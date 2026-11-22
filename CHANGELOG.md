@@ -1,11 +1,15 @@
 # Changelog
 
-## v3.0.0
+## v3.0.1
 
 <!--Releasenotes start-->
+- Allow passing `AutoUnlock` to `RegisterFamiliarCostume`.
+<!--Releasenotes end-->
+
+## v3.0.0
+
 - The mod now supports adding new skins for familiars through `RegisterFamiliarCostume`.
 - Renamed `RegisterCardBackPackages` to `RegisterAlwaysLoadedPackages`. The old name can still be used.
-<!--Releasenotes end-->
 
 ## v2.1.1
 
