@@ -4,6 +4,7 @@
 
 <!--Releasenotes start-->
 - Allow passing `AutoUnlock` to `RegisterFamiliarCostume`.
+- The familiar skins menu now shows six skins per page instead of five.
 <!--Releasenotes end-->
 
 ## v3.0.0

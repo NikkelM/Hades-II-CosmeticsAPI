@@ -5,6 +5,7 @@ local registeredCostumes = {}
 -- #region Shop Pagination
 public.lovely_env.SetupFamiliarCostumePagination = function(screen)
 	screen.ScrollOffset = 0
+	screen.ItemsPerPage = 6
 	screen.NumItems = #screen.ItemCategories[screen.OpenedFrom.Name]
 	if screen.NumItems <= screen.ItemsPerPage then
 		return
@@ -12,8 +13,9 @@ public.lovely_env.SetupFamiliarCostumePagination = function(screen)
 
 	local cosmeticsShop = game.ScreenData.CosmeticsShop
 	local offsetY = game.ScreenData.FamiliarCostumeShop.ItemStartY - cosmeticsShop.ItemStartY
+	local extraHeight = screen.ItemSpacingY * (screen.ItemsPerPage - cosmeticsShop.ItemsPerPage)
 	screen.ScrollbarSliderTopY = cosmeticsShop.ScrollbarSliderTopY + offsetY
-	screen.ScrollbarSliderBottomY = cosmeticsShop.ScrollbarSliderBottomY + offsetY
+	screen.ScrollbarSliderBottomY = cosmeticsShop.ScrollbarSliderBottomY + offsetY + extraHeight
 
 	for _, name in ipairs({ "Scrollbar", "ScrollbarSlider", "ScrollUp", "ScrollDown" }) do
 		local component = game.DeepCopyTable(cosmeticsShop.ComponentData[name])
@@ -21,6 +23,10 @@ public.lovely_env.SetupFamiliarCostumePagination = function(screen)
 		screen.ComponentData[name] = component
 		table.insert(screen.ComponentData.Order, name)
 	end
+	screen.ComponentData.Scrollbar.Y = screen.ComponentData.Scrollbar.Y + extraHeight / 2
+	screen.ComponentData.Scrollbar.ScaleY = (cosmeticsShop.ScrollbarSliderBottomY - cosmeticsShop.ScrollbarSliderTopY + extraHeight) /
+			(cosmeticsShop.ScrollbarSliderBottomY - cosmeticsShop.ScrollbarSliderTopY)
+	screen.ComponentData.ScrollDown.Y = screen.ComponentData.ScrollDown.Y + extraHeight
 	screen.ComponentData.ScrollUp.Data.OnPressedFunctionName = _PLUGIN.guid .. "." .. "FamiliarCostumeScrollUp"
 	screen.ComponentData.ScrollDown.Data.OnPressedFunctionName = _PLUGIN.guid .. "." .. "FamiliarCostumeScrollDown"
 end
