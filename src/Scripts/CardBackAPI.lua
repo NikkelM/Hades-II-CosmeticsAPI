@@ -261,7 +261,7 @@ public.RegisterCardBackPack = function(packData)
 end
 
 ---Registers an individual card back. The card back is unlocked when its associated pack is purchased in the shop.
----The pack must be registered via `RegisterCardBackPack` before calling this function.
+---The pack must be registered via `RegisterCardBackPack` before calling this function, or be an existing pack from the vanilla game or another mod.
 ---The API auto-assigns a deterministic TextureNum derived from the card back's string ID, ensuring the same ID always maps to the same number regardless of mod load order.
 ---This TextureNum is used internally for animation name lookup.
 ---@param cardBackData CardBackData The input data for the new card back.
@@ -289,11 +289,12 @@ public.RegisterCardBack = function(cardBackData)
 		end
 	end
 
-	-- Ensure the pack exists
-	if mod.RegisteredCardBackPacks[cardBackData.PackId] == nil then
-		mod.DebugPrint("[CosmeticsAPI] Error: Card back pack '" .. cardBackData.PackId
-			.. "' has not been registered yet. Register the pack with RegisterCardBackPack before registering card backs. "
-			.. "Card back ID: " .. cardBackData.Id, 1)
+	local registeredPack = mod.RegisteredCardBackPacks[cardBackData.PackId]
+	local packUpgrade = game.WorldUpgradeData[cardBackData.PackId]
+	if not packUpgrade or (not registeredPack and type(packUpgrade.NumBackings) ~= "number") then
+		mod.DebugPrint("[CosmeticsAPI] Error: Card back pack '" .. cardBackData.PackId ..
+			"' has not been registered yet. Use a base-game pack or register a custom pack first. " ..
+			"Card back ID: " .. cardBackData.Id, 1)
 		return false
 	end
 
@@ -321,14 +322,24 @@ public.RegisterCardBack = function(cardBackData)
 	end
 	-- #endregion
 
-	-- #region Append to LayoutSetArtOptions
+	-- #region Insert into LayoutSetArtOptions
 	local artOption = {
 		TextureNum = textureNum,
 		GameStateRequirements = {
 			{ PathTrue = { "GameState", "WorldUpgradesAdded", cardBackData.PackId } },
 		},
 	}
-	table.insert(game.ScreenData.MetaUpgradeCardLayout.LayoutSetArtOptions, artOption)
+	local artOptions = game.ScreenData.MetaUpgradeCardLayout.LayoutSetArtOptions
+	local insertIndex = #artOptions + 1
+	-- Iterate backwards over the list, and if we find an existing card back with the same PackId, insert the new one after it
+	-- This ensures we append the new card back after existing ones in the same pack, no matter if added by another mod or vanilla
+	for index = #artOptions, 1, -1 do
+		if mod.CardBackPackByTextureNum[artOptions[index].TextureNum] == cardBackData.PackId then
+			insertIndex = index + 1
+			break
+		end
+	end
+	table.insert(artOptions, insertIndex, artOption)
 	-- #endregion
 
 	-- #region Store SJSON animation data
@@ -353,11 +364,15 @@ public.RegisterCardBack = function(cardBackData)
 		TextureNum = textureNum,
 	}
 	mod.ActiveCardBackTextureNums[textureNum] = true
+	mod.CardBackPackByTextureNum[textureNum] = cardBackData.PackId
 
 	-- Update the pack's card back count and NumBackings
-	local pack = mod.RegisteredCardBackPacks[cardBackData.PackId]
-	pack.CardBackCount = pack.CardBackCount + 1
-	game.WorldUpgradeData[cardBackData.PackId].NumBackings = pack.CardBackCount
+	if registeredPack then
+		registeredPack.CardBackCount = registeredPack.CardBackCount + 1
+		packUpgrade.NumBackings = registeredPack.CardBackCount
+	else
+		packUpgrade.NumBackings = packUpgrade.NumBackings + 1
+	end
 	-- #endregion
 
 	mod.DebugPrint("[CosmeticsAPI] Successfully registered new card back " .. cardBackData.Id

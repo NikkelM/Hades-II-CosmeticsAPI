@@ -265,13 +265,14 @@ CosmeticsAPI.RegisterCardBackPack({
 ### Registering Card Backs
 
 After registering a pack, register individual card backs for it.
+You can also register card backs for existing packs from the vanilla game, or added by other mods.
 Card backs will be ordered by registration order within their pack.
 
 ```lua
 CosmeticsAPI.RegisterCardBack({
 	-- REQUIRED FIELDS
 	Id = _PLUGIN.guid .. "." .. "MyCardBack_01",
-	-- Must match a previously registered pack ID
+	-- Must match a previously registered pack ID from your mod or another, or a vanilla pack
 	PackId = _PLUGIN.guid .. "." .. "MyCardBackPack",
 	-- Idle card art for the selection overlay (248×318 px). See vanilla: GUI\Screens\MetaUpgrade\DeckArt\Deck10
 	DeckArtPath = "AuthorName-ModName\\DeckArt\\MyDeck10",

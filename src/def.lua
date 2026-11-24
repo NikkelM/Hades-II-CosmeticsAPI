@@ -98,14 +98,14 @@ public.RegisterCardBackPack = function(packData) end
 
 ---@class CardBackData
 ---@field Id string Unique card back identifier. Prefix this with your mod's `_PLUGIN.guid` to ensure uniqueness!
----@field PackId string The ID of the CardBackPack this card back belongs to. Must have been registered first via `RegisterCardBackPack`.
+---@field PackId string The ID of the CardBackPack this card back belongs to. Must have been registered first via `RegisterCardBackPack`, or be an existing pack from the vanilla game or another mod.
 ---@field DeckArtPath string Path to the idle/normal card art texture shown in the card back picker overlay (Arcana screen, 248×318 px). This is the default state before hovering. See `GUI\Screens\MetaUpgrade\DeckArt\Deck10`. This texture should be in a package registered via `RegisterCrossroadsPackages`, as the picker is only accessible in the Crossroads.
 ---@field DeckArtMouseoverPath string|nil Path to the highlighted/brighter variant of the card art, shown on hover in the picker overlay (330×308 px). Each vanilla card back has a separate mouseover texture - see `GUI\Screens\MetaUpgrade\DeckArt\DeckMouseover10`. This texture should be in the same Crossroads package as DeckArtPath. If nil, uses DeckArtPath (no hover effect).
 ---@field CardBackPath string Path to the card back texture shown during the in-combat Arcana card flip animation, e.g. when gaining an Arcana through Judgment (453×680 px). See `GUI\Screens\CardBack\CardBack10`. This texture should be in a package registered via `RegisterAlwaysLoadedPackages`, as it must be available at all times including during runs. Textures must match the vanilla dimensions exactly, as the engine derives the display scale from the source texture size.
 ---@field DeckArtScale number|nil Scale for DeckArt animation in the selection UI.
 
 ---Registers an individual card back. The card back is unlocked when its associated pack is purchased in the shop.
----The pack must be registered via `RegisterCardBackPack` before calling this function.
+---The pack must be registered via `RegisterCardBackPack` before calling this function, or be an existing pack from the vanilla game or another mod.
 ---The API auto-assigns a deterministic TextureNum derived from the card back's string ID, ensuring the same ID always maps to the same number regardless of mod load order.
 ---This TextureNum is used internally for animation name lookup.
 ---@param cardBackData CardBackData The input data for the new card back.

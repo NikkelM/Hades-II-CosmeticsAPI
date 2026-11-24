@@ -1,11 +1,15 @@
 # Changelog
 
-## v3.0.1
+## v3.0.2
 
 <!--Releasenotes start-->
+- Allow adding Arcana Cards to existing packs.
+<!--Releasenotes end-->
+
+## v3.0.1
+
 - Allow passing `AutoUnlock` to `RegisterFamiliarCostume`.
 - The familiar skins menu now shows six skins per page instead of five.
-<!--Releasenotes end-->
 
 ## v3.0.0
 

@@ -73,6 +73,50 @@ mod.ActiveCardBackTextureNums = {}
 for i = 1, 40 do
 	mod.ActiveCardBackTextureNums[i] = true
 end
+-- Which pack each TextureNum == Card Back belongs to
+-- Extended as mods add new card backs
+mod.CardBackPackByTextureNum = {
+	[2] = "Cosmetic_CardDeck01",
+	[3] = "Cosmetic_CardDeck01",
+	[4] = "Cosmetic_CardDeck02",
+	[5] = "Cosmetic_CardDeck02",
+	[6] = "Cosmetic_CardDeck02",
+	[7] = "Cosmetic_CardDeck02",
+	[8] = "Cosmetic_CardDeck02",
+	[9] = "Cosmetic_CardDeck02",
+	[10] = "Cosmetic_CardDeck01",
+	[11] = "Cosmetic_CardDeck05",
+	[12] = "Cosmetic_CardDeck05",
+	[13] = "Cosmetic_CardDeck05",
+	[14] = "Cosmetic_CardDeck05",
+	[15] = "Cosmetic_CardDeck05",
+	[16] = "Cosmetic_CardDeck03",
+	[17] = "Cosmetic_CardDeck04",
+	[18] = "Cosmetic_CardDeck03",
+	[19] = "Cosmetic_CardDeck04",
+	[20] = "Cosmetic_CardDeck03",
+	[21] = "Cosmetic_CardDeck04",
+	[22] = "Cosmetic_CardDeck03",
+	[23] = "Cosmetic_CardDeck04",
+	[24] = "Cosmetic_CardDeck03",
+	[25] = "Cosmetic_CardDeck04",
+	[26] = "Cosmetic_CardDeck03",
+	[27] = "Cosmetic_CardDeck04",
+	[28] = "Cosmetic_CardDeck06",
+	[29] = "Cosmetic_CardDeck06",
+	[30] = "Cosmetic_CardDeck06",
+	[31] = "Cosmetic_CardDeck07",
+	[32] = "Cosmetic_CardDeck07",
+	[33] = "Cosmetic_CardDeck07",
+	[34] = "Cosmetic_CardDeck07",
+	[35] = "Cosmetic_CardDeck07",
+	[36] = "Cosmetic_CardDeck07",
+	[37] = "Cosmetic_CardDeck08",
+	[38] = "Cosmetic_CardDeck08",
+	[39] = "Cosmetic_CardDeck08",
+	[40] = "Cosmetic_CardDeck08",
+}
+
 -- Package names for card back textures that must be loaded at all times (including during runs)
 mod.RegisteredAlwaysLoadedPackages = {}
 -- Stores package names registered by mods, to be loaded when entering the Crossroads
